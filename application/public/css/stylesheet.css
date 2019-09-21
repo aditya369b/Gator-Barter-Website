@@ -1,35 +1,63 @@
 .navbar-default {
-    background-color: #4a235a;
+    background-color: #330033;
 }
 
 .active a{
-  background-color:  #f4d03f !important;
+  background-color:  #ffcc33 !important;
 }
 
-.section_subtitle{
+body
+{
+  background-color: #330033;
+}
+
+.section_subtitle
+{
   margin-bottom: 7px;
   padding-left: 7px;
   font-size: 16px;
   line-height: 1;
   text-transform: uppercase;
-  color: #aaaaaa;
-  border-left: 3px solid #bfa67a;
+  color: #ffcc33;
+  border-left: 3px solid #ffcc33;
   font-size: 700;
   font-family: tahoma;
 }
 
-img{
-
+a:hover {
+  opacity: 0.5;
 }
 
-.footer{
+.avatar {
+  border-radius: 50%;
+  border: 7px solid;
+  width: 170px;
+  height: 170px;
+  margin: 14px auto 14px;
+  color: #ffcc33;
+}
+
+.social-icon {
+  color: #ffcc33;
+  padding: 2px;
+}
+
+#member-desc {
+  padding: 4rem;
+  color: #ffcc33;
+  text-align: center;
+}
+
+.footer
+{
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 60px;
-  background-color: #4a235a;
+  background-color: ;
 }
 
-.footer p{
+.footer p
+{
   color: white;
 }
