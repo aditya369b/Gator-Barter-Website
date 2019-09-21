@@ -2,6 +2,11 @@
     background-color: #330033;
 }
 
+.navbar
+{
+  border:0px;
+}
+
 .active a{
   background-color:  #ffcc33 !important;
 }
