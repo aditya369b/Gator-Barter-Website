@@ -12,7 +12,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
   <!-- CSS Stylesheets -->
-  <link rel="stylesheet" type="text/css" href="../public/css/stylesheet.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
 
 </head>
 
@@ -21,25 +21,25 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Gater Barter</a>
+        <a class="navbar-brand" href="/">Gater Barter</a>
       </div>
       <ul class="nav navbar-nav">
-        <li><a href="#">Home</a></li>
-        <li class ="active"><a href="about.html">About</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Register</a></li>
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+        <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
     </div>
   </nav>
   <!-- Member Description Template -->
   <section id="member-desc">
     <div class="container-fluid">
-      <img src="images/man.png" alt="man" class="avatar">
+      <img src="/static/images/man.png" alt="man" class="avatar">
       <!-- Change to your full name -->
       <h2>Akshay Kasar</h2>
       <!-- Change to your role -->
-      <h5>Back-end Engineer</h5>
+      <h5>Back-End</h5>
       <p>
         <!-- Add description in here -->
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis

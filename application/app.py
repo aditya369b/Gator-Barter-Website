@@ -51,7 +51,7 @@ def dyan():
 def pyu():
     return render_template("about/pyu.html")
 
-@app.route("/about/tbelsares")
+@app.route("/about/tbelsare")
 def tbelsare():
     return render_template("about/tbelsare.html")
 

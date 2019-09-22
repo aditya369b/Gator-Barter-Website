@@ -1,39 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Home Page</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
-  </head>
+
+<head>
+  <title>Home Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
+</head>
+
 <body>
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Gater Barter</a>
+        <a class="navbar-brand" href="/">Gater Barter</a>
       </div>
       <ul class="nav navbar-nav">
-        <li class ="active"><a href="/">Home</a></li>
-        <li ><a href="/about">About</a></li>
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Register</a></li>
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+        <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
     </div>
   </nav>
+  <h3>
+    <center>
+      <font color="ffcc33"> Software Engineering Class SFSU</font>
+  </h3>
+  <h3>
+    <center>
+      <font color="ffcc33"> Fall 2019</font>
+  </h3>
+  <h3>
+    <center>
+      <font color="ffcc33">Section</font>
+  </h3>
+  <h3>
+    <center>
+      <font color="ffcc33">Team 4</font>
+  </h3>
 
-  <h3><center> Software Engineering Class SFSU </h3>
-  <h3><center> Fall 2019</h3>
-  <h3><center>Section</h3>
-  <h3><center>Team 4</h3>
-
-  
-   <div class="footer">
-     <div class="container">
-     </div>
-   </div>
+  <div class="footer">
+    <div class="container">
+    </div>
+  </div>
 </body>
+
 </html>
