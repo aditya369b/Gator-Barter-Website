@@ -1,0 +1,37 @@
+Make sure before you start make sure you clone your repo
+
+It will looks something like this
+
+$ git clone https://github.com/CSC-648-SFSU/csc648-fall2019-Team04.git
+
+Here are some instruction on how to create a new branch for tracking
+
+First check to see what branch you are on and see if you have any conflicts
+
+$ git status
+
+if you are good to go, let's make you a branch
+
+$ git branch -b [YOUR_BRANCH_NAME]
+
+Cool, you have a branch now. But Github doesn't know about it yet
+
+Let's navigate to the 'Milestones' directory
+
+Then go to one of the MileStones [M0-M5] (preferably the one we are working on now)
+
+Make a file here and put some text in it
+
+Cool, you made a change, congragulations!
+
+Now we need to setup the remote repo
+
+$ git remote add origin [YOUR_BRANCH_NAME]
+
+Time to push it, let's be lazy and do it in one line
+
+$ git add . && git commit -m "Please put some meaningful message here" && git push
+
+Cool, checkout github and refresh it. 
+
+Let me know if you have problems
