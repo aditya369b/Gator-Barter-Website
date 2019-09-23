@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>About Us</title>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/6ab52acb52.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
+
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Gater Barter</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+    </div>
+  </nav>
+  <!-- Member Description Template -->
+  <section id="member-desc">
+    <div class="container-fluid">
+      <img src="/static/images/man.png" alt="man" class="avatar">
+      <!-- Change to your full name -->
+      <h2>Deming Yan</h2>
+      <!-- Change to your role -->
+      <h5>Full Stack Engineer</h5>
+      <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+          <p style="">
+            <!-- Add description in here -->
+            My name is Deming Yan. I am a senior student majoring in computer science. I am expected to grauate from San Francisco State University in Dec 2019.
+          </p>
+        </div>
+      </div>
+      <a href="https://www.linkedin.com/in/deming-yan-1a967028/"><i class="social-icon fab fa-linkedin"></i></a>
+      <a href="https://github.com/DemingYan"><i class="social-icon fab fa-github"></i></a>
+      <a href="mailto:yandeming@gmail.com"><i class="social-icon fas fa-envelope"></i></a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+
+</body>
+
+</html>
