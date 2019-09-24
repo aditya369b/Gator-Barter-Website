@@ -18,6 +18,7 @@ def home():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    """
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -28,11 +29,13 @@ def login():
             if next_url:
                 return redirect(next_url)
             return redirect(url_for("profile"))
+            """
     return render_template("login.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    """
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -44,6 +47,7 @@ def register():
         if next_url:
             return redirect(next_url)
         return redirect(url_for("profile"))
+        """
     return render_template("register.html")
 
 @app.route("/about")
