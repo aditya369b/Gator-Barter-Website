@@ -13,8 +13,8 @@
 ## NO code needs to be stored in the root of your repository. You may rename the application folder if you like to your team's application name. But all source code related to your team's application should be stored inside the application folder.
 
 ## Run instructions :
-Git clone the repo
-cd /application /
-Python app.py
-This will start the server at 127.0.0.1:5000
-Ye main vale readme mei jayega
+1. Git clone the repo
+2. cd /application /
+3. python app.py
+
+This will start the server at 0.0.0.0:5000
