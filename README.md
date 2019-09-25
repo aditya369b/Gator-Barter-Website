@@ -11,3 +11,10 @@
 2. Add ALL members of your team to this repository. For it to count, they must ACCEPT the invite.
 
 ## NO code needs to be stored in the root of your repository. You may rename the application folder if you like to your team's application name. But all source code related to your team's application should be stored inside the application folder.
+
+## Run instructions :
+Git clone the repo
+cd /application /
+Python app.py
+This will start the server at 127.0.0.1:5000
+Ye main vale readme mei jayega
