@@ -8,31 +8,159 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+  <!-- font awesome -->
+  <script src="https://kit.fontawesome.com/6ab52acb52.js"></script>
+
+  <!-- css for server
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
+  -->
+
+  <!-- css for local testing -->
+  <link rel="stylesheet" type="text/css" href="public/css/stylesheet.css">
 </head>
 
 <body>
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/">Gater Barter</a>
+        <a class="navbar-brand" href="home.html">Gater Barter</a>
       </div>
       <ul class="nav navbar-nav">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about/about.html">About</a></li>
       </ul>
+
+      <!--  search bar -->
+      <ul class="nav navbar-nav" style="width:75%; padding-top: 7px; padding-left: 18%;">
+        <form class="form-inline">
+          <div class="form-group">
+            <input class="form-control" name="search" placeholder="Type to Search" size="85">
+            <a class="search-btn" href="#"> <i class="fas fa-search"></i></a>
+          </div>
+        </form>
+      </ul>
+
       <ul class="nav navbar-nav navbar-right">
-        <li class="active"><a href="/register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
-        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+        <li class = "active"><a href="register.php"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+        <!-- button for modal login form -->
+        <a class="link" onclick="document.getElementById('id01').style.display='block'">Login</a>
+
+        <!-- modal -->
+        <div id='id01' class="modal">
+        <span onclick="document.getElementById('id01').style/display='block'" class="close" title="Close Modal">&times;</span>
+
+        <!-- modal content -->
+        <form class="modal-content animate"  action="/action_page.php">
+          <div class="mcontainer">
+            <p><center>Click outside the box to exit</p>
+              <label for="email"><b>Username</b></label>
+              <input type="text" placeholder="Enter Username or email" name="email" required>
+
+              <label for="psw"><b>Password</b></label>
+              <input type="password" placeholder="Enter Password" name="psw" required>
+
+              <button type="submit">Login</button>
+            <label> <input type="checkbox" checked="checked" name="remember">Remember me</label>
+            <span class = "psw"><a href="#">Forgot Password</a></span>
+        </div>
+      </form>
+
+      <!-- close modal when user clicks outside box -->
+      <script>
+      var modal = document.getElementById('id01');
+      window.onclick=function(event){
+        if (event.target == modal){
+          modal.style.display = "none";
+        }
+      }
+      </script>
     </div>
-  </nav>
-  <h1>Register</h1>
-  <form method="post">
-    <label>Username: <input type="text" name="username" /></label>
-    <label>Password: <input type="password" name="password" /></label>
-    <input type="submit" /></form>
-  </form>
+  </ul>
+</div>
+</nav>
+
+  <!-- registration -->
+  <h1><center>Registration</h1>
+  <div class="register">
+    <form action="register.php"  style="text-align: center;">
+      <label for="fname"><b>First name</b></label>
+      <input type="text" placeholder="Enter your first name" name="fname" required>
+
+      <label for="lname"><b>last name</b></label>
+      <input type="text" placeholder="Enter your last name" name="lname" required>
+
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter your email" name="email" required>
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter your password" name="psw" id="psw" required>
+      <input type="checkbox" onclick="showPsw()">Show Password
+
+      <!-- script to show the password -->
+      <script>
+        function showPsw(){
+          var x = document.getElementById("psw");
+          if ( x.type == "password"){
+            x.type = "text";
+          }
+          else{
+            x.type = "password";
+          }
+        }
+      </script>
+
+      <label for="psw-repeat"><b>Repeat Password</b></label>
+      <input type="password" placeholder="Re-enter your password" name="psw_repeat" id="psw-check" required>
+
+
+      <p> What is your gender? </p>
+      <input type="radio" name="gender" value="Male"><span id="male">&nbsp; Male</span>&nbsp;&nbsp;
+      <input type="radio" name="gender" value="Female"><span id="female">&nbsp; Female</span>&nbsp;&nbsp;
+      <input type="radio" name="gender" value="Other"><span id="other">&nbsp; Other</span>&nbsp;&nbsp;<br><br>
+      <input type="radio" name="gender" value="na"><span id="na">&nbsp; prefer not to answer</span>&nbsp;&nbsp;<br><br>
+
+      <p> By creating an account you agree to our <a href="#">ToS</a>
+      <button type="submit" name="create">Register</button>
+    </form>
+  </div>
+
+  <div class="container-signin">
+    <p><center>Already have an account? <a class="link" onclick="document.getElementById('id01').style.display='block'">Sign In.</a></p>
+  </div>
+
+
+  <!-- footer -->
+  <div class="footer">
+    <div class="container2">
+      <div class="row">
+        <div class="col-md-4">
+          <ul>
+            <h4><a href="#">Products</a></h4>
+            <h4><a href="#">Services</a></h4>
+            <h4><a href="#">Specials</a></h4>
+          </ul>
+        </div>
+
+        <div class="col-md-4">
+          <ul>
+            <h4><a href="#">Contacts</a></h4>
+            <h4><a href="#">returns</a></h4>
+            <h4><a href="#">tracking</a></h4>
+         </ul>
+        </div>
+
+        <div class="col-md-4">
+          <ul>
+            <h1>Contact US</h1>
+            <p>Email Us At: <a href="mailto:not-real@gmail.com">not-real@gmail.com</a></p>
+            <p>Call Us At: <a href="tel:444-444-4444">(444) 444-4444</a></p>
+          </ul>
+        </div>
+    </div>
+  </div>
+</div>
+
 </body>
 
 </html>
