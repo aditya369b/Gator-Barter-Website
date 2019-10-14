@@ -16,34 +16,13 @@ def home():
     return render_template("home.html")
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        next_url = request.form.get("next")
-
-        if username in users and users[username][1] == password:
-            session["username"] = username
-            if next_url:
-                return redirect(next_url)
-            return redirect(url_for("profile"))
     return render_template("login.html")
 
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route("/register")
 def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        next_url = request.form.get("next")
-
-    if username not in users: # new user
-        session["username"] = username
-        session["password"] = password
-        if next_url:
-            return redirect(next_url)
-        return redirect(url_for("profile"))
     return render_template("register.html")
 
 @app.route("/about")
