@@ -42,7 +42,7 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li class = "active"><a href="register.php"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+        <li class = "active"><a href=""><span class="glyphicon glyphicon-user"></span> Register</a></li>
         <!-- button for modal login form -->
         <a class="link" onclick="document.getElementById('id01').style.display='block'">Login</a>
 
@@ -51,7 +51,7 @@
         <span onclick="document.getElementById('id01').style/display='block'" class="close" title="Close Modal">&times;</span>
 
         <!-- modal content -->
-        <form class="modal-content animate"  action="/action_page.php">
+        <form class="modal-content animate"  action="" method="post">
           <div class="mcontainer">
             <p><center>Click outside the box to exit</p>
               <label for="email"><b>Username</b></label>
@@ -62,6 +62,7 @@
 
               <button type="submit">Login</button>
             <label> <input type="checkbox" checked="checked" name="remember">Remember me</label>
+            <li><a href="register.html">Don't have an account? Sign Up</a></li>
             <span class = "psw"><a href="#">Forgot Password</a></span>
         </div>
       </form>
@@ -83,7 +84,7 @@
   <!-- registration -->
   <h1><center>Registration</h1>
   <div class="register">
-    <form action="register.php"  style="text-align: center;">
+    <form action=""  style="text-align: center;" method="post">
       <label for="fname"><b>First name</b></label>
       <input type="text" placeholder="Enter your first name" name="fname" required>
 
@@ -111,24 +112,40 @@
       </script>
 
       <label for="psw-repeat"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Re-enter your password" name="psw_repeat" id="psw-check" required>
+      <input type="password" placeholder="Re-enter your password" name="psw_repeat" id="psw-repeat" oninput="check(this)" required>
 
-
-      <p> What is your gender? </p>
-      <input type="radio" name="gender" value="Male"><span id="male">&nbsp; Male</span>&nbsp;&nbsp;
-      <input type="radio" name="gender" value="Female"><span id="female">&nbsp; Female</span>&nbsp;&nbsp;
-      <input type="radio" name="gender" value="Other"><span id="other">&nbsp; Other</span>&nbsp;&nbsp;<br><br>
-      <input type="radio" name="gender" value="na"><span id="na">&nbsp; prefer not to answer</span>&nbsp;&nbsp;<br><br>
+      <!-- script for password validation -->
+      <script>
+        function check(input){
+          if(input.value != document.getElementById('psw').value){
+            input.setCustomValidity('Password does not match!');
+          }
+          else{
+            input.setCustomValidity('');
+          }
+        }
+      </script>
 
       <p> By creating an account you agree to our <a href="#">ToS</a>
       <button type="submit" name="create">Register</button>
     </form>
+
+    <!-- script for creating a json array from data fields -->
+    <script>
+      $values = array(
+        "jsonFirstName" =>        $_POST['fname'],
+        "jsonLastName" =>         $_POST['lname'],
+        "jsonEmail" =>            $_POST['email'],
+        "jsonPassword" =>         $_POST['psw'],
+      );
+      $json_obj = json_encode($values);
+    </script>
+
   </div>
 
   <div class="container-signin">
     <p><center>Already have an account? <a class="link" onclick="document.getElementById('id01').style.display='block'">Sign In.</a></p>
   </div>
-
 
   <!-- footer -->
   <div class="footer">
