@@ -138,6 +138,7 @@ span.psw{
   margin: 5px auto;
   border: 1px solid #888;
   width: 20%;
+  height: 45%;
 }
 
 /* close button */
@@ -248,8 +249,9 @@ ul
   margin-left: 40%;
 }
 
+/* temp padding for registration page to keep footer on bottom of the page in full screen */
 .container-signin{
-  height:100px;
+  height:230px;
 }
 
 /* temp div to space header vs footer in home page. Remove when home page is populated */
