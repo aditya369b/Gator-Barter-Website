@@ -58,42 +58,46 @@ def searchPage():
 # prepare a cursor object using cursor() method
     cursor = db.cursor()
 
-    print(request.form)
+    print(len(request.form))
 
-    search = request.form['text']
+    formsLen = len(request.form)
 
-    search = str(bleach.clean(search))  # sanitizing a bad search
-    feedback = ""
-    # Open database connection
-    starting = "" + search + "%"
-    ending = "%" + search + ""
-    starting2 = " " + search + "%"
-    ending2 = "%" + search + " "
-    middle = "%" + search + "%"
-    exact = search
-    cursor.execute("""
-    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-    FROM item AS i
-    JOIN item_image AS ii
-    ON i.i_id = ii.ii_i_id
-    JOIN category as c
-    ON c.c_id = i.i_c_id
-    WHERE i.i_status = 1
-    AND i.i_sold_ts IS NULL
-    AND (i.i_desc LIKE '""" + starting + """'
-    OR i.i_desc LIKE '""" + ending + """'
-    OR i.i_desc LIKE '""" + starting2 + """'
-    OR i.i_desc LIKE '""" + ending2 + """'
-    OR i.i_desc LIKE '""" + middle + """'
-    OR i.i_desc LIKE '""" + exact + """');
-    """)
-    # cursor.execute("SELECT * FROM item;")
-    data = cursor.fetchall()
-    print("All items?", data)
+    feedback, data = "", ""
+    if formsLen > 0:
+        search = request.form['text']
+
+        search = str(bleach.clean(search))  # sanitizing a bad search
+        # Open database connection
+        starting = "" + search + "%"
+        ending = "%" + search + ""
+        starting2 = " " + search + "%"
+        ending2 = "%" + search + " "
+        middle = "%" + search + "%"
+        exact = search
+        cursor.execute("""
+        SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+        FROM item AS i
+        JOIN item_image AS ii
+        ON i.i_id = ii.ii_i_id
+        JOIN category as c
+        ON c.c_id = i.i_c_id
+        WHERE i.i_status = 1
+        AND i.i_sold_ts IS NULL
+        AND (i.i_desc LIKE '""" + starting + """'
+        OR i.i_desc LIKE '""" + ending + """'
+        OR i.i_desc LIKE '""" + starting2 + """'
+        OR i.i_desc LIKE '""" + ending2 + """'
+        OR i.i_desc LIKE '""" + middle + """'
+        OR i.i_desc LIKE '""" + exact + """');
+        """)
+        # cursor.execute("SELECT * FROM item;")
+        data = cursor.fetchall()
+        print("All items?", data)
     productList = []
 
     if len(data) == 0:
-        feedback = "No Results, Consider these Items"
+        if formsLen > 0:
+            feedback = "No Results, Consider these Items"
         cursor.execute("""
     SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
     FROM item AS i
@@ -111,7 +115,7 @@ def searchPage():
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
-    if feedback == "":
+    if feedback == "" and formsLen != 0:
         if len(data) == 1:
             feedback = str(len(data)) + " Result Found"
         else:
