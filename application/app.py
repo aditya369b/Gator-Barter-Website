@@ -153,6 +153,40 @@ def productPage(product_id):
     return render_template("products/product.html", product=productObject)
 
 
+@app.route("/categories/<categoryName>", methods=["POST", "GET"])
+def selectCategory(categoryName):
+    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
+                         app.config['MYSQL_DATABASE_USER'],
+                         None, app.config['MYSQL_DATABASE_DB'])
+
+    cursor = db.cursor()
+    print(categoryName)
+
+    query = """
+    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+    FROM item AS i
+    JOIN item_image AS ii
+    ON i.i_id = ii.ii_i_id
+    JOIN category as c
+    ON c.c_id = i.i_c_id
+    HAVING c.c_name = '""" + categoryName + """';"""
+
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    if len(data) == 0:
+        abort(404)
+
+    productList = []
+
+    for d in data:
+        if len(d) > 11:
+            productObject = product.makeProduct(d)
+            productList.append(productObject)
+
+    return render_template("home.html", products=productList, feedback=categoryName)
+
+
 @app.route("/login")
 def login():
     return render_template("login.html")
