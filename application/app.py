@@ -54,9 +54,12 @@ def home():
 
     # Open database connection
     cursor.execute("""
-    SELECT i.*, ii.ii_url, ii.ii_status FROM item AS i
+    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+    FROM item AS i
     JOIN item_image AS ii
     ON i.i_id = ii.ii_i_id
+    JOIN category as c
+    ON c.c_id = i.i_c_id
     WHERE i.i_status = 1
     AND i.i_sold_ts IS NULL;
     """)
@@ -84,9 +87,12 @@ def productPage(product_id):
     # Open database connection
 
     query = """
-    SELECT i.*, ii.ii_url, ii.ii_status FROM item AS i
+    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+    FROM item AS i
     JOIN item_image AS ii
     ON i.i_id = ii.ii_i_id
+    JOIN category as c
+    ON c.c_id = i.i_c_id
     WHERE i.i_id = """ + product_id + """;"""
 
     cursor.execute(query)

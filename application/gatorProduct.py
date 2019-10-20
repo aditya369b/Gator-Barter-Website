@@ -1,10 +1,11 @@
+from flask import json, jsonify
 
 
 class Product():
     def __init__(
             self, i_id, i_title, i_desc, i_price, i_is_tradable,
             i_u_id, i_create_ts, i_update_ts, i_sold_ts, i_status,
-            i_c_id, ii_url, ii_status
+            i_c_id, ii_url, ii_status, c_name, c_id, c_status
             ):
         self.i_id = i_id
         self.i_title = i_title
@@ -19,6 +20,9 @@ class Product():
         self.i_c_id = i_c_id
         self.ii_url = ii_url
         self.ii_status = ii_status
+        self.c_name = c_name
+        self.c_id = c_id
+        self.c_status = c_status
 
 
 def makeProduct(productTuple):

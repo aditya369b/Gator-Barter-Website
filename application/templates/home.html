@@ -38,9 +38,11 @@
       {% set imageSrc = product.ii_url %}
       {% set itemDesc = product.i_desc %}
       {% set itemTitle = product.i_title %}
+      {% set itemCategory = product.c_name %}
       <div class="col-md-4">
           <div class="thumbnail">
-            <p> Title: {{itemTitle}}
+            <p> Title: {{itemTitle}} </p>
+            <p> Category: {{itemCategory}} </p>
             <a href=/products/{{imageRedirect}}>
               <img src={{imageSrc}} alt="{{imageSrc}}" style="max-height:200px; max-width:200px;">
               <div class="caption">
