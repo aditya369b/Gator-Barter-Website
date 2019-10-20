@@ -40,9 +40,9 @@
       {% set itemTitle = product.i_title %}
       <div class="col-md-4">
           <div class="thumbnail">
-              <p> Title: {{itemTitle}}
+            <p> Title: {{itemTitle}}
             <a href=/products/{{imageRedirect}}>
-              <img src={{imageSrc}} alt="{{imageSrc}}" style="width:100%">
+              <img src={{imageSrc}} alt="{{imageSrc}}" style="max-height:200px; max-width:200px;">
               <div class="caption">
                 <p>{{itemDesc}}</p>
               </div>

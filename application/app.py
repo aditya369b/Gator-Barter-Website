@@ -6,13 +6,12 @@ Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-lo
 """
 
 import gatorProduct as product  # class made by alex
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, abort
 import pymysql
 import jinja2
 import bleach  # sql santization lib
 
 app = Flask(__name__)
-
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
@@ -40,7 +39,6 @@ data = cursor.fetchone()
 print("Database version : %s " % data)
 
 # alex tests
-
 
 # disconnect from server
 
@@ -94,6 +92,9 @@ def productPage(product_id):
     cursor.execute(query)
     # cursor.execute("SELECT * FROM item;")
     data = cursor.fetchall()
+    if len(data) == 0:
+        abort(404)
+        # return redirect("/")
     print("Redirecting to Product page", product_id)
     print(data[0])
     productObject = product.makeProduct(data[0])
@@ -148,6 +149,11 @@ def pyu():
 @app.route("/about/tbelsare")
 def tbelsare():
     return render_template("about/tbelsare.html")
+
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("errors/404.html", url_for_redirect="/")
 
 
 db.close()
