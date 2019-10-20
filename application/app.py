@@ -5,23 +5,28 @@ Might incorperate some features mentioned in the blog post(s)
 Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-logging-in-with-flask/
 """
 
+import gatorProduct as product  # class made by alex
 from flask import Flask, render_template, request, session, redirect, url_for
 import pymysql
 import jinja2
+import bleach  # sql santization lib
 
 app = Flask(__name__)
 
+
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
-app.config['MYSQL_DATABASE_DB'] = 'gator'
+app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+
 
 # mysql = MySQL()
 # mysql.init_app(app)conn = mysql.connect()
 # cursor = conn.cursor()
 
 # Open database connection
-db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'], app.config['MYSQL_DATABASE_USER'],
+db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
+                     app.config['MYSQL_DATABASE_USER'],
                      None, app.config['MYSQL_DATABASE_DB'])
 
 # prepare a cursor object using cursor() method
@@ -42,16 +47,57 @@ print("Database version : %s " % data)
 # name=session.get("username", "Unknown")
 @app.route("/", methods=["POST", "GET"])
 def home():
+    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
+                         app.config['MYSQL_DATABASE_USER'], None,
+                         app.config['MYSQL_DATABASE_DB'])
+
+# prepare a cursor object using cursor() method
+    cursor = db.cursor()
+
+    # Open database connection
     cursor.execute("""
-SELECT i.*, ii.ii_url, ii.ii_status FROM item AS i
-JOIN item_image AS ii
-ON i.i_id = ii.ii_i_id
-WHERE i.i_status == 1 
-AND i.i_sold_ts == NULL;
-""")
+    SELECT i.*, ii.ii_url, ii.ii_status FROM item AS i
+    JOIN item_image AS ii
+    ON i.i_id = ii.ii_i_id
+    WHERE i.i_status = 1
+    AND i.i_sold_ts IS NULL;
+    """)
+    # cursor.execute("SELECT * FROM item;")
     data = cursor.fetchall()
-    print("All items?", data[0])
-    return render_template("home.html", image_url=data[0])
+    print("All items?", data)
+    productList = []
+    for d in data:
+        if len(d) > 11:
+            productObject = product.makeProduct(d)
+            productList.append(productObject)
+    return render_template("home.html", products=productList)
+
+
+@app.route("/products/<product_id>", methods=["POST", "GET"])
+def productPage(product_id):
+
+    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
+                         app.config['MYSQL_DATABASE_USER'],
+                         None, app.config['MYSQL_DATABASE_DB'])
+
+    cursor = db.cursor()
+    product_id = str(bleach.clean(product_id))  # sanitizing a bad redirect
+
+    # Open database connection
+
+    query = """
+    SELECT i.*, ii.ii_url, ii.ii_status FROM item AS i
+    JOIN item_image AS ii
+    ON i.i_id = ii.ii_i_id
+    WHERE i.i_id = """ + product_id + """;"""
+
+    cursor.execute(query)
+    # cursor.execute("SELECT * FROM item;")
+    data = cursor.fetchall()
+    print("Redirecting to Product page", product_id)
+    print(data[0])
+    productObject = product.makeProduct(data[0])
+    return render_template("products/product.html", product=productObject)
 
 
 @app.route("/login")

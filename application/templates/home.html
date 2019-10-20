@@ -26,8 +26,32 @@
         <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
     </div>
   </nav>
- 
- <img src={{image_url}}/>
+
+  <div class="container">
+    <h2>Bartor Images</h2>
+    <p>The .thumbnail class can be used to display an image gallery.</p>
+    <p>The .caption class adds proper padding and a dark grey color to text inside thumbnails.</p>
+    <p>Click on the images to enlarge them.</p>
+    <div class="row">
+      {% for product in products %}
+      {% set imageRedirect = product.i_id %}
+      {% set imageSrc = product.ii_url %}
+      {% set itemDesc = product.i_desc %}
+      {% set itemTitle = product.i_title %}
+      <div class="col-md-4">
+          <div class="thumbnail">
+              <p> Title: {{itemTitle}}
+            <a href=/products/{{imageRedirect}}>
+              <img src={{imageSrc}} alt="{{imageSrc}}" style="width:100%">
+              <div class="caption">
+                <p>{{itemDesc}}</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 
 </body>
 
