@@ -27,11 +27,24 @@
     </div>
   </nav>
 
+  <form action="/results" method="POST">
+    <div class="row">
+      <div class="col-xs-6 col-md-4">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search" id="txtSearch" name="text" />
+          <div class="input-group-btn">
+            <button class="btn btn-primary" type="submit">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
   <div class="container">
-    <h2>Bartor Images</h2>
-    <p>The .thumbnail class can be used to display an image gallery.</p>
-    <p>The .caption class adds proper padding and a dark grey color to text inside thumbnails.</p>
-    <p>Click on the images to enlarge them.</p>
+    <h2> {{feedback}} </h2>
+   
     <div class="row">
       {% for product in products %}
       {% set imageRedirect = product.i_id %}
@@ -40,17 +53,17 @@
       {% set itemTitle = product.i_title %}
       {% set itemCategory = product.c_name %}
       <div class="col-md-4">
-          <div class="thumbnail">
-            <p> Title: {{itemTitle}} </p>
-            <p> Category: {{itemCategory}} </p>
-            <a href=/products/{{imageRedirect}}>
-              <img src={{imageSrc}} alt="{{imageSrc}}" style="max-height:200px; max-width:200px;">
-              <div class="caption">
-                <p>{{itemDesc}}</p>
-              </div>
-            </a>
-          </div>
+        <div class="thumbnail">
+          <p> Title: {{itemTitle}} </p>
+          <p> Category: {{itemCategory}} </p>
+          <a href=/products/{{imageRedirect}}> <img src={{imageSrc}} alt="{{imageSrc}}"
+            style="max-height:200px; max-width:200px;">
+            <div class="caption">
+              <p>{{itemDesc}}</p>
+            </div>
+          </a>
         </div>
+      </div>
       {% endfor %}
     </div>
   </div>

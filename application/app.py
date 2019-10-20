@@ -45,6 +45,12 @@ print("Database version : %s " % data)
 # name=session.get("username", "Unknown")
 @app.route("/", methods=["POST", "GET"])
 def home():
+    productList = []
+    return render_template("home.html", products=productList, feedback="")
+
+
+@app.route('/results', methods=['POST', 'GET'])
+def searchPage():
     db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                          app.config['MYSQL_DATABASE_USER'], None,
                          app.config['MYSQL_DATABASE_DB'])
@@ -52,8 +58,43 @@ def home():
 # prepare a cursor object using cursor() method
     cursor = db.cursor()
 
+    print(request.form)
+
+    search = request.form['text']
+
+    search = str(bleach.clean(search))  # sanitizing a bad search
+    feedback = ""
     # Open database connection
+    starting = "" + search + "%"
+    ending = "%" + search + ""
+    starting2 = " " + search + "%"
+    ending2 = "%" + search + " "
+    middle = "%" + search + "%"
+    exact = search
     cursor.execute("""
+    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+    FROM item AS i
+    JOIN item_image AS ii
+    ON i.i_id = ii.ii_i_id
+    JOIN category as c
+    ON c.c_id = i.i_c_id
+    WHERE i.i_status = 1
+    AND i.i_sold_ts IS NULL
+    AND (i.i_desc LIKE '""" + starting + """'
+    OR i.i_desc LIKE '""" + ending + """'
+    OR i.i_desc LIKE '""" + starting2 + """'
+    OR i.i_desc LIKE '""" + ending2 + """'
+    OR i.i_desc LIKE '""" + middle + """'
+    OR i.i_desc LIKE '""" + exact + """');
+    """)
+    # cursor.execute("SELECT * FROM item;")
+    data = cursor.fetchall()
+    print("All items?", data)
+    productList = []
+
+    if len(data) == 0:
+        feedback = "No Results, Consider these Items"
+        cursor.execute("""
     SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
     FROM item AS i
     JOIN item_image AS ii
@@ -64,14 +105,19 @@ def home():
     AND i.i_sold_ts IS NULL;
     """)
     # cursor.execute("SELECT * FROM item;")
-    data = cursor.fetchall()
-    print("All items?", data)
-    productList = []
+        data = cursor.fetchall()
+
     for d in data:
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
-    return render_template("home.html", products=productList)
+    if feedback == "":
+        if len(data) == 1:
+            feedback = str(len(data)) + " Result Found"
+        else:
+            feedback = str(len(data)) + " Results Found"
+
+    return render_template("home.html", products=productList, feedback=feedback)
 
 
 @app.route("/products/<product_id>", methods=["POST", "GET"])
