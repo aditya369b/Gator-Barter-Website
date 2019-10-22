@@ -2,84 +2,163 @@
 <html lang="en">
 
 <head>
-  <title>Home Page</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Gator Barter</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../static/styles/public/css/styles.css">
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+
+    <!-- Fontawesome -->
+    <script src="https://kit.fontawesome.com/6ab52acb52.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Pacifico|Roboto&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">Gater Barter</a>
-      </div>
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
-        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
-    </div>
-  </nav>
+    <header>
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg">
+            <!-- Sidebar Hamburger Menu Button -->
+            <span class="sidebar-btn" onclick="toggleSideBar()"><i class="fas fa-bars"></i></span>
 
-  <div class="container3" style="width: 120px; margin-left: 50px; margin-bottom:-24px">
-    <div class="dropdown" >
-      <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">filter
-      <span class="caret"></span></button>
-      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/categories/Electronic">Electronic</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/categories/Furniture">Furniture</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/categories/Other">Other</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <form action="/results" method="POST">
-    <div class="row" style="margin-left: 50%;">
-      <div class="col-xs-6 col-md-4">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search" id="txtSearch" name="text" />
-          <div class="input-group-btn">
-            <button class="btn btn-primary" type="submit">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </form>
-
-  <div class="container">
-    <h2> {{feedback}} </h2>
-   
-    <div class="row">
-      {% for product in products %}
-      {% set imageRedirect = product.i_id %}
-      {% set imageSrc = product.ii_url %}
-      {% set itemDesc = product.i_desc %}
-      {% set itemTitle = product.i_title %}
-      {% set itemCategory = product.c_name %}
-      <div class="col-md-4">
-        <div class="thumbnail">
-          <p> Title: {{itemTitle}} </p>
-          <p> Category: {{itemCategory}} </p>
-          <a href=/products/{{imageRedirect}}> <img src={{imageSrc}} alt="{{imageSrc}}"
-            style="max-height:200px; max-width:200px;">
-            <div class="caption">
-              <p>{{itemDesc}}</p>
+            <!-- Navigation Brand/Logo -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Gater Barter</a>
+                <h6 class="navbar-subtext">CSC 648-04, Team 4</h6>
             </div>
-          </a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
 
+            <!-- Navigation Links Hamburger Menu Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-btn"><i class="fas fa-bars"></i></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <!-- LHS Navigation Links -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/">FAQ</a>
+                    </li>
+                </ul>
+
+                <!-- RHS Navigation Links -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <h4>Categories</h4>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link side-link" href="/categories/Electronic">Electronic</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link side-link" href="/categories/Furniture">Furniture</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link side-link" href="/categories/Other">Other</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main content -->
+        <div id="content">
+            <!-- Dropdown Menu -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="/categories/Electronic"><i class="fas fa-laptop">
+                                Electronic</i></a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/categories/Furniture"><i class="fas fa-couch"></i>
+                            Furniture</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/categories/Other"><i class="fas fa-question-circle">
+                                Other</i></a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Search Container -->
+            <div class="search-container">
+                <!-- Search bar -->
+                <form action="/results" method="POST">
+                    <input type="text" placeholder="Search for anything..." name="text">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
+            <p class="feedback"> {{feedback}} </p>
+
+            <div class="container-fluid content-row">
+                <div class="row">
+                    {% for product in products %}
+                    {% set imageRedirect = product.i_id %}
+                    {% set imageSrc = product.ii_url %}
+                    {% set itemDesc = product.i_desc %}
+                    {% set itemTitle = product.i_title %}
+                    {% set itemCategory = product.c_name %}
+                    <div class="col-lg-4 col-sm-6 mb-3">
+                        <div class="card mb-3 h-100">
+                            <img src="{{imageSrc}}" class="card-img-top h-50" alt="{{imageSrc}}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{itemTitle}}</h5>
+                                <h5 class="card-title price-label">$9.99</h5><br>
+                                <h6 class="card-subtitle mb-2 text-muted">@username</h6>
+                                <p class="card-text overflow-auto">
+                                    Category: {{itemCategory}}
+                                    {{itemDesc}}
+                                </p>
+                                <a href="#" class="btn btn-warning btn-block">Interested</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <!-- Load all item listings -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <h6>Copyright © 2019 Gator Barter</h6>
+    </footer>
+
+    <script src="./index.js"></script>
 </body>
 
 </html>
