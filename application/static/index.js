@@ -6,3 +6,12 @@ function toggleSideBar() {
         $("#sidebar").css("display", "none");
     }
 }
+
+// Check if item is tradable
+function isTradable(tradable) {
+    if (tradable != 0) {
+        $(".tradable-label").css("background-color", "red");
+    } else {
+        $(".tradable-label").css("background-color", "blue");
+    }
+}

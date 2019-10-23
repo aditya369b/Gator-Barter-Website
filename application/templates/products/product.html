@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Product Page</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../../static/styles/public/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/styles.css') }}">
 
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -44,13 +44,13 @@
                     </ol>
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <img class="d-block" src="../../static/images/image-na.png" alt="First slide">
+                            <img class="d-block" src="{{product.ii_url}}" alt="First slide">
                         </div>
                         <div class="carousel-item">
-                            <img class="d-block" src="../../static/images/image-na.png" alt="Second slide">
+                            <img class="d-block" src="/static/images/image-na.png" alt="Second slide">
                         </div>
                         <div class="carousel-item">
-                            <img class="d-block" src="../../static/images/image-na.png" alt="Third slide">
+                            <img class="d-block" src="/static/images/image-na.png" alt="Third slide">
                         </div>
                     </div>
                     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -65,9 +65,12 @@
             </div>
 
             <div class="col-sm-12 col-lg-4 product-col">
-                <h5>Listing</h5>
+                <h5>{{product.i_title}}</h5>
                 <h6 class="text-muted">@username</h6>
                 <p>
+                    {{product.i_desc}}
+                </p>
+                <!-- <p>
                     LLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
                     et dolore magna aliqua. Lectus quam id leo in vitae turpis massa sed. Id aliquet lectus proin nibh
                     nisl. Fusce id velit ut tortor pretium viverra. Condimentum lacinia quis vel eros. Sit amet mauris
@@ -94,50 +97,50 @@
                     duis. Sagittis id consectetur purus ut faucibus. Neque sodales ut etiam sit amet. Nulla posuere
                     sollicitudin aliquam ultrices sagittis orci a scelerisque purus. Ultricies mi eget mauris pharetra
                     et ultrices. Elit pellentesque habitant morbi tristique.
-                </p>
+                </p> -->
             </div>
 
             <div class="col-sm-12 col-lg-2 col-right product-col">
-                <h5 class="price-label">$9.99</h5>
-                <br>
+                <h5 class="price-label">${{product.i_price}}</h5>
+                <!-- <br> -->
                 <div class="tradable-label">Tradable</div>
 
                 <div class="dropdown show">
-                    <a class="btn btn-warning dropdown-toggle wishlist-toggle" href="#" role="button" id="dropdownMenuLink"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="btn btn-warning dropdown-toggle wishlist-toggle" href="#" role="button"
+                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         @username's Wishlist
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right wishlist-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a>
                         <a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a>
                         <a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a>
                         <a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a><a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a>
                         <a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a>
                         <a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a>
                         <a class="dropdown-item wishlist-item" href="#">
-                            <img src="../../static/images/image-na.png" alt="">
+                            <img src="/static/images/image-na.png" alt="">
                             <p>Item</p>
                         </a>
                     </div>
@@ -145,9 +148,13 @@
             </div>
         </div>
 
-        <a href="" class="btn btn-warning btn-block">Interested</a>
+        <a href="" class="btn btn-warning btn-block">Contact Seller</a>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Custom JS -->
+    <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
 </body>
 
 </html>
