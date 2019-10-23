@@ -151,10 +151,21 @@ def productPage(product_id):
     if len(data) == 0:
         abort(404)
         # return redirect("/")
+
+    query = """
+    SELECT u.u_id, u.u_email, u.u_fname, u.u_lname, i.i_u_id FROM user AS u
+    JOIN item as i
+    ON i.i_u_id = u.u_id;
+    """
+    cursor.execute(query)
+    userObject = cursor.fetchone()
+
+    print(userObject)
+
     print("Redirecting to Product page", product_id)
     print(data[0])
     productObject = product.makeProduct(data[0])
-    return render_template("products/product.html", product=productObject)
+    return render_template("products/product.html", product=productObject, user=userObject)
 
 
 @app.route("/categories/<categoryName>", methods=["POST", "GET"])

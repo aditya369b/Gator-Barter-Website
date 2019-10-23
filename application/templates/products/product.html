@@ -66,7 +66,7 @@
 
             <div class="col-sm-12 col-lg-4 product-col">
                 <h5>{{product.i_title}}</h5>
-                <h6 class="text-muted">@username</h6>
+                <h6 class="text-muted">@{{user[2]}}_{{user[3]}}</h6>
                 <p>
                     {{product.i_desc}}
                 </p>
@@ -108,7 +108,7 @@
                 <div class="dropdown show">
                     <a class="btn btn-warning dropdown-toggle wishlist-toggle" href="#" role="button"
                         id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        @username's Wishlist
+                        @{{user[2]}}_{{user[3]}}'s Wishlist
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right wishlist-menu" aria-labelledby="dropdownMenuLink">
@@ -148,7 +148,7 @@
             </div>
         </div>
 
-        <a href="" class="btn btn-warning btn-block">Contact Seller</a>
+        <a href="mailto:{{user[1]}}" class="btn btn-warning btn-block">Contact Seller</a>
     </div>
 
     <!-- jQuery -->
