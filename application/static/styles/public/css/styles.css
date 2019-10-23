@@ -48,36 +48,27 @@ a:hover {
 /* Search Bar Section */
 input {
     padding: 0.5rem 1rem;
-    margin: 1.5rem 0 1.5rem 2rem;
+    margin: 1rem 0;
     background-color: #C4C4C4;
     border: solid;
     border-width: 1px;
-    /* width: 88%;  */
-    /* width: 85%; */
-    width: 74%;
+    width: 100%;
 }
 
-.search-container button {
-    padding: 0.75rem 1.5rem;
-    margin-left: 2rem;
+.category-btn {
     background-color: #330033;
     color: #FFCC33;
-    border: none;
-    cursor: pointer;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    width: 100%;
 }
 
-.dropdown button {
-    float: left;
-    padding: 0.75rem 1.5rem;
-    margin-left: 2rem;
-    margin-top: 1.2rem;
+.search-btn {
     background-color: #330033;
     color: #FFCC33;
-    cursor: pointer;
-}
-
-.feedback {
-    padding-left: 1rem;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    width: 100%;
 }
 
 /* Sidebar Section */
@@ -85,7 +76,7 @@ input {
 #sidebar {
     display: table-cell;
     background-color: #C4C4C4;
-    width: 12%;
+    width: 15%;
     vertical-align: top;
     border: solid;
     border-width: 1px;
@@ -120,7 +111,7 @@ input {
 }
 
 .feedback {
-    margin-left: 1rem;
+    float: right;
     font-style: italic;
 }
 
