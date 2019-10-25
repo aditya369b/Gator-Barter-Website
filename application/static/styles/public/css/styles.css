@@ -242,3 +242,35 @@ input[type=checkbox] {
     text-align: center;
     margin: 0.5rem 0
 }
+
+/* Register Section */
+
+#register-page {
+    margin: 0 auto;
+}
+
+#register-page .btn {
+    width: 60%;
+}
+
+.register-email-field input[type=email] {
+    margin-top: 0;
+}
+
+.tos-check {
+    text-align: center;
+}
+
+.g-recaptcha {
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.register-btn {
+    text-align: center;
+}
+
+.already-have-account-link {
+    text-align: center;
+    margin: 1.5rem 0;
+}
