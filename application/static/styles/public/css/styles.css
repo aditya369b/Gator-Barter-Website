@@ -209,3 +209,36 @@ footer {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Login Section */
+
+#login-page {
+    margin: 0 auto;
+}
+
+#login-page .btn {
+    width: 60%;
+    margin: 1rem 0;
+}
+
+input[type=checkbox] {
+    margin-top: 0.25rem;
+}
+
+.rmr-me-check {
+    text-align: center;
+}
+
+.login-btn {
+    text-align: center;
+}
+
+.forgot-pw-link {
+    text-align: center;
+    margin: 0.5rem 0;
+}
+
+.register-link {
+    text-align: center;
+    margin: 0.5rem 0
+}
