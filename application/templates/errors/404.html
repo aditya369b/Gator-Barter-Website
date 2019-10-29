@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <title>Page Not Found</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
+    <script language="JavaScript" type="text/javascript">
+
+        var seconds = 6;
+        // countdown timer. took 6 because page takes approx 1 sec to load 
+
+        var url = "{{url_for_redirect}}";
+        // variable for index.html url 
+
+        function redirect() {
+            if (seconds <= 0) {
+
+                // redirect to new url after counter down. 
+                window.location = url;
+            } else {
+                seconds--;
+                document.getElementById("pageInfo").innerHTML = "Redirecting to Home Page after "
+                    + seconds + " seconds."
+                setTimeout("redirect()", 1000)
+            }
+        } 
+    </script>
+
+</head>
+
+<body onload="redirect()">
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Gater Barter</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+                <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+        </div>
+    </nav>
+    <p id="pageInfo"></p>
+
+
+</html>
