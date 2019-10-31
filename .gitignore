@@ -1,2 +1,4 @@
 .vscode/
 application/applicationenv/
+__pycache__
+.DS_Store
