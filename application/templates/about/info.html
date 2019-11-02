@@ -35,24 +35,26 @@
   <!-- Member Description Template -->
   <section id="member-desc">
     <div class="container-fluid">
-      <img src="/static/images/man.png" alt="Male" class="avatar">
+      <img src={{ image }} alt="man" class="avatar">
       <!-- Change to your full name -->
-      <h2>Akshay Kasar</h2>
+      <h2>{{ name }}</h2>
       <!-- Change to your role -->
-      <h5>Git-Master, Back-end Engineer</h5>
+      <h5>{{ title }}</h5>
       <div class="row">
         <div class="col-md-4">
         </div>
         <div class="col-md-4">
           <p style="">
             <!-- Add description in here -->
-            Pursuing Master's in Computer Science from San Francisco State University. Worked as a Software Engineer in Spring Computing Technologies using Java platform.
+            {{ description }}
           </p>
         </div>
       </div>
-      <a href="https://www.linkedin.com/akshaykasar"><i class="social-icon fab fa-linkedin"></i></a>
-      <a href="https://github.com/akshaypkasar"><i class="social-icon fab fa-github"></i></a>
-      <a href="mailto:akasar@mail.sfsu.edu"><i class="social-icon fas fa-envelope"></i></a>
+
+
+      <a href={{ linkedin }}><i class="social-icon fab fa-linkedin"></i></a>
+      <a href={{ github }}><i class="social-icon fab fa-github"></i></a>
+      <a href={{ email }}><i class="social-icon fas fa-envelope"></i></a>
     </div>
   </section>
 

@@ -7,6 +7,7 @@ Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-lo
 
 import gatorProduct as product  # class made by alex
 from flask import Flask, render_template, request, session, redirect, url_for, abort
+from about_info import dev
 import pymysql
 import jinja2
 import bleach  # sql santization lib
@@ -217,39 +218,16 @@ def about():
     return render_template("about/about.html")
 
 
-@app.route("/about/abodi")
-def abodi():
-    return render_template("about/abodi.html")
-
-
-@app.route("/about/akasar")
-def akasar():
-    return render_template("about/akasar.html")
-
-
-@app.route("/about/akohanim")
-def akohanim():
-    return render_template("about/akohanim.html")
-
-
-@app.route("/about/ang")
-def ang():
-    return render_template("about/ang.html")
-
-
-@app.route("/about/dyan")
-def dyan():
-    return render_template("about/dyan.html")
-
-
-@app.route("/about/pyu")
-def pyu():
-    return render_template("about/pyu.html")
-
-
-@app.route("/about/tbelsare")
-def tbelsare():
-    return render_template("about/tbelsare.html")
+@app.route("/about/<member>")
+def about_mem(member):
+    return render_template("about/info.html",name=dev[member]['name'],
+                                                title=dev[member]['title'],
+                                                image = dev[member]['img'],
+                                                description = dev[member]['description'],
+                                                linkedin = dev[member]['linkedin'],
+                                                github = dev[member]['github'],
+                                                email = dev[member]['email']
+                                                )
 
 
 @app.errorhandler(404)
