@@ -1,0 +1,30 @@
+<h1> admin page {{id}} </h1>
+
+<h2> Items Needing Approval </h2>
+{% for product in products %}
+<span style="display: block;">
+    <img src="{{product.ii_url}}" height="50px" width="50px" />
+    <p title="{{product.i_desc}}"> {{product.i_title}} </p>
+    <form action="/admin/item/{{product.i_id}}/approve">
+        <button type="submit">Approve</button>
+    </form>
+    <form action="/admin/item/{{product.i_id}}/deny">
+        <button type="submit">Deny</button>
+    </form>
+    <form action="/admin/item/{{product.i_id}}/moreinfo">
+        <button type="sunmit">More Info</button>
+    </form>
+</span> <br/> <br/>
+{% endfor %}
+
+<h2> Users </h2>
+{% for user in users %}
+<span style="display: block;">
+
+    <p> {{user.u_fname}} {{user.u_lname}} </p>
+    <p> {{user.u_email}} </p>
+    <form action="/admin/user/{{user.u_id}}/ban">
+        <button type="submit">BAN</button>
+    </form>
+</span>
+{% endfor %}
