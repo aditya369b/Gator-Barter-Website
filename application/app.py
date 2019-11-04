@@ -258,7 +258,7 @@ def admin_page(user_id):
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    cursor.execute("SELECT * FROM user WHERE user.u_is_admin=0 ;")
+    cursor.execute("SELECT * FROM user WHERE user.u_is_admin=0 AND user.u_status>0 ;")
     data = cursor.fetchall()
     userList = []
 
@@ -310,13 +310,14 @@ def admin_user_action(user_id, action):
     connection, cursor = makeCursor()
     cursor.execute("SELECT MAX(user.u_id) FROM user")
 
-    if not 0 < user_id <= int(cursor.fetchone()):
+    if not 0 < user_id <= int(cursor.fetchone()[0]):
         abort(404)
 
-    if action == "BAN":
+    if action == "ban":
         cursor.execute(
-            "UPDATE user SET u_status=0 WHERE u_id=" + user_id + ";")
-        return 200
+            "UPDATE user SET u_status=0 WHERE u_id=" + str(user_id) + ";")
+        connection.commit()
+        return redirect("/admin/" + str(testUser.u_id))
     else:
         abort(404)
 
