@@ -11,16 +11,16 @@ body {
 }
 
 main {
-    display: table;
-    width: 100%;
-    height: 100%;
+    min-height: 100%;
 }
 
 a:hover {
     color: #c89b00;
 }
 
+
 /* Navigation Bar Section */
+
 .navbar {
     background-color: #330033;
     color: #FFCC33;
@@ -29,6 +29,7 @@ a:hover {
 .navbar-brand {
     color: #FFCC33;
     font-family: 'Pacifico', cursive;
+    font-size: 2.17rem;
     padding-left: 4px;
 }
 
@@ -39,16 +40,23 @@ a:hover {
 
 .navbar-link {
     color: #FFCC33;
+    font-size: 1.25rem;
 }
 
 .navbar-btn {
     color: #FFCC33;
 }
 
+
 /* Search Bar Section */
+
+.search-container {
+    background-color: #330033;
+}
+
 input {
     padding: 0.5rem 1rem;
-    margin: 1rem 0;
+    margin: 1rem 0rem;
     background-color: #C4C4C4;
     border: solid;
     border-width: 1px;
@@ -56,66 +64,48 @@ input {
 }
 
 .category-btn {
-    background-color: #330033;
-    color: #FFCC33;
+    background-color: #FFCC33;
+    color: #330033;
+    border-color: #FFCC33;
     padding: 0.5rem 1rem;
     margin: 1rem 0;
     width: 100%;
 }
 
 .search-btn {
-    background-color: #330033;
-    color: #FFCC33;
-    padding: 0.5rem 1rem;
-    margin: 1rem 0;
+    background-color: #FFCC33;
+    color: #330033;
+    border-color: #FFCC33;
+    padding: 0.5rem 0rem;
+    margin: 1rem 0.20rem 1rem 0;
+    /* margin: 1rem 0; */
     width: 100%;
 }
 
-/* Sidebar Section */
-
-#sidebar {
-    display: table-cell;
-    background-color: #C4C4C4;
-    width: 15%;
-    vertical-align: top;
-    border: solid;
-    border-width: 1px;
-}
-
-.sidebar-btn {
-    padding: 1rem;
-}
-
-#sidebar h4 {
-    text-decoration: underline;
-    margin: 0.5rem 2rem;
-    color: #FFCC33;
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-}
-
-.nav-link {
-    color: #FFCC33;
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-}
-
-.side-link {
-    margin: 0 4rem;
-}
 
 /* Main Content Section */
 
-#content {
-    display: table-cell;
-    width: 85%;
-    vertical-align: top;
+.edu-purpose-label {
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.5rem;
 }
 
 .feedback {
-    float: right;
     font-style: italic;
+    /* padding: 0.5rem 7.25rem 0.5rem 0; */
+    padding: 0.5rem 1.5rem;
+    text-align: right;
+    margin: 0;
 }
 
+
 /* Listing Section */
+
+.product-listing {
+    margin-bottom: 1rem;
+}
 
 .price-label {
     color: green;
@@ -135,14 +125,32 @@ input {
     padding: 1rem 0;
 }
 
+/* .more-details-btn {
+    margin: 0 auto;
+    position: absolute;
+    bottom: -1;
+} */
+
+.show-more-btn {
+    margin: 0 auto 1rem auto;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    color: #FFCC33;
+    background-color: #330033;
+}
+
 /* Footer Section */
 
 footer {
     padding: 1rem 1rem;
     background-color: #330033;
     color: #FFCC33;
-    height: 50px;
     text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: -1;
 }
 
 /* Product Details Section */
@@ -167,8 +175,8 @@ footer {
 
 .tradable-label {
     text-align: center;
-    background-color: green;
-    color: white;
+    background-color: #C4C4C4;
+    /* color: white; */
     width: 80px;
     padding: 0.25rem 0;
     margin-bottom: 0.5rem;
@@ -281,6 +289,7 @@ footer {
 .item-posting-btn {
     width: 100%;
     margin: 0.5rem 0;
+}
 
 /* Login Section */
 

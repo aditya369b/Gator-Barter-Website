@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, a
 import pymysql
 import jinja2
 import bleach  # sql santization lib
+#from livereload import Server   # PHILIPTEST
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+app.config['DEBUG'] = 'True'    # PHILIPTEST
 
 
 # mysql = MySQL()
@@ -260,4 +262,6 @@ def not_found(e):
 db.close()
 
 if __name__ == "__main__":
-    app.run("0.0.0.0")
+     app.run("0.0.0.0")
+#    server = Server(app.wsgi_app)   # PHILIPTEST
+#    server.serve()  # PHILIPTEST
