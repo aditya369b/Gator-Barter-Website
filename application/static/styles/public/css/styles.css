@@ -355,3 +355,30 @@ input[type=checkbox] {
     text-align: center;
     margin: 1.5rem 0;
 }
+
+/* Admin Dashboard */
+
+.nav-tabs .nav-item .nav-link {
+    color: black;
+}
+
+.nav-tabs .nav-item .active {
+    background: #330033;
+    color: #FFCC33;
+}
+
+.nav-tabs {
+    margin: 0 1rem;
+}
+
+.tab-content {
+    margin-top: 1rem;
+}
+
+.fa-envelope {
+    color: black;
+}
+
+.fa-ban {
+    color: red;
+}
