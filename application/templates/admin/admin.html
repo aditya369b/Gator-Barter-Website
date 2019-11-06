@@ -28,3 +28,15 @@
     </form>
 </span>
 {% endfor %}
+
+<h2> Items Listed </h2>
+{% for product in approvedProducts %}
+<span style="display: block;">
+    <img src="{{product.ii_url}}" height="50px" width="50px" />
+    <p title="{{product.i_desc}}"> {{product.i_title}} </p>
+    <form action="/admin/item/{{product.i_id}}/deny">
+        <button type="submit">Remove</button>
+    </form>
+ 
+</span> <br/> <br/>
+{% endfor %}

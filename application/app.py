@@ -258,7 +258,8 @@ def admin_page(user_id):
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    cursor.execute("SELECT * FROM user WHERE user.u_is_admin=0 AND user.u_status>0 ;")
+    cursor.execute(
+        "SELECT * FROM user WHERE user.u_is_admin=0 AND user.u_status>0 ;")
     data = cursor.fetchall()
     userList = []
 
@@ -266,8 +267,17 @@ def admin_page(user_id):
         if len(d) == 9:
             userObject = user.makeUser(d)
             userList.append(userObject)
+    query = query.replace("i.i_status = 0", "i.i_status = 1")
+    cursor.exact(query)
+    data = cursor.fetchall()
 
-    return render_template("admin/admin.html", id=user_id, products=productList, users=userList)
+    productList2 = []
+    for d in data:
+        if len(d) == 16:
+            productObject = product.makeProduct(d)
+            productList2.append(productObject)
+
+    return render_template("admin/admin.html", id=user_id, products=productList, users=userList, approvedProducts=productList2)
 
 
 @app.route("/admin/item/<item_id>/<action>")
