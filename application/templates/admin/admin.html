@@ -14,7 +14,7 @@
     <form action="/admin/item/{{product.i_id}}/moreinfo">
         <button type="sunmit">More Info</button>
     </form>
-</span> <br/> <br/>
+</span> <br /> <br />
 {% endfor %}
 
 <h2> Users </h2>
@@ -34,9 +34,12 @@
 <span style="display: block;">
     <img src="{{product.ii_url}}" height="50px" width="50px" />
     <p title="{{product.i_desc}}"> {{product.i_title}} </p>
-    <form action="/admin/item/{{product.i_id}}/deny">
+    <form action="/admin/item/{{product.i_id}}/remove">
         <button type="submit">Remove</button>
     </form>
- 
-</span> <br/> <br/>
+    <form action="/admin/item/{{product.i_id}}/moreinfo">
+        <button type="sunmit">More Info</button>
+    </form>
+
+</span> <br /> <br />
 {% endfor %}

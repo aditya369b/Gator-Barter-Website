@@ -24,6 +24,9 @@ class Product():
         self.c_id = c_id
         self.c_status = c_status
 
+    def getStatus(self):
+        return self.i_status
+
 
 def makeProduct(productTuple):
     return Product(*productTuple)

@@ -147,7 +147,8 @@ def productPage(product_id):
     ON i.i_id = ii.ii_i_id
     JOIN category as c
     ON c.c_id = i.i_c_id
-    WHERE i.i_id = """ + product_id + """;"""
+    WHERE i.i_id = """ + product_id + """
+    AND i.i_status >= 0;"""
 
     cursor.execute(query)
     # cursor.execute("SELECT * FROM item;")
@@ -166,9 +167,11 @@ def productPage(product_id):
 
     print(userObject)
 
-    print("Redirecting to Product page", product_id)
     print(data[0])
     productObject = product.makeProduct(data[0])
+    if productObject.getStatus() == 0 and not testUser.isAdmin():
+        abort(404)
+    print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
 
 
@@ -188,7 +191,8 @@ def selectCategory(categoryName):
     ON i.i_id = ii.ii_i_id
     JOIN category as c
     ON c.c_id = i.i_c_id
-    HAVING c.c_name = '""" + categoryName + """';"""
+    HAVING c.c_name = '""" + categoryName + """'
+    AND i.i_status = 1;"""
 
     cursor.execute(query)
     data = cursor.fetchall()
@@ -268,7 +272,7 @@ def admin_page(user_id):
             userObject = user.makeUser(d)
             userList.append(userObject)
     query = query.replace("i.i_status = 0", "i.i_status = 1")
-    cursor.exact(query)
+    cursor.execute(query)
     data = cursor.fetchall()
 
     productList2 = []
@@ -303,6 +307,11 @@ def admin_item_action(item_id, action):
     elif action == "deny":
         cursor.execute(
             "UPDATE item SET i_status=-1 WHERE i_id=" + str(item_id) + ";")
+        connection.commit()
+        return redirect("/admin/" + str(testUser.u_id))
+    elif action == "remove":
+        cursor.execute(
+            "UPDATE item SET i_status=-2 WHERE i_id=" + str(item_id) + ";")
         connection.commit()
         return redirect("/admin/" + str(testUser.u_id))
     elif action == "moreinfo":

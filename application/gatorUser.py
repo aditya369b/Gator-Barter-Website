@@ -16,6 +16,9 @@ class User():
         self.u_lname = u_lname
         self.u_status = u_status
 
+    def isAdmin(self):
+        return self.u_is_admin > 0
+
 
 def makeUser(userTuple):
     return User(*userTuple)
