@@ -1,0 +1,348 @@
+/* Sitewide Section */
+
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+main {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+a:hover {
+    color: #c89b00;
+}
+
+/* Navigation Bar Section */
+.navbar {
+    background-color: #330033;
+    color: #FFCC33;
+}
+
+.navbar-brand {
+    color: #FFCC33;
+    font-family: 'Pacifico', cursive;
+    padding-left: 4px;
+}
+
+.navbar-subtext {
+    font-family: 'Pacifico', cursive;
+    font-size: 14px;
+}
+
+.navbar-link {
+    color: #FFCC33;
+}
+
+.navbar-btn {
+    color: #FFCC33;
+}
+
+/* Search Bar Section */
+input {
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    background-color: #C4C4C4;
+    border: solid;
+    border-width: 1px;
+    width: 100%;
+}
+
+.category-btn {
+    background-color: #330033;
+    color: #FFCC33;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.search-btn {
+    background-color: #330033;
+    color: #FFCC33;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+/* Sidebar Section */
+
+#sidebar {
+    display: table-cell;
+    background-color: #C4C4C4;
+    width: 15%;
+    vertical-align: top;
+    border: solid;
+    border-width: 1px;
+}
+
+.sidebar-btn {
+    padding: 1rem;
+}
+
+#sidebar h4 {
+    text-decoration: underline;
+    margin: 0.5rem 2rem;
+    color: #FFCC33;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.nav-link {
+    color: #FFCC33;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.side-link {
+    margin: 0 4rem;
+}
+
+/* Main Content Section */
+
+#content {
+    display: table-cell;
+    width: 85%;
+    vertical-align: top;
+}
+
+.feedback {
+    float: right;
+    font-style: italic;
+}
+
+/* Listing Section */
+
+.price-label {
+    color: green;
+    float: right;
+    clear: right;
+}
+
+.item-label {
+    font-size: 18px;
+}
+
+.user-label {
+    padding-top: 0.5rem;
+}
+
+.card-text {
+    padding: 1rem 0;
+}
+
+/* Footer Section */
+
+footer {
+    padding: 1rem 1rem;
+    background-color: #330033;
+    color: #FFCC33;
+    height: 50px;
+    text-align: center;
+}
+
+/* Product Details Section */
+
+.carousel-item img {
+    width: 100%;
+    height: 600px;
+}
+
+.product-container {
+    margin: 2rem;
+}
+
+.product-col {
+    padding: 1rem;
+}
+
+.product-col p {
+    overflow-y: scroll;
+    height: 530px;
+}
+
+.tradable-label {
+    text-align: center;
+    background-color: green;
+    color: white;
+    width: 80px;
+    padding: 0.25rem 0;
+    margin-bottom: 0.5rem;
+    float: right;
+    clear: right;
+}
+
+.wishlist-toggle {
+    width: 100%;
+}
+
+.wishlist-menu {
+    width: 100%;
+    height: 450px;
+    overflow-y: scroll;
+}
+
+.wishlist-item {
+    width: auto;
+    padding: 0.5rem;
+}
+
+.wishlist-item:hover {
+    background-color: #FFCC33;
+}
+
+.wishlist-item img {
+    width: 25%;
+    height: auto;
+    border: solid;
+    border-width: 1px;
+}
+
+.wishlist-item p {
+    display: inline;
+    padding: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Item Posting Section */
+
+#item-posting-page {
+    margin: 0 auto;
+}
+
+.item-category-toggle {
+    width: 100%;
+}
+
+.item-category-menu {
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.category-item {
+    width: auto;
+    padding: 0.5rem;
+}
+
+.category-item:hover {
+    background-color: #FFCC33;
+}
+
+.item-desc-field {
+    padding-top: 1rem;
+}
+
+#drop_zone {
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 0.25rem;
+    height: 300px;
+    position: relative;
+}
+
+.fa-images {
+    font-size: 5rem;
+    margin: 4rem 0 0.5rem 0;
+}
+
+#drop_zone p {
+    margin: 0;
+    text-align: center;
+}
+
+#drop_zone button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    padding: 0.25rem 2rem;
+    background-color: #C4C4C4;
+}
+
+.tradable-check {
+    text-align: center;
+}
+
+.tradable-check p {
+    margin: 1rem 0 0.5rem 0;
+}
+
+.tradable-check .form-check {
+    display: inline;
+    margin: 0.5rem;
+}
+
+.item-posting-btn {
+    width: 100%;
+    margin: 0.5rem 0;
+
+/* Login Section */
+
+#login-page {
+    margin: 0 auto;
+}
+
+#login-page .btn {
+    width: 60%;
+    margin: 1rem 0;
+}
+
+input[type=checkbox] {
+    margin-top: 0.25rem;
+}
+
+.rmr-me-check {
+    text-align: center;
+}
+
+.login-btn {
+    text-align: center;
+}
+
+.forgot-pw-link {
+    text-align: center;
+    margin: 0.5rem 0;
+}
+
+.register-link {
+    text-align: center;
+    margin: 0.5rem 0
+}
+
+/* Register Section */
+
+#register-page {
+    margin: 0 auto;
+}
+
+#register-page .btn {
+    width: 60%;
+}
+
+.register-email-field input[type=email] {
+    margin-top: 0;
+}
+
+.tos-check {
+    text-align: center;
+}
+
+.g-recaptcha {
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.register-btn {
+    text-align: center;
+}
+
+.already-have-account-link {
+    text-align: center;
+    margin: 1.5rem 0;
+}
