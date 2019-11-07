@@ -12,7 +12,7 @@ from about_info import dev
 import pymysql
 import jinja2
 import bleach  # sql santization lib
-# from livereload import Server   # PHILIPTEST
+from livereload import Server   # PHILIPTEST
 
 app = Flask(__name__)
 
@@ -20,7 +20,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
-# app.config['DEBUG'] = 'True'    # PHILIPTEST
+app.config['DEBUG'] = 'True'    # PHILIPTEST
 
 
 # mysql = MySQL()
@@ -220,12 +220,7 @@ def login():
 @app.route("/register")
 def register():
     return render_template("register.html")
-
-
-@app.route("/admin-dashboard")
-def admin_dashboard():
-    return render_template("admin-dashboard.html")
-
+    
 
 @app.route("/about")
 def about():
@@ -365,6 +360,6 @@ def makeCursor():
 db.close()
 
 if __name__ == "__main__":
-     app.run("0.0.0.0")
-#    server = Server(app.wsgi_app)   # PHILIPTEST
-#    server.serve()  # PHILIPTEST
+    #  app.run("0.0.0.0")
+   server = Server(app.wsgi_app)   # PHILIPTEST
+   server.serve()  # PHILIPTEST
