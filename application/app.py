@@ -6,10 +6,13 @@ Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-lo
 """
 
 import gatorProduct as product  # class made by alex
+import gatorUser as user
 from flask import Flask, render_template, request, session, redirect, url_for, abort
+from about_info import dev
 import pymysql
 import jinja2
 import bleach  # sql santization lib
+# from livereload import Server   # PHILIPTEST
 
 app = Flask(__name__)
 
@@ -17,11 +20,13 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+# app.config['DEBUG'] = 'True'    # PHILIPTEST
 
 
 # mysql = MySQL()
 # mysql.init_app(app)conn = mysql.connect()
 # cursor = conn.cursor()
+
 
 # Open database connection
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
@@ -38,9 +43,10 @@ cursor.execute("SELECT VERSION()")
 data = cursor.fetchone()
 print("Database version : %s " % data)
 
-# alex tests
+# testuser
 
-# disconnect from server
+cursor.execute("SELECT * FROM user WHERE user.u_is_admin=1 LIMIT 1;")
+testUser = user.makeUser(cursor.fetchone())
 
 # name=session.get("username", "Unknown")
 @app.route("/", methods=["POST", "GET"])
@@ -143,7 +149,8 @@ def productPage(product_id):
     ON i.i_id = ii.ii_i_id
     JOIN category as c
     ON c.c_id = i.i_c_id
-    WHERE i.i_id = """ + product_id + """;"""
+    WHERE i.i_id = """ + product_id + """
+    AND i.i_status >= 0;"""
 
     cursor.execute(query)
     # cursor.execute("SELECT * FROM item;")
@@ -162,9 +169,11 @@ def productPage(product_id):
 
     print(userObject)
 
-    print("Redirecting to Product page", product_id)
     print(data[0])
     productObject = product.makeProduct(data[0])
+    if productObject.getStatus() == 0 and not testUser.isAdmin():
+        abort(404)
+    print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
 
 
@@ -184,7 +193,8 @@ def selectCategory(categoryName):
     ON i.i_id = ii.ii_i_id
     JOIN category as c
     ON c.c_id = i.i_c_id
-    HAVING c.c_name = '""" + categoryName + """';"""
+    HAVING c.c_name = '""" + categoryName + """'
+    AND i.i_status = 1;"""
 
     cursor.execute(query)
     data = cursor.fetchall()
@@ -212,44 +222,130 @@ def register():
     return render_template("register.html")
 
 
+@app.route("/admin-dashboard")
+def admin_dashboard():
+    return render_template("admin-dashboard.html")
+
+
 @app.route("/about")
 def about():
     return render_template("about/about.html")
 
 
-@app.route("/about/abodi")
-def abodi():
-    return render_template("about/abodi.html")
+@app.route("/about/<member>")
+def about_mem(member):
+    return render_template("about/info.html", name=dev[member]['name'],
+                           title=dev[member]['title'],
+                           image=dev[member]['img'],
+                           description=dev[member]['description'],
+                           linkedin=dev[member]['linkedin'],
+                           github=dev[member]['github'],
+                           email=dev[member]['email']
+                           )
 
 
-@app.route("/about/akasar")
-def akasar():
-    return render_template("about/akasar.html")
+@app.route("/admin/<user_id>")
+def admin_page(user_id):
+    if testUser.u_id < 1 or testUser.u_id != int(user_id):
+        abort(404)
+    conncetion, cursor = makeCursor()
+
+    query = """
+    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+    FROM item AS i
+    JOIN item_image AS ii
+    ON i.i_id = ii.ii_i_id
+    JOIN category as c
+    ON c.c_id = i.i_c_id
+    WHERE i.i_status = 0
+    AND i.i_sold_ts IS NULL;
+    """
+
+    cursor.execute(query)
+    data = cursor.fetchall()
+    productList = []
+    for d in data:
+        if len(d) == 16:
+            productObject = product.makeProduct(d)
+            productList.append(productObject)
+
+    cursor.execute(
+        "SELECT * FROM user WHERE user.u_is_admin=0 AND user.u_status>0 ;")
+    data = cursor.fetchall()
+    userList = []
+
+    for d in data:
+        if len(d) == 9:
+            userObject = user.makeUser(d)
+            userList.append(userObject)
+    query = query.replace("i.i_status = 0", "i.i_status = 1")
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    productList2 = []
+    for d in data:
+        if len(d) == 16:
+            productObject = product.makeProduct(d)
+            productList2.append(productObject)
+
+    return render_template("admin/admin.html", id=user_id, products=productList, users=userList, approvedProducts=productList2)
 
 
-@app.route("/about/akohanim")
-def akohanim():
-    return render_template("about/akohanim.html")
+@app.route("/admin/item/<item_id>/<action>")
+def admin_item_action(item_id, action):
+    item_id = int(item_id)
+    if testUser.u_id < 1:
+        abort(404)
+    connection, cursor = makeCursor()
+    print(connection, cursor)
+    cursor.execute("SELECT MAX(item.i_id) FROM item")
+    data = cursor.fetchone()
+    print(data)
+
+    if not 0 < item_id <= data[0]:
+        abort(404)
+
+    if action == "approve":
+        print("approving:", item_id)
+        cursor.execute(
+            "UPDATE item SET i_status=1 WHERE i_id=" + str(item_id) + ";")
+        connection.commit()
+        return redirect("/admin/" + str(testUser.u_id))
+    elif action == "deny":
+        cursor.execute(
+            "UPDATE item SET i_status=-1 WHERE i_id=" + str(item_id) + ";")
+        connection.commit()
+        return redirect("/admin/" + str(testUser.u_id))
+    elif action == "remove":
+        cursor.execute(
+            "UPDATE item SET i_status=-2 WHERE i_id=" + str(item_id) + ";")
+        connection.commit()
+        return redirect("/admin/" + str(testUser.u_id))
+    elif action == "moreinfo":
+        print("moreinfo")
+        return redirect("/products/"+str(item_id))
+    else:
+        abort(404)
 
 
-@app.route("/about/ang")
-def ang():
-    return render_template("about/ang.html")
+@app.route("/admin/user/<user_id>/<action>")
+def admin_user_action(user_id, action):
+    user_id = int(user_id)
+    if testUser.u_id < 1:
+        abort(404)
+    connection, cursor = makeCursor()
+    cursor.execute("SELECT MAX(user.u_id) FROM user")
 
+    if not 0 < user_id <= int(cursor.fetchone()[0]):
+        abort(404)
 
-@app.route("/about/dyan")
-def dyan():
-    return render_template("about/dyan.html")
-
-
-@app.route("/about/pyu")
-def pyu():
-    return render_template("about/pyu.html")
-
-
-@app.route("/about/tbelsare")
-def tbelsare():
-    return render_template("about/tbelsare.html")
+    if action == "ban":
+        cursor.execute(
+            "UPDATE user SET u_status=0 WHERE u_id=" + str(user_id) + ";")
+        connection.commit()
+        return redirect("/admin/" + str(testUser.u_id))
+    else:
+        abort(404)
 
 
 @app.errorhandler(404)
@@ -257,7 +353,18 @@ def not_found(e):
     return render_template("errors/404.html", url_for_redirect="/")
 
 
+def makeCursor():
+    connection = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
+                                 app.config['MYSQL_DATABASE_USER'],
+                                 None, app.config['MYSQL_DATABASE_DB'])
+    cursor = connection.cursor()
+
+    return [connection, cursor]
+
+
 db.close()
 
 if __name__ == "__main__":
-    app.run("0.0.0.0")
+     app.run("0.0.0.0")
+#    server = Server(app.wsgi_app)   # PHILIPTEST
+#    server.serve()  # PHILIPTEST
