@@ -52,7 +52,7 @@ testUser = user.makeUser(cursor.fetchone())
 @app.route("/", methods=["POST", "GET"])
 def home():
     productList = []
-    return render_template("home.html", products=productList, feedback="")
+    return render_template("home.html", products=productList, user=testUser ,  feedback="")
 
 
 @app.route('/results', methods=['POST', 'GET'])
