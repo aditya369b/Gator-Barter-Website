@@ -7,17 +7,20 @@ Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-lo
 
 
 import gatorProduct as product  # class made by alex
+import gatorUser as user #class made by akshay
 from flask import Flask, render_template, request, session, redirect, url_for, abort
 import pymysql
 import jinja2
 import bleach  # sql santization lib
+import hashlib
+import time
 
 app = Flask(__name__)
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
 
 # mysql = MySQL()
@@ -27,7 +30,7 @@ app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
 # Open database connection
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
+                     app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
 
 # prepare a cursor object using cursor() method
 cursor = db.cursor()
@@ -53,7 +56,7 @@ def home():
 @app.route('/results', methods=['POST', 'GET'])
 def searchPage():
     db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
-                         app.config['MYSQL_DATABASE_USER'], None,
+                         app.config['MYSQL_DATABASE_USER'], app.config['MYSQL_DATABASE_PASSWORD'],
                          app.config['MYSQL_DATABASE_DB'])
 
 # prepare a cursor object using cursor() method
@@ -130,7 +133,7 @@ def productPage(product_id):
 
     db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                          app.config['MYSQL_DATABASE_USER'],
-                         None, app.config['MYSQL_DATABASE_DB'])
+                         app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
 
     cursor = db.cursor()
     product_id = str(bleach.clean(product_id))  # sanitizing a bad redirect
@@ -173,7 +176,7 @@ def productPage(product_id):
 def selectCategory(categoryName):
     db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                          app.config['MYSQL_DATABASE_USER'],
-                         None, app.config['MYSQL_DATABASE_DB'])
+                         app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
 
     cursor = db.cursor()
     print(categoryName)
@@ -205,31 +208,87 @@ def selectCategory(categoryName):
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username = request.form['username']
-        pswd = request.form['password']    
-        print(username, " tried to login")
-        
-        data = cursor.execute("SELECT * FROM user where u_email = %s", (username))
-        print(data)
-        conn.commit()
-        return render_template("home.html",code=200)
+    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
+                         app.config['MYSQL_DATABASE_USER'],
+                         app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
+
+    cursor = db.cursor()
     
-    print("Simple Login Page Click")
+    if request.method == "POST":
+        email = request.form['email']
+        pwd = request.form['pwd']    
+        print(email, " tried to login")
+        
+        #u.u_id, u.u_email, u.u_fname, u.u_lname, u.u_is_admin
+        query = """
+        SELECT * 
+        FROM user u 
+        WHERE u_email = %(email)s
+        AND u_status = 1"""
+        
+        cursor.execute(query, {'email':email})
+        data = cursor.fetchone()
+        if data is None:
+            print("User not found!")
+            return render_template("login.html", code=404, message = "Page Not Found")
+        print(data)
+        userObject = user.makeUser(data)
+        
+        if pwd == userObject.u_pwd:
+            print("Authentication Successful")
+            return render_template("home.html",code=200, userObject = userObject, message = "Success")
+        else:
+            print("Authentication Failed!")
+            return render_template("login.html", code=401, message = "Unauthorized")
+        
     return render_template("login.html")
 
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    
+    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
+                         app.config['MYSQL_DATABASE_USER'],
+                         app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
+    cursor = db.cursor()
+    
     if request.method == "POST":
-        username = request.form['username']
-        pswd = request.form['password']    
-        print(username, " tried to register")
+        email = request.form['email']
+        password = request.form['password']
+        fname = request.form['fname']
+        lname = request.form['lname']
+        created_ts = time.strftime('%Y-%m-%d %H:%M:%S')
+        updated_ts = time.strftime('%Y-%m-%d %H:%M:%S')
         
-        d = cursor.execute("INSERT INTO user (u_email, u_pass, u_fname, u_lname) Values (%s, %s, %s, %s)", (username, pswd, "akshay", "kasar"))
+        
+        #check if user already exists
+        query = """
+        SELECT * 
+        FROM user u 
+        WHERE u_email = %(email)s
+        AND u_status = 1"""
+        
+        cursor.execute(query, {'email':email})
+        data = cursor.fetchone()
+        if data is not None:
+            print("Registeration of %s Failed. User Already Exists!",email)
+            return render_template("login.html", code=409, message = "Conflict")
+        
+        query = """
+        INSERT INTO
+        user (u_email, u_pass, u_fname, u_lname, u_created_ts, u_updated_ts)
+        values 
+        (%(email)s, %(password)s, %(fname)s, %(lname)s, %(created_ts)s, %(updated_ts)s);"""
+        
+        d = cursor.execute(query, {'email':email,'password':password,'fname':fname, 'lname':lname,
+                                  'created_ts':created_ts, 'updated_ts':updated_ts })
         print(d)
-        conn.commit()
-        return render_template("home.html")
+
+        db.commit()
+        if d == 1:
+            print("Registeration of %s Successful",email)
+            return render_template("login.html", code=200, message = "Success")
+            
     
     print("Simple Register Page Click")
     return render_template("register.html")
