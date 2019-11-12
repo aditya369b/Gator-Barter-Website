@@ -129,8 +129,8 @@ def productPage(product_id):
     try:
         if productObject.getStatus() == 0 and not session['sessionUser']['u_is_admin'] > 0:
             abort(404)
-        except KeyError:
-            abort(404)
+    except KeyError:
+        abort(404)
     print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
 
