@@ -26,8 +26,8 @@ class User():
             self.u_create_ts = time.strftime('%Y-%m-%d %H:%M:%S')
             self.u_update_ts = time.strftime('%Y-%m-%d %H:%M:%S')
         else:
-            self.u_created_ts = u_create_ts
-            self.u_updated_ts = u_update_ts
+            self.u_create_ts = u_create_ts
+            self.u_update_ts = u_update_ts
         self.u_status = u_status
 
     def isAdmin(self):
