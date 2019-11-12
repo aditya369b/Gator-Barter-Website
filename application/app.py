@@ -163,8 +163,8 @@ def login():
     cursor = getCursor()[1]
 
     if request.method == "POST":
-        email = request.form['email']
-        pwd = request.form['pwd']
+        email = str(bleach.clean(request.form['email']))
+        pwd = str(bleach.clean(request.form['pwd']))
         print(email, " tried to login")
 
         cursor.execute(query().GET_USER_BY_EMAIL(email))
@@ -192,12 +192,12 @@ def register():
     cursor = getCursor()[1]
 
     if request.method == "POST":
-        email = request.form['email']
-        password = request.form['password']
-        fname = request.form['fname']
-        lname = request.form['lname']
-        created_ts = time.strftime('%Y-%m-%d %H:%M:%S')
-        updated_ts = time.strftime('%Y-%m-%d %H:%M:%S')
+        email = str(bleach.clean(request.form['email']))
+        password = str(bleach.clean(request.form['password']))
+        fname = str(bleach.clean(request.form['fname']))
+        lname = str(bleach.clean(request.form['lname']))
+        created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
+        updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S'))) 
 
         print(fname, lname)
 
