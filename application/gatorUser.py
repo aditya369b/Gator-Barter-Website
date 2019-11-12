@@ -22,7 +22,7 @@ class User():
         self.u_lname = u_lname
         self.u_is_admin = u_is_admin
         self.u_pwd = u_pwd
-        if self.u_create_ts is "NULL":
+        if u_create_ts is "NULL":
             self.u_create_ts = time.strftime('%Y-%m-%d %H:%M:%S')
             self.u_update_ts = time.strftime('%Y-%m-%d %H:%M:%S')
         else:
