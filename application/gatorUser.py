@@ -33,7 +33,20 @@ class User():
     def isAdmin(self):
         return self.u_is_admin > 0
 
+    def toDict(self):
+        return {
+            'u_id': self.u_id,
+            'u_email': self.u_email,
+            'u_fname': self.u_fname,
+            'u_lname': self.u_lname,
+            'u_is_admin': self.u_is_admin,
+            'u_pwd': self.u_pwd,
+            'u_create_ts': self.u_create_ts,
+            'u_update_ts': self.u_update_ts
+        }
+
 
 def makeUser(userTuple):
     return User(*userTuple)
+
 # -*- coding: utf-8 -*-

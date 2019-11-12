@@ -41,6 +41,10 @@ class Query():
     AND i.i_sold_ts IS NULL;
     """
 
+    def ALL_PENDING_LISTINGS(self):
+        return self.ALL_APPROVED_LISTINGS().replace(
+            "WHERE i.i_status = 1", "WHERE i.i_status = 0")
+
     def APPROVED_ITEM(self, product_id):
         return """
     SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
@@ -79,13 +83,15 @@ class Query():
         AND u_status = 1"""
 
     def INSERT_USER(self, email, password, fname, lname, created_ts, updated_ts):
+        print(type(email))
         return """
-        INSERT INTO
-        user (u_email, u_pass, u_fname, u_lname, u_created_ts, u_updated_ts)
-        values
-        (""" + email + """ , """ + password + """ , """
-        + fname + """ , """ + lname + """ , """ + \
-            created_ts + """ , """ + updated_ts + """ );"""
+        INSERT INTO `user` (u_email, u_pass, u_fname, u_lname, u_created_ts, u_updated_ts)
+        VALUES('""" + email + "', '" + password + "', '" + fname + "', '" + lname + "', '" + created_ts + "', '" + updated_ts + "');"
+
+    def ALL_NON_ADMIN_APPROVED_USERS(self):
+        return """SELECT * FROM user
+        WHERE user.u_is_admin = 0
+        AND user.u_status > 0"""
 
 
 def query():

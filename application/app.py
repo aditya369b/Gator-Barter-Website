@@ -18,6 +18,7 @@ import bleach  # sql santization lib
 
 import hashlib
 import time
+import os
 
 # from livereload import Server   # PHILIPTEST
 
@@ -28,6 +29,7 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
+app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
@@ -52,14 +54,21 @@ print("Database version : %s " % data)
 # testuser
 # cursor.execute("SELECT * FROM user WHERE user.u_is_admin=1 LIMIT 1;")
 cursor.execute(query().TEST_USER)
-sessionUser = user.makeUser(cursor.fetchone())
+# sessionUser = user.makeUser(cursor.fetchone())
 cursor.close()
 
 
 @app.route("/", methods=["POST", "GET"])
 def home():
     productList = []
-    return render_template("home.html", products=productList, feedback="")
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if 'sessionUser' in session:
+        feedback = "Welcome Back " + \
+            session['sessionUser']['u_fname'] + ", " + \
+            session['sessionUser']['u_lname']
+    else:
+        feedback = ""
+    return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
 
 
 @app.route('/results', methods=['POST', 'GET'])
@@ -117,7 +126,7 @@ def productPage(product_id):
     userObject = cursor.fetchone()
 
     productObject = product.makeProduct(data[0])
-    if productObject.getStatus() == 0 and not sessionUser.isAdmin():
+    if productObject.getStatus() == 0 and not session['sessionUser']['u_is_admin'] > 0:
         abort(404)
     print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
@@ -165,7 +174,8 @@ def login():
 
         if pwd == userObject.u_pwd:
             print("Authentication Successful")
-            return render_template("home.html", code=200, userObject=userObject, message="Success")
+            session['sessionUser'] = userObject.toDict()
+            return redirect("/")
         else:
             print("Authentication Failed!")
             return render_template("login.html", code=401, message="Unauthorized")
@@ -186,31 +196,41 @@ def register():
         created_ts = time.strftime('%Y-%m-%d %H:%M:%S')
         updated_ts = time.strftime('%Y-%m-%d %H:%M:%S')
 
+        print(fname, lname)
+
         # check if user already exists
         cursor.execute(query().GET_USER_BY_EMAIL(email))
         data = cursor.fetchone()
 
         if data is not None:
-            print("Registeration of %s Failed. User Already Exists!", email)
-            return render_template("login.html", code=409, message="Conflict")
+            print("Registeration of" + email + " Failed. User Already Exists!")
+            return redirect("/login")
 
         # make new user row in db
+        print(query().INSERT_USER(email, password,
+                                  fname, lname, created_ts, updated_ts))
         d = cursor.execute(query().INSERT_USER(
             email, password, fname, lname, created_ts, updated_ts))
         print(d)
 
         db.commit()
         if d == 1:
-            print("Registeration of %s Successful", email)
-            return render_template("login.html", code=200, message="Success")
+            print("Registeration of" + email + "Successful")
+            return redirect("/")
 
     print("Simple Register Page Click")
     return render_template("register.html")
 
 
+@app.route("/logout")
+def logout():
+    session.pop('sessionUser')
+    return redirect('/')
+
+
 @app.route("/admin-dashboard")
 def admin_dashboard():
-    return redirect("/admin/"+str(sessionUser.u_id))
+    return redirect("/admin/"+str(session['sessionUser']['u_id']))
 
 
 @app.route("/about")
@@ -232,25 +252,14 @@ def about_mem(member):
 
 @app.route("/admin/<user_id>")
 def admin_page(user_id):
-    if sessionUser.u_id < 1 or sessionUser.u_id != int(user_id):
+    if session['sessionUser']['u_id'] < 1 or session['sessionUser']['u_id'] != int(user_id):
         abort(404)
     conncetion, cursor = getCursor()
 
     cursor.execute("SELECT * FROM user;")
     print(cursor.fetchall())
 
-    query = """
-    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-    FROM item AS i
-    JOIN item_image AS ii
-    ON i.i_id = ii.ii_i_id
-    JOIN category as c
-    ON c.c_id = i.i_c_id
-    WHERE i.i_status = 0
-    AND i.i_sold_ts IS NULL;
-    """
-
-    cursor.execute(query)
+    cursor.execute(query().ALL_PENDING_LISTINGS())
     data = cursor.fetchall()
     productList = []
     for d in data:
@@ -258,8 +267,7 @@ def admin_page(user_id):
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    cursor.execute(
-        "SELECT * FROM user WHERE user.u_is_admin=0 AND user.u_status>0 ;")
+    cursor.execute(query().ALL_NON_ADMIN_APPROVED_USERS())
     data = cursor.fetchall()
     userList = []
 
@@ -267,23 +275,22 @@ def admin_page(user_id):
         if len(d) == 9:
             userObject = user.makeUser(d)
             userList.append(userObject)
-    query = query.replace("i.i_status = 0", "i.i_status = 1")
-    cursor.execute(query)
+    cursor.execute(query().ALL_APPROVED_LISTINGS())
     data = cursor.fetchall()
 
-    productList2 = []
+    approvedProducts = []
     for d in data:
         if len(d) == 16:
             productObject = product.makeProduct(d)
-            productList2.append(productObject)
+            approvedProducts.append(productObject)
 
-    return render_template("admin/admin-dashboard.html", id=user_id, products=productList, users=userList, approvedProducts=productList2)
+    return render_template("admin/admin-dashboard.html", id=user_id, products=productList, users=userList, approvedProducts=approvedProducts)
 
 
 @app.route("/admin/item/<item_id>/<action>")
 def admin_item_action(item_id, action):
     item_id = int(item_id)
-    if sessionUser.u_id < 1:
+    if session['sessionUser']['u_id'] < 1:
         abort(404)
     connection, cursor = getCursor()
     print(connection, cursor)
@@ -299,17 +306,17 @@ def admin_item_action(item_id, action):
         cursor.execute(
             "UPDATE item SET i_status=1 WHERE i_id=" + str(item_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(sessionUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     elif action == "deny":
         cursor.execute(
             "UPDATE item SET i_status=-1 WHERE i_id=" + str(item_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(sessionUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     elif action == "remove":
         cursor.execute(
             "UPDATE item SET i_status=-2 WHERE i_id=" + str(item_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(sessionUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     elif action == "moreinfo":
         print("moreinfo")
         return redirect("/products/"+str(item_id))
@@ -320,7 +327,7 @@ def admin_item_action(item_id, action):
 @app.route("/admin/user/<user_id>/<action>")
 def admin_user_action(user_id, action):
     user_id = int(user_id)
-    if sessionUser.u_id < 1:
+    if session['sessionUser']['u_id'] < 1:
         abort(404)
     connection, cursor = getCursor()
     cursor.execute("SELECT MAX(user.u_id) FROM user")
@@ -332,7 +339,7 @@ def admin_user_action(user_id, action):
         cursor.execute(
             "UPDATE user SET u_status=0 WHERE u_id=" + str(user_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(sessionUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     else:
         abort(404)
 
