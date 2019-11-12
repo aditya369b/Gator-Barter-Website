@@ -1,5 +1,7 @@
 from flask import json, jsonify
+
 import time
+
 
 
 class User():
@@ -21,12 +23,21 @@ class User():
         self.u_lname = u_lname
         self.u_is_admin = u_is_admin
         self.u_pwd = u_pwd
-        self.u_create_ts = time.strftime('%Y-%m-%d %H:%M:%S')
-        self.u_update_ts = time.strftime('%Y-%m-%d %H:%M:%S')
+        if self.u_create_ts is "NULL":
+            self.u_create_ts = time.strftime('%Y-%m-%d %H:%M:%S')
+            self.u_update_ts = time.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            self.u_created_ts = u_created_ts
+            self.u_updated_ts = u_updated_ts     
         self.u_status = u_status
-
+        
+    def isAdmin(self):
+        return self.u_is_admin > 0
 
 def makeUser(userTuple):
     return User(*userTuple)
 # -*- coding: utf-8 -*-
+
+
+
 

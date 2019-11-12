@@ -33,6 +33,10 @@
 
 <body>
 
+    {% if product.i_status == 0 %}
+        <h2> FOR ADMIN USE ONLY </h2>
+    {% endif %}
+
     <div class="product-container">
         <div class="row">
             <div class="col-sm-12 col-lg-6 product-col">
