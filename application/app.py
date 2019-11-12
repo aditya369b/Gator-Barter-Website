@@ -225,45 +225,45 @@ def login():
                          app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
 
     cursor = db.cursor()
-    
+
     if request.method == "POST":
         email = request.form['email']
-        pwd = request.form['pwd']    
+        pwd = request.form['pwd']
         print(email, " tried to login")
-        
+
         #u.u_id, u.u_email, u.u_fname, u.u_lname, u.u_is_admin
         query = """
         SELECT * 
         FROM user u 
         WHERE u_email = %(email)s
         AND u_status = 1"""
-        
-        cursor.execute(query, {'email':email})
+
+        cursor.execute(query, {'email': email})
         data = cursor.fetchone()
         if data is None:
             print("User not found!")
-            return render_template("login.html", code=404, message = "Page Not Found")
+            return render_template("login.html", code=404, message="Page Not Found")
         print(data)
         userObject = user.makeUser(data)
-        
+
         if pwd == userObject.u_pwd:
             print("Authentication Successful")
-            return render_template("home.html",code=200, userObject = userObject, message = "Success")
+            return render_template("home.html", code=200, userObject=userObject, message="Success")
         else:
             print("Authentication Failed!")
-            return render_template("login.html", code=401, message = "Unauthorized")
-        
+            return render_template("login.html", code=401, message="Unauthorized")
+
     return render_template("login.html")
 
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    
+
     db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                          app.config['MYSQL_DATABASE_USER'],
                          app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
     cursor = db.cursor()
-    
+
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
@@ -271,37 +271,35 @@ def register():
         lname = request.form['lname']
         created_ts = time.strftime('%Y-%m-%d %H:%M:%S')
         updated_ts = time.strftime('%Y-%m-%d %H:%M:%S')
-        
-        
-        #check if user already exists
+
+        # check if user already exists
         query = """
-        SELECT * 
-        FROM user u 
+        SELECT *
+        FROM user u
         WHERE u_email = %(email)s
         AND u_status = 1"""
-        
-        cursor.execute(query, {'email':email})
+
+        cursor.execute(query, {'email': email})
         data = cursor.fetchone()
         if data is not None:
-            print("Registeration of %s Failed. User Already Exists!",email)
-            return render_template("login.html", code=409, message = "Conflict")
-        
+            print("Registeration of %s Failed. User Already Exists!", email)
+            return render_template("login.html", code=409, message="Conflict")
+
         query = """
         INSERT INTO
         user (u_email, u_pass, u_fname, u_lname, u_created_ts, u_updated_ts)
-        values 
+        values
         (%(email)s, %(password)s, %(fname)s, %(lname)s, %(created_ts)s, %(updated_ts)s);"""
-        
-        d = cursor.execute(query, {'email':email,'password':password,'fname':fname, 'lname':lname,
-                                  'created_ts':created_ts, 'updated_ts':updated_ts })
+
+        d = cursor.execute(query, {'email': email, 'password': password, 'fname': fname, 'lname': lname,
+                                   'created_ts': created_ts, 'updated_ts': updated_ts})
         print(d)
 
         db.commit()
         if d == 1:
-            print("Registeration of %s Successful",email)
-            return render_template("login.html", code=200, message = "Success")
-            
-    
+            print("Registeration of %s Successful", email)
+            return render_template("login.html", code=200, message="Success")
+
     print("Simple Register Page Click")
     return render_template("register.html")
 
@@ -449,6 +447,6 @@ def makeCursor():
 db.close()
 
 if __name__ == "__main__":
-     app.run("0.0.0.0")
+    app.run("0.0.0.0")
 #    server = Server(app.wsgi_app)   # PHILIPTEST
 #    server.serve()  # PHILIPTEST
