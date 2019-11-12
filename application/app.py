@@ -126,8 +126,11 @@ def productPage(product_id):
     userObject = cursor.fetchone()
 
     productObject = product.makeProduct(data[0])
-    if productObject.getStatus() == 0 and not session['sessionUser']['u_is_admin'] > 0:
-        abort(404)
+    try:
+        if productObject.getStatus() == 0 and not session['sessionUser']['u_is_admin'] > 0:
+            abort(404)
+        except KeyError:
+            abort(404)
     print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
 
@@ -224,13 +227,19 @@ def register():
 
 @app.route("/logout")
 def logout():
-    session.pop('sessionUser')
+    try:
+        session.pop('sessionUser')
+    except:
+        pass
     return redirect('/')
 
 
 @app.route("/admin-dashboard")
 def admin_dashboard():
-    return redirect("/admin/"+str(session['sessionUser']['u_id']))
+    try:
+        return redirect("/admin/"+str(session['sessionUser']['u_id']))
+    except KeyError:
+        abort(404)
 
 
 @app.route("/about")
@@ -252,7 +261,10 @@ def about_mem(member):
 
 @app.route("/admin/<user_id>")
 def admin_page(user_id):
-    if session['sessionUser']['u_id'] < 1 or session['sessionUser']['u_id'] != int(user_id):
+    try:
+        if session['sessionUser']['u_id'] < 1 or session['sessionUser']['u_id'] != int(user_id):
+            abort(404)
+    except KeyError:
         abort(404)
     conncetion, cursor = getCursor()
 
@@ -290,7 +302,10 @@ def admin_page(user_id):
 @app.route("/admin/item/<item_id>/<action>")
 def admin_item_action(item_id, action):
     item_id = int(item_id)
-    if session['sessionUser']['u_id'] < 1:
+    try:
+        if session['sessionUser']['u_id'] < 1:
+            abort(404)
+    except KeyError:
         abort(404)
     connection, cursor = getCursor()
     print(connection, cursor)
@@ -327,7 +342,10 @@ def admin_item_action(item_id, action):
 @app.route("/admin/user/<user_id>/<action>")
 def admin_user_action(user_id, action):
     user_id = int(user_id)
-    if session['sessionUser']['u_id'] < 1:
+    try:
+        if session['sessionUser']['u_id'] < 1:
+            abort(404)
+    except KeyError:
         abort(404)
     connection, cursor = getCursor()
     cursor.execute("SELECT MAX(user.u_id) FROM user")
