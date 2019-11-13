@@ -112,7 +112,9 @@ def searchPage():
         else:
             feedback = str(len(data)) + " Results Found"
 
-    return render_template("home.html", products=productList, feedback=feedback)
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
 
 
 @app.route("/products/<product_id>", methods=["POST", "GET"])
@@ -201,7 +203,7 @@ def register():
         fname = str(bleach.clean(request.form['fname']))
         lname = str(bleach.clean(request.form['lname']))
         created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
-        updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S'))) 
+        updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
 
         print(fname, lname)
 
@@ -246,21 +248,24 @@ def admin_dashboard():
         abort(404)
 
 
-
 @app.route("/about")
 def about():
-    return render_template("about/about.html")
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    return render_template("about/about.html", sessionUser=sessionUser)
 
 
 @app.route("/about/<member>")
 def about_mem(member):
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
     return render_template("about/info.html", name=dev[member]['name'],
                            title=dev[member]['title'],
                            image=dev[member]['img'],
                            description=dev[member]['description'],
                            linkedin=dev[member]['linkedin'],
                            github=dev[member]['github'],
-                           email=dev[member]['email']
+                           email=dev[member]['email'], sessionUser=sessionUser
                            )
 
 
@@ -300,8 +305,9 @@ def admin_page(user_id):
         if len(d) == 16:
             productObject = product.makeProduct(d)
             approvedProducts.append(productObject)
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
-    return render_template("admin/admin-dashboard.html", id=user_id, products=productList, users=userList, approvedProducts=approvedProducts)
+    return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts)
 
 
 @app.route("/admin/item/<item_id>/<action>")
