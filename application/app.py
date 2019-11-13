@@ -5,36 +5,48 @@ Might incorperate some features mentioned in the blog post(s)
 Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-logging-in-with-flask/
 """
 
+
 import gatorProduct as product  # class made by alex
 import gatorUser as user
+from queries import query
+
 from flask import Flask, render_template, request, session, redirect, url_for, abort
 from about_info import dev
 import pymysql
 import jinja2
 import bleach  # sql santization lib
-from livereload import Server   # PHILIPTEST
+
+import hashlib
+import time
+import os
+
+# from livereload import Server   # PHILIPTEST
+# from livereload import Server   # PHILIPTEST
+
 
 app = Flask(__name__)
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
-app.config['DEBUG'] = 'True'    # PHILIPTEST
+# app.config['DEBUG'] = 'True'    # PHILIPTEST
+app.secret_key = os.urandom(32)
 
+# app.config['DEBUG'] = 'True'    # PHILIPTEST
 
-# mysql = MySQL()
-# mysql.init_app(app)conn = mysql.connect()
-# cursor = conn.cursor()
-
-
-# Open database connection
+# Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
                      None, app.config['MYSQL_DATABASE_DB'])
 
+
+def getCursor():
+    return [db, db.cursor()]
+
+
 # prepare a cursor object using cursor() method
-cursor = db.cursor()
+cursor = getCursor()[1]
 
 # execute SQL query using execute() method.
 cursor.execute("SELECT VERSION()")
@@ -44,25 +56,29 @@ data = cursor.fetchone()
 print("Database version : %s " % data)
 
 # testuser
+# cursor.execute("SELECT * FROM user WHERE user.u_is_admin=1 LIMIT 1;")
+cursor.execute(query().TEST_USER)
+# sessionUser = user.makeUser(cursor.fetchone())
+cursor.close()
 
-cursor.execute("SELECT * FROM user WHERE user.u_is_admin=1 LIMIT 1;")
-testUser = user.makeUser(cursor.fetchone())
 
-# name=session.get("username", "Unknown")
 @app.route("/", methods=["POST", "GET"])
 def home():
     productList = []
-    return render_template("home.html", products=productList, feedback="")
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if 'sessionUser' in session:
+        feedback = "Welcome Back " + \
+            session['sessionUser']['u_fname'] + ", " + \
+            session['sessionUser']['u_lname']
+    else:
+        feedback = ""
+    return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
 
 
 @app.route('/results', methods=['POST', 'GET'])
 def searchPage():
-    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
-                         app.config['MYSQL_DATABASE_USER'], None,
-                         app.config['MYSQL_DATABASE_DB'])
 
-# prepare a cursor object using cursor() method
-    cursor = db.cursor()
+    cursor = getCursor()[1]
 
     print(len(request.form))
 
@@ -73,30 +89,8 @@ def searchPage():
         search = request.form['text']
 
         search = str(bleach.clean(search))  # sanitizing a bad search
-        # Open database connection
-        starting = "" + search + "%"
-        ending = "%" + search + ""
-        starting2 = " " + search + "%"
-        ending2 = "%" + search + " "
-        middle = "%" + search + "%"
-        exact = search
-        cursor.execute("""
-        SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-        FROM item AS i
-        JOIN item_image AS ii
-        ON i.i_id = ii.ii_i_id
-        JOIN category as c
-        ON c.c_id = i.i_c_id
-        WHERE i.i_status = 1
-        AND i.i_sold_ts IS NULL
-        AND (i.i_desc LIKE '""" + starting + """'
-        OR i.i_desc LIKE '""" + ending + """'
-        OR i.i_desc LIKE '""" + starting2 + """'
-        OR i.i_desc LIKE '""" + ending2 + """'
-        OR i.i_desc LIKE '""" + middle + """'
-        OR i.i_desc LIKE '""" + exact + """');
-        """)
-        # cursor.execute("SELECT * FROM item;")
+        cursor.execute(query().SEARCH_QUERY(search))
+
         data = cursor.fetchall()
         print("All items?", data)
     productList = []
@@ -104,18 +98,9 @@ def searchPage():
     if len(data) == 0:
         if formsLen > 0:
             feedback = "No Results, Consider these Items"
-        cursor.execute("""
-    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-    FROM item AS i
-    JOIN item_image AS ii
-    ON i.i_id = ii.ii_i_id
-    JOIN category as c
-    ON c.c_id = i.i_c_id
-    WHERE i.i_status = 1
-    AND i.i_sold_ts IS NULL;
-    """)
-    # cursor.execute("SELECT * FROM item;")
+        cursor.execute(query().ALL_APPROVED_LISTINGS())
         data = cursor.fetchall()
+    cursor.close()
 
     for d in data:
         if len(d) > 11:
@@ -133,45 +118,22 @@ def searchPage():
 @app.route("/products/<product_id>", methods=["POST", "GET"])
 def productPage(product_id):
 
-    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
-                         app.config['MYSQL_DATABASE_USER'],
-                         None, app.config['MYSQL_DATABASE_DB'])
-
-    cursor = db.cursor()
+    cursor = getCursor()[1]
     product_id = str(bleach.clean(product_id))  # sanitizing a bad redirect
 
-    # Open database connection
-
-    query = """
-    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-    FROM item AS i
-    JOIN item_image AS ii
-    ON i.i_id = ii.ii_i_id
-    JOIN category as c
-    ON c.c_id = i.i_c_id
-    WHERE i.i_id = """ + product_id + """
-    AND i.i_status >= 0;"""
-
-    cursor.execute(query)
-    # cursor.execute("SELECT * FROM item;")
+    cursor.execute(query().APPROVED_ITEM(product_id))
     data = cursor.fetchall()
     if len(data) == 0:
         abort(404)
-        # return redirect("/")
 
-    query = """
-    SELECT u.u_id, u.u_email, u.u_fname, u.u_lname, i.i_u_id FROM user AS u
-    JOIN item as i
-    ON i.i_u_id = u.u_id;
-    """
-    cursor.execute(query)
+    cursor.execute(query().USER_FOR_PRODUCT(product_id))
     userObject = cursor.fetchone()
 
-    print(userObject)
-
-    print(data[0])
     productObject = product.makeProduct(data[0])
-    if productObject.getStatus() == 0 and not testUser.isAdmin():
+    try:
+        if productObject.getStatus() == 0 and not session['sessionUser']['u_is_admin'] > 0:
+            abort(404)
+    except KeyError:
         abort(404)
     print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
@@ -179,24 +141,11 @@ def productPage(product_id):
 
 @app.route("/categories/<categoryName>", methods=["POST", "GET"])
 def selectCategory(categoryName):
-    db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
-                         app.config['MYSQL_DATABASE_USER'],
-                         None, app.config['MYSQL_DATABASE_DB'])
 
-    cursor = db.cursor()
+    cursor = getCursor()[1]
     print(categoryName)
 
-    query = """
-    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-    FROM item AS i
-    JOIN item_image AS ii
-    ON i.i_id = ii.ii_i_id
-    JOIN category as c
-    ON c.c_id = i.i_c_id
-    HAVING c.c_name = '""" + categoryName + """'
-    AND i.i_status = 1;"""
-
-    cursor.execute(query)
+    cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
     data = cursor.fetchall()
 
     if len(data) == 0:
@@ -212,15 +161,91 @@ def selectCategory(categoryName):
     return render_template("home.html", products=productList, feedback=categoryName)
 
 
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def login():
+
+    cursor = getCursor()[1]
+
+    if request.method == "POST":
+        email = str(bleach.clean(request.form['email']))
+        pwd = str(bleach.clean(request.form['pwd']))
+        print(email, " tried to login")
+
+        cursor.execute(query().GET_USER_BY_EMAIL(email))
+        data = cursor.fetchone()
+        if data is None:
+            print("User not found!")
+            return render_template("login.html", code=404, message="Page Not Found")
+        print(data)
+        userObject = user.makeUser(data)
+
+        if pwd == userObject.u_pwd:
+            print("Authentication Successful")
+            session['sessionUser'] = userObject.toDict()
+            return redirect("/")
+        else:
+            print("Authentication Failed!")
+            return render_template("login.html", code=401, message="Unauthorized")
+
     return render_template("login.html")
 
 
-@app.route("/register")
+@app.route("/register", methods=['GET', 'POST'])
 def register():
+
+    cursor = getCursor()[1]
+
+    if request.method == "POST":
+        email = str(bleach.clean(request.form['email']))
+        password = str(bleach.clean(request.form['password']))
+        fname = str(bleach.clean(request.form['fname']))
+        lname = str(bleach.clean(request.form['lname']))
+        created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
+        updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S'))) 
+
+        print(fname, lname)
+
+        # check if user already exists
+        cursor.execute(query().GET_USER_BY_EMAIL(email))
+        data = cursor.fetchone()
+
+        if data is not None:
+            print("Registeration of" + email + " Failed. User Already Exists!")
+            return redirect("/login")
+
+        # make new user row in db
+        print(query().INSERT_USER(email, password,
+                                  fname, lname, created_ts, updated_ts))
+        d = cursor.execute(query().INSERT_USER(
+            email, password, fname, lname, created_ts, updated_ts))
+        print(d)
+
+        db.commit()
+        if d == 1:
+            print("Registeration of" + email + "Successful")
+            return redirect("/")
+
+    print("Simple Register Page Click")
     return render_template("register.html")
-    
+
+
+@app.route("/logout")
+def logout():
+    try:
+        session.pop('sessionUser')
+    except:
+        pass
+    return redirect('/')
+
+
+@app.route("/admin-dashboard")
+def admin_dashboard():
+    try:
+        return redirect("/admin/"+str(session['sessionUser']['u_id']))
+    except KeyError:
+        abort(404)
+
+
 
 @app.route("/about")
 def about():
@@ -241,22 +266,17 @@ def about_mem(member):
 
 @app.route("/admin/<user_id>")
 def admin_page(user_id):
-    if testUser.u_id < 1 or testUser.u_id != int(user_id):
+    try:
+        if session['sessionUser']['u_id'] < 1 or session['sessionUser']['u_id'] != int(user_id):
+            abort(404)
+    except KeyError:
         abort(404)
-    conncetion, cursor = makeCursor()
+    conncetion, cursor = getCursor()
 
-    query = """
-    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-    FROM item AS i
-    JOIN item_image AS ii
-    ON i.i_id = ii.ii_i_id
-    JOIN category as c
-    ON c.c_id = i.i_c_id
-    WHERE i.i_status = 0
-    AND i.i_sold_ts IS NULL;
-    """
+    cursor.execute("SELECT * FROM user;")
+    print(cursor.fetchall())
 
-    cursor.execute(query)
+    cursor.execute(query().ALL_PENDING_LISTINGS())
     data = cursor.fetchall()
     productList = []
     for d in data:
@@ -264,8 +284,7 @@ def admin_page(user_id):
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    cursor.execute(
-        "SELECT * FROM user WHERE user.u_is_admin=0 AND user.u_status>0 ;")
+    cursor.execute(query().ALL_NON_ADMIN_APPROVED_USERS())
     data = cursor.fetchall()
     userList = []
 
@@ -273,25 +292,27 @@ def admin_page(user_id):
         if len(d) == 9:
             userObject = user.makeUser(d)
             userList.append(userObject)
-    query = query.replace("i.i_status = 0", "i.i_status = 1")
-    cursor.execute(query)
+    cursor.execute(query().ALL_APPROVED_LISTINGS())
     data = cursor.fetchall()
 
-    productList2 = []
+    approvedProducts = []
     for d in data:
         if len(d) == 16:
             productObject = product.makeProduct(d)
-            productList2.append(productObject)
+            approvedProducts.append(productObject)
 
-    return render_template("admin/admin.html", id=user_id, products=productList, users=userList, approvedProducts=productList2)
+    return render_template("admin/admin-dashboard.html", id=user_id, products=productList, users=userList, approvedProducts=approvedProducts)
 
 
 @app.route("/admin/item/<item_id>/<action>")
 def admin_item_action(item_id, action):
     item_id = int(item_id)
-    if testUser.u_id < 1:
+    try:
+        if session['sessionUser']['u_id'] < 1:
+            abort(404)
+    except KeyError:
         abort(404)
-    connection, cursor = makeCursor()
+    connection, cursor = getCursor()
     print(connection, cursor)
     cursor.execute("SELECT MAX(item.i_id) FROM item")
     data = cursor.fetchone()
@@ -305,17 +326,17 @@ def admin_item_action(item_id, action):
         cursor.execute(
             "UPDATE item SET i_status=1 WHERE i_id=" + str(item_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(testUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     elif action == "deny":
         cursor.execute(
             "UPDATE item SET i_status=-1 WHERE i_id=" + str(item_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(testUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     elif action == "remove":
         cursor.execute(
             "UPDATE item SET i_status=-2 WHERE i_id=" + str(item_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(testUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     elif action == "moreinfo":
         print("moreinfo")
         return redirect("/products/"+str(item_id))
@@ -326,9 +347,12 @@ def admin_item_action(item_id, action):
 @app.route("/admin/user/<user_id>/<action>")
 def admin_user_action(user_id, action):
     user_id = int(user_id)
-    if testUser.u_id < 1:
+    try:
+        if session['sessionUser']['u_id'] < 1:
+            abort(404)
+    except KeyError:
         abort(404)
-    connection, cursor = makeCursor()
+    connection, cursor = getCursor()
     cursor.execute("SELECT MAX(user.u_id) FROM user")
 
     if not 0 < user_id <= int(cursor.fetchone()[0]):
@@ -338,7 +362,7 @@ def admin_user_action(user_id, action):
         cursor.execute(
             "UPDATE user SET u_status=0 WHERE u_id=" + str(user_id) + ";")
         connection.commit()
-        return redirect("/admin/" + str(testUser.u_id))
+        return redirect("/admin/" + str(session['sessionUser']['u_id']))
     else:
         abort(404)
 
@@ -348,18 +372,8 @@ def not_found(e):
     return render_template("errors/404.html", url_for_redirect="/")
 
 
-def makeCursor():
-    connection = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
-                                 app.config['MYSQL_DATABASE_USER'],
-                                 None, app.config['MYSQL_DATABASE_DB'])
-    cursor = connection.cursor()
-
-    return [connection, cursor]
-
-
-db.close()
-
 if __name__ == "__main__":
+    app.run("0.0.0.0")
+#    server = Server(app.wsgi_app)   # PHILIPTEST
+#    server.serve()  # PHILIPTEST
     #  app.run("0.0.0.0")
-   server = Server(app.wsgi_app)   # PHILIPTEST
-   server.serve()  # PHILIPTEST
