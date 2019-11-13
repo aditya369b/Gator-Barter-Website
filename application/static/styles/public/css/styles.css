@@ -78,7 +78,6 @@ input {
     border-color: #FFCC33;
     padding: 0.5rem 0rem;
     margin: 1rem 0.20rem 1rem 0;
-    /* margin: 1rem 0; */
     width: 100%;
 }
 
@@ -94,7 +93,6 @@ input {
 
 .feedback {
     font-style: italic;
-    /* padding: 0.5rem 7.25rem 0.5rem 0; */
     padding: 0.5rem 1.5rem;
     text-align: right;
     margin: 0;
@@ -122,14 +120,12 @@ input {
 }
 
 .card-text {
-    padding: 1rem 0;
+    padding: 0.5rem 0;
 }
 
-/* .more-details-btn {
-    margin: 0 auto;
-    position: absolute;
-    bottom: -1;
-} */
+.card-img-top {
+    height: 15.625rem;
+}
 
 .show-more-btn {
     margin: 0 auto 1rem auto;
@@ -176,7 +172,6 @@ footer {
 .tradable-label {
     text-align: center;
     background-color: #C4C4C4;
-    /* color: white; */
     width: 80px;
     padding: 0.25rem 0;
     margin-bottom: 0.5rem;
@@ -356,7 +351,7 @@ input[type=checkbox] {
     margin: 1.5rem 0;
 }
 
-/* Admin Dashboard */
+/* Admin Dashboard Section */
 
 .nav-tabs .nav-item .nav-link {
     color: black;
@@ -381,4 +376,70 @@ input[type=checkbox] {
 
 .fa-ban {
     color: red;
+}
+
+.btn-white-text {
+    color: white !important;
+    margin: 0.5rem 0;
+}
+
+.user-list {
+    margin: 1rem;
+}
+
+.user-list-header {
+    margin: 2rem;
+}
+
+/* about page stuff*/
+.abouttext {
+  font-size: 24px;
+  color: #330033;
+}
+
+.section_subtitle
+{
+  margin-bottom: 7px;
+  padding-left: 7px;
+  font-size: 16px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #330033;
+  border-left: 3px solid #ffcc33;
+  font-size: 700;
+  font-family: tahoma;
+}
+
+.member_container{
+  text-align: center;
+  padding-top: 15px;
+}
+
+.btn-primary{
+  width:20%;
+}
+
+.about{
+  color:#330033;
+}
+
+/* profile page stuff */
+.avatar {
+    border-radius: 50%;
+    border: 7px solid;
+    width: 170px;
+    height: 170px;
+    margin: 14px auto 14px;
+    color: #ffcc33;
+}
+
+#social-icon {
+  color: #ffcc33;
+  padding: 2px;
+}
+
+.member-desc {
+  padding: 4rem;
+  color: black;
+  text-align: center;
 }
