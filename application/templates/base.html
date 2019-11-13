@@ -58,9 +58,6 @@
                     <li class="nav-item">
                         <a class="nav-link navbar-link" href="/">Sell</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link navbar-link" href="/admin/3">Admin</a>
-                    </li>
                 </ul>
 
                 <!-- RHS Navigation Links -->
@@ -116,65 +113,11 @@
         </nav>
     </header>
 
-    <!-- Main content -->
-    <main>
-        <div class="edu-purpose-label">
-            "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration Only”
-        </div>
 
-        <div class="feedback">
-            {{feedback}}
-        </div>
 
-        <div class="container-fluid content-row">
-            <div class="row">
-                {% for product in products %}
-                {% set imageRedirect = product.i_id %}
-                {% set imageSrc = product.ii_url %}
-                {% set itemDesc = product.i_desc %}
-                {% set itemTitle = product.i_title %}
-                {% set itemCategory = product.c_name %}
-                {% set itemPrice = product.i_price %}
-                {% set isTradable = product.i_is_tradable %}
-                {% set userId = product.i_u_id %}
-                <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
-                    <div class="card mb-3 h-100">
-                        <img src="{{imageSrc}}" class="card-img-top h-50" alt="{{imageSrc}}">
-                        <div class="card-body d-flex flex-column">
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <h5 class="card-title item-label">{{itemTitle}}</h5>
-                                    <h6 class="card-subtitle user-label">@username</h6>
-                                </div>
+{% block content %}
 
-                                <div class="col">
-                                    <h5 class="card-title price-label">${{itemPrice}}</h5>
-                                    <div class="card-subtitle tradable-label">
-                                        Tradable
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-text">
-                                Category: {{itemCategory}}<br>
-                                {{itemDesc}}
-                            </div>
-
-                            <a class="btn btn-warning btn-block mt-auto"
-                                onclick="window.open('/products/{{imageRedirect}}')">More Details</a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <!-- Load all item listings -->
-            </div>
-        </div>
-
-        <!-- Show more items -->
-        <button class="show-more-btn">
-            Show More
-        </button>
-    </main>
+{% endblock %}
 
     <!-- Footer -->
     <footer>
