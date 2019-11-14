@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Main content -->
+<main>
+    <div class="edu-purpose-label">
+        "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration Only”
+        <br>User Dashboard
+    </div>
+
+    <ul class="nav nav-pills nav-justified nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="pill" href="#item">Item</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Item Tab -->
+        <div id="item" class="tab-pane container-fluid active tab-content">
+            <!-- Load items -->
+            <div class="container-fluid content-row seller-listing">
+                <div class="row">
+                    <!-- Item image column -->
+                    <div class="col-lg-2">
+                        <img class="item-img-col" src="/static/images/image-na.png" alt="image-na">
+                    </div>
+                    <!-- Item name description column -->
+                    <div class="col-lg-7">
+                        <div class="item-desc-col">
+                            <h4>Item name</h4>
+
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut
+                                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                                ullamco
+                                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+                                in
+                                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Item condition column -->
+                    <div class="col-lg-3">
+                        <div class="item-cond-col">
+                            <h5>Status: <span>Pending</span></h5>
+
+                            <a class="btn btn-success btn-block" href="/">
+                                <i class="fas fa-check-circle"> Mark Item as Sold</i>
+                            </a>
+
+                            <a class="btn btn-info btn-block" href="/seller-inbox">
+                                <i class="fas fa-envelope"> Inbox</i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+{% endblock %}
