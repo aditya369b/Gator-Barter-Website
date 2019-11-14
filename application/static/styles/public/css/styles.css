@@ -47,6 +47,33 @@ a:hover {
     color: #FFCC33;
 }
 
+.profile-dropdown {
+    background-color: #330033;
+    margin: 0.3rem 0;
+    color: #FFCC33;
+    border: none;
+}
+
+.fa-user-circle {
+    font-size: 2rem;
+}
+
+.dropdown-menu {
+    text-align: right;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #FFCC33;
+}
+
+.current-user {
+    font-size: 20px;
+    margin: 0.5rem 0.25rem;
+}
+
+.dropdown-divider {
+    border-color: #FFCC33;
+}
 
 /* Search Bar Section */
 
@@ -393,34 +420,33 @@ input[type=checkbox] {
 
 /* about page stuff*/
 .abouttext {
-  font-size: 24px;
-  color: #330033;
+    font-size: 24px;
+    color: #330033;
 }
 
-.section_subtitle
-{
-  margin-bottom: 7px;
-  padding-left: 7px;
-  font-size: 16px;
-  line-height: 1;
-  text-transform: uppercase;
-  color: #330033;
-  border-left: 3px solid #ffcc33;
-  font-size: 700;
-  font-family: tahoma;
+.section_subtitle {
+    margin-bottom: 7px;
+    padding-left: 7px;
+    font-size: 16px;
+    line-height: 1;
+    text-transform: uppercase;
+    color: #330033;
+    border-left: 3px solid #ffcc33;
+    font-size: 700;
+    font-family: tahoma;
 }
 
-.member_container{
-  text-align: center;
-  padding-top: 15px;
+.member_container {
+    text-align: center;
+    padding-top: 15px;
 }
 
-.btn-primary{
-  width:20%;
+.btn-primary {
+    width: 20%;
 }
 
-.about{
-  color:#330033;
+.about {
+    color: #330033;
 }
 
 /* profile page stuff */
@@ -434,12 +460,12 @@ input[type=checkbox] {
 }
 
 #social-icon {
-  color: #ffcc33;
-  padding: 2px;
+    color: #ffcc33;
+    padding: 2px;
 }
 
 .member-desc {
-  padding: 4rem;
-  color: black;
-  text-align: center;
+    padding: 4rem;
+    color: black;
+    text-align: center;
 }
