@@ -20,7 +20,7 @@ import hashlib
 import time
 import os
 
-from livereload import Server   # PHILIPTEST
+# from livereload import Server   # PHILIPTEST
 
 
 app = Flask(__name__)
@@ -29,7 +29,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
-app.config['DEBUG'] = 'True'    # PHILIPTEST
+# app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
@@ -237,6 +237,16 @@ def logout():
     return redirect('/')
 
 
+@app.route('/item-posting')
+def item_posting():
+    return render_template('item-posting.html')
+
+
+@app.route('/contact-seller')
+def contact_seller():
+    return render_template('contact-seller.html')
+
+
 @app.route('/seller-inbox')
 def seller_inbox():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
@@ -390,6 +400,6 @@ def not_found(e):
 
 
 if __name__ == "__main__":
-   server = Server(app.wsgi_app)   # PHILIPTEST
-   server.serve()  # PHILIPTEST
-    #  app.run("0.0.0.0")
+#    server = Server(app.wsgi_app)   # PHILIPTEST
+#    server.serve()  # PHILIPTEST
+     app.run("0.0.0.0")
