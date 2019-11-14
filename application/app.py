@@ -237,6 +237,13 @@ def logout():
     return redirect('/')
 
 
+@app.route('/seller-inbox')
+def seller_inbox():
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    return render_template('seller-inbox.html', sessionUser=sessionUser)
+
+
 @app.route("/user-dashboard")
 def user_dashboard():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
