@@ -56,7 +56,7 @@
                         <a class="nav-link navbar-link" href="/">FAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link navbar-link" href="/">Sell</a>
+                        <a class="nav-link navbar-link" href="/item-posting">Sell</a>
                     </li>
                     {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0 %}
                     <li class="nav-item">
@@ -86,16 +86,18 @@
 
                             <ul class="dropdown-menu dropdown-menu-right">
                                 <li>
-                                    <a class="dropdown-item" href="/"><i class="fas fa-user"> User Dashboard</i></a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/"><i class="fas fa-cog"> Settings</i></a>
+                                    <a class="dropdown-item" href="/user-dashboard"><i class="fas fa-user"> User
+                                            Dashboard</i></a>
                                 </li>
                                 {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0 %}
                                 <li>
-                                    <a class="dropdown-item" href="/admin/{{sessionUser['u_id']}}"><i class="fas fa-crown"> Admin Dashboard</i></a>
+                                    <a class="dropdown-item" href="/admin/{{sessionUser['u_id']}}"><i
+                                            class="fas fa-crown"> Admin Dashboard</i></a>
                                 </li>
                                 {% endif %}
+                                <li>
+                                    <a class="dropdown-item" href="/"><i class="fas fa-cog"> Settings</i></a>
+                                </li>
                             </ul>
                         </div>
 
