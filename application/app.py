@@ -62,6 +62,15 @@ cursor.close()
 @app.route("/", methods=["POST", "GET"])
 def home():
     productList = []
+    cursor = getCursor()[1]
+    cursor.execute(query().MOST_RECENT_ITEMS(5))
+    data = cursor.fetchall()
+
+    for d in data:
+        if len(d) == 16:
+            productObject = product.makeProduct(d)
+            productList.append(productObject)
+
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if 'sessionUser' in session:
         feedback = "Welcome Back " + \
@@ -202,7 +211,7 @@ def register():
         created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
         updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
 
-        print(fname, lname)
+        print(fname, lname, created_ts)
 
         # check if user already exists
         cursor.execute(query().GET_USER_BY_EMAIL(email))

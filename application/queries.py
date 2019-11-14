@@ -93,6 +93,20 @@ class Query():
         WHERE user.u_is_admin = 0
         AND user.u_status > 0"""
 
+    def MOST_RECENT_ITEMS(self, n):
+        return """
+    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+    FROM item AS i
+    JOIN item_image AS ii
+    ON i.i_id = ii.ii_i_id
+    JOIN category as c
+    ON c.c_id = i.i_c_id
+    WHERE i.i_status = 1
+    AND i.i_created_ts IS NOT NULL
+    ORDER BY i.i_created_ts
+    LIMIT """ + str(n) + """;
+    """
+
 
 def query():
     return Query()
