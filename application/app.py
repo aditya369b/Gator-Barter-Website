@@ -262,7 +262,7 @@ def contact_seller():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if sessionUser == "":
         abort(404)
-    
+
     return render_template('contact-seller.html', sessionUser=sessionUser)
 
 
@@ -289,8 +289,6 @@ def seller_inbox(item_id):
     cursor.close()
 
     messageProduct = product.makeProduct(data)
-
-    
 
     return render_template('seller-inbox.html', sessionUser=sessionUser, messages=messageList, messageProduct=messageProduct)
 
@@ -453,6 +451,6 @@ def not_found(e):
 
 
 if __name__ == "__main__":
-#    server = Server(app.wsgi_app)   # PHILIPTEST
-#    server.serve()  # PHILIPTEST
-     app.run("0.0.0.0")
+    #    server = Server(app.wsgi_app)   # PHILIPTEST
+    #    server.serve()  # PHILIPTEST
+    app.run("0.0.0.0")
