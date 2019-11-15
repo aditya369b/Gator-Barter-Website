@@ -76,10 +76,11 @@ def home():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if 'sessionUser' in session:
         feedback = "Welcome Back " + \
-            session['sessionUser']['u_fname'] + ", " + \
+            session['sessionUser']['u_fname'] + " " + \
             session['sessionUser']['u_lname']
     else:
         feedback = ""
+    feedback += "\nHere are the latest Items"
     return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
 
 
@@ -257,13 +258,33 @@ def item_posting():
     return render_template('item-posting.html')
 
 
-@app.route('/contact-seller')
-def contact_seller():
+@app.route('/contact-seller/<item_id>', methods=['POST'])
+def contact_seller(item_id):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if sessionUser == "":
-        abort(404)
+        abort(404) # TODO lazy registration
+    if request.method == "POST":
+        buyerContact = str(bleach.clean(request.form['contactType']))
+        buyerMessage = str(bleach.clean(request.form['buyerMessage']))
+        print("post??")
 
-    return render_template('contact-seller.html', sessionUser=sessionUser)
+        cursor = getCursor()[1]
+        cursor.execute(query().APPROVED_ITEM(item_id))
+        item = product.makeProduct(cursor.fetchone())
+
+        cursor.execute(query().USER_FOR_PRODUCT(item_id))
+        seller = cursor.fetchone()
+
+        completeMessage = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
+                                        buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
+        
+        print(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
+
+        cursor.execute(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
+        db.commit()
+        cursor.close()
+
+        return render_template('contact-seller.html', sessionUser=sessionUser)
 
 
 @app.route('/seller-inbox/<item_id>')
@@ -443,6 +464,17 @@ def admin_user_action(user_id, action):
         return redirect("/admin/" + str(session['sessionUser']['u_id']))
     else:
         abort(404)
+
+
+def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
+    completeMessage = "This is a message in regaurds to " + itemTitle
+    completeMessage += "\nWhich was posted at " + str(itemTS)
+    completeMessage += "\nFor the price of " + str(itemPrice)
+    completeMessage += messageBody + "\n\n"
+    completeMessage += buyerName + "\n"
+    completeMessage += buyerConact + "\n"
+
+    return completeMessage
 
 
 @app.errorhandler(404)

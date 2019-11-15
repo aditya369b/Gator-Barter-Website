@@ -1,6 +1,8 @@
 #!/usr/bin env python3
 
+import time
 localQuery = None
+
 
 class Query():
     def __init__(self):
@@ -128,7 +130,15 @@ class Query():
         WHERE i.i_id = """ + str(i_id) + """
         AND i.i_status > 0;"""
 
+    def INSERT_MESSAGE(self, m_text, m_sender_id, m_receiver_id, m_item_id):
+        return """
+        INSERT INTO `message`(m_text, m_sender_id, m_receiver_id, m_item_id, m_sent_ts  )
+        VALUES (\"""" + m_text + "\", " + str(m_sender_id) + ", " + str(m_receiver_id) + ", " + str(m_item_id) + ", '" + str(time.strftime('%Y-%m-%d %H:%M:%S')) + """');
+        """
+
+
 localQuery = Query()
+
 
 def query():
     return localQuery
