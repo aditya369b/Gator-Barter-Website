@@ -8,6 +8,7 @@ Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-lo
 
 import gatorProduct as product  # class made by alex
 import gatorUser as user
+import gatorMessage as message
 from queries import query
 
 from flask import Flask, render_template, request, session, redirect, url_for, abort
@@ -71,6 +72,7 @@ def home():
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
+    cursor.close()
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if 'sessionUser' in session:
         feedback = "Welcome Back " + \
@@ -136,6 +138,7 @@ def productPage(product_id):
 
     cursor.execute(query().USER_FOR_PRODUCT(product_id))
     userObject = cursor.fetchone()
+    cursor.close()
 
     productObject = product.makeProduct(data[0])
     try:
@@ -155,6 +158,7 @@ def selectCategory(categoryName):
 
     cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
     data = cursor.fetchall()
+    cursor.close()
 
     if len(data) == 0:
         abort(404)
@@ -181,6 +185,7 @@ def login():
 
         cursor.execute(query().GET_USER_BY_EMAIL(email))
         data = cursor.fetchone()
+        cursor.close()
         if data is None:
             print("User not found!")
             return render_template("login.html", code=404, message="Page Not Found")
@@ -232,6 +237,7 @@ def register():
         if d == 1:
             print("Registeration of" + email + "Successful")
             return redirect("/")
+        cursor.close()
 
     print("Simple Register Page Click")
     return render_template("register.html")
@@ -253,21 +259,59 @@ def item_posting():
 
 @app.route('/contact-seller')
 def contact_seller():
-    return render_template('contact-seller.html')
-
-
-@app.route('/seller-inbox')
-def seller_inbox():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if sessionUser == "":
+        abort(404)
+    
+    return render_template('contact-seller.html', sessionUser=sessionUser)
 
-    return render_template('seller-inbox.html', sessionUser=sessionUser)
+
+@app.route('/seller-inbox/<item_id>')
+def seller_inbox(item_id):
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if sessionUser == "":
+        abort(404)
+    cursor = getCursor()[1]
+    cursor.execute(query().GET_ITEM_MESSAGES(item_id))
+    data = cursor.fetchall()
+
+    print(data)
+
+    messageList = []
+
+    for d in data:
+        if len(d) > 3:
+            messageObject = message.makeMessage(d)
+            messageList.append(messageObject)
+
+    cursor.execute(query().APPROVED_ITEM(item_id))
+    data = cursor.fetchone()
+    cursor.close()
+
+    messageProduct = product.makeProduct(data)
+
+    
+
+    return render_template('seller-inbox.html', sessionUser=sessionUser, messages=messageList, messageProduct=messageProduct)
 
 
 @app.route("/user-dashboard")
 def user_dashboard():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if sessionUser == "":
+        abort(404)
+    cursor = getCursor()[1]
+    cursor.execute(query().PRODUCTS_FOR_USER(sessionUser['u_id']))
+    data = cursor.fetchall()
 
-    return render_template("user-dashboard.html", sessionUser=sessionUser)
+    productList = []
+
+    for d in data:
+        if len(d) == 16:
+            productObject = product.makeProduct(d)
+            productList.append(productObject)
+
+    return render_template("user-dashboard.html", sessionUser=sessionUser, productList=productList)
 
 
 @app.route("/admin-dashboard")

@@ -9,24 +9,22 @@
         <br>Seller Inbox
     </div>
 
+
     <hr>
+        <div class="row seller-inbox-product">
+            <div class="col-lg-2">
+                <img src="{{messageProduct.ii_url}}" alt="img-na">
+            </div>
 
-    <div class="row seller-inbox-product">
-        <div class="col-lg-2">
-            <img src="/static/images/image-na.png" alt="img-na">
+            <div class="col-lg-10">
+                <h4>{{messageProduct.i_title}}</h4>
+                <p>
+                    {{messageProduct.i_desc}}
+                </p>
+            </div>
         </div>
 
-        <div class="col-lg-10">
-            <h4>Item name</h4>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-        </div>
-    </div>
+    {% for message in messages %}
 
     <hr>
 
@@ -44,23 +42,17 @@
         <div class="col-lg-2">
             <div class="seller-inbox-buyer">
                 <span class=""></span>
-                <h5>Alan</h5>
-                <h6>@alanng</h6>
+                <h5>{{message.u_fname}}</h5>
+                <h6>@ {{message.u_fname}}_{{message.u_lname}}</h6>
             </div>
         </div>
         <div class="col-lg-10">
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim id est laborum.
+                {{message.m_text}}
             </p>
         </div>
     </div>
+    {% endfor %}
 
     <!-- <div class="row seller-inbox-msg">
             <div class="col-lg-2">
