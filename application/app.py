@@ -8,6 +8,7 @@ Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-lo
 
 import gatorProduct as product  # class made by alex
 import gatorUser as user
+import gatorMessage as message
 from queries import query
 
 from flask import Flask, render_template, request, session, redirect, url_for, abort
@@ -71,13 +72,21 @@ def home():
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
+    cursor.close()
+    otherFeedback = "" if 'otherFeedback' not in session else session['otherFeedback'] + " "
+    feedback = otherFeedback
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if 'sessionUser' in session:
-        feedback = "Welcome Back " + \
-            session['sessionUser']['u_fname'] + ", " + \
+        feedback += "Welcome Back " + \
+            session['sessionUser']['u_fname'] + " " + \
             session['sessionUser']['u_lname']
-    else:
-        feedback = ""
+    
+    feedback += "\nHere are the latest Items"
+
+    try:
+        session.pop('otherFeedback')
+    except KeyError:
+        pass
     return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
 
 
@@ -136,6 +145,7 @@ def productPage(product_id):
 
     cursor.execute(query().USER_FOR_PRODUCT(product_id))
     userObject = cursor.fetchone()
+    cursor.close()
 
     productObject = product.makeProduct(data[0])
     try:
@@ -155,6 +165,7 @@ def selectCategory(categoryName):
 
     cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
     data = cursor.fetchall()
+    cursor.close()
 
     if len(data) == 0:
         abort(404)
@@ -181,6 +192,7 @@ def login():
 
         cursor.execute(query().GET_USER_BY_EMAIL(email))
         data = cursor.fetchone()
+        cursor.close()
         if data is None:
             print("User not found!")
             return render_template("login.html", code=404, message="Page Not Found")
@@ -232,6 +244,7 @@ def register():
         if d == 1:
             print("Registeration of" + email + "Successful")
             return redirect("/")
+        cursor.close()
 
     print("Simple Register Page Click")
     return render_template("register.html")
@@ -251,23 +264,88 @@ def item_posting():
     return render_template('item-posting.html')
 
 
-@app.route('/contact-seller')
-def contact_seller():
-    return render_template('contact-seller.html')
-
-
-@app.route('/seller-inbox')
-def seller_inbox():
+@app.route('/contact-seller/<item_id>', methods=['GET', 'POST'])
+def contact_seller(item_id):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if sessionUser == "":
+        abort(404) # TODO lazy registration
+    print(request.form)
 
-    return render_template('seller-inbox.html', sessionUser=sessionUser)
+    if request.method == "GET":
+        print("WHY IS IT GET??")
+
+    if request.method == "POST":
+        buyerContact = str(bleach.clean(request.form['contactType']))
+        buyerMessage = str(bleach.clean(request.form['buyerMessage']))
+        print("EITHER")
+
+        cursor = getCursor()[1]
+        cursor.execute(query().APPROVED_ITEM(item_id))
+        item = product.makeProduct(cursor.fetchone())
+
+        cursor.execute(query().USER_FOR_PRODUCT(item_id))
+        seller = cursor.fetchone()
+
+        completeMessageList = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
+                                        buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
+        completeMessage = '\n'.join(message for message in completeMessageList)
+        
+        print(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
+
+        cursor.execute(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
+        db.commit()
+        cursor.close()
+        redirect("/")
+        session['otherFeedback'] = "Message Sent"
+        return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
+
+    return render_template('contact-seller.html', sessionUser=sessionUser, id=item_id)
+
+
+@app.route('/seller-inbox/<item_id>')
+def seller_inbox(item_id):
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if sessionUser == "":
+        abort(404)
+    cursor = getCursor()[1]
+    cursor.execute(query().GET_ITEM_MESSAGES(item_id))
+    data = cursor.fetchall()
+
+    print(data)
+
+    messageList = []
+
+    for d in data:
+        if len(d) > 3:
+            messageObject = message.makeMessage(d)
+            messageList.append(messageObject)
+
+    cursor.execute(query().APPROVED_ITEM(item_id))
+    data = cursor.fetchone()
+    cursor.close()
+
+    messageProduct = product.makeProduct(data)
+
+    return render_template('seller-inbox.html', sessionUser=sessionUser, messages=messageList, messageProduct=messageProduct)
 
 
 @app.route("/user-dashboard")
 def user_dashboard():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    if sessionUser == "":
+        abort(404)
+    cursor = getCursor()[1]
+    cursor.execute(query().PRODUCTS_FOR_USER(sessionUser['u_id']))
+    data = cursor.fetchall()
 
-    return render_template("user-dashboard.html", sessionUser=sessionUser)
+    productList = []
+
+    for d in data:
+        if len(d) == 16:
+            productObject = product.makeProduct(d)
+            productList.append(productObject)
+
+    return render_template("user-dashboard.html", sessionUser=sessionUser, productList=productList)
 
 
 @app.route("/admin-dashboard")
@@ -403,12 +481,23 @@ def admin_user_action(user_id, action):
         abort(404)
 
 
+def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
+    completeMessage = ["This is a message in regaurds to " + itemTitle]
+    completeMessage.append("Which was posted at " + str(itemTS))
+    completeMessage.append( "For the price of " + str(itemPrice))
+    completeMessage.append( messageBody)
+    completeMessage.append( buyerName )
+    completeMessage.append( buyerConact )
+
+    return completeMessage
+
+
 @app.errorhandler(404)
 def not_found(e):
     return render_template("errors/404.html", url_for_redirect="/")
 
 
 if __name__ == "__main__":
-#    server = Server(app.wsgi_app)   # PHILIPTEST
-#    server.serve()  # PHILIPTEST
-     app.run("0.0.0.0")
+    #    server = Server(app.wsgi_app)   # PHILIPTEST
+    #    server.serve()  # PHILIPTEST
+    app.run("0.0.0.0")

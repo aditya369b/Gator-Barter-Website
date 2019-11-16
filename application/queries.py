@@ -1,5 +1,8 @@
 #!/usr/bin env python3
 
+import time
+localQuery = None
+
 
 class Query():
     def __init__(self):
@@ -107,6 +110,35 @@ class Query():
     LIMIT """ + str(n) + """;
     """
 
+    def PRODUCTS_FOR_USER(self, u_id):
+        return """
+    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
+    FROM item AS i
+    JOIN item_image AS ii
+    ON i.i_id = ii.ii_i_id
+    JOIN category as c
+    ON c.c_id = i.i_c_id
+    WHERE i.i_u_id = """ + str(u_id) + """;"""
+
+    def GET_ITEM_MESSAGES(self, i_id):
+        return """
+        SELECT m.*, u.u_fname, u.u_lname, u.u_email FROM message AS m
+        JOIN item AS i
+        ON i.i_id = m.m_item_id
+        JOIN user AS u
+        ON m.m_sender_id = u.u_id
+        WHERE i.i_id = """ + str(i_id) + """
+        AND i.i_status > 0;"""
+
+    def INSERT_MESSAGE(self, m_text, m_sender_id, m_receiver_id, m_item_id):
+        return """
+        INSERT INTO `message`(m_text, m_sender_id, m_receiver_id, m_item_id, m_sent_ts  )
+        VALUES (\"""" + m_text + "\", " + str(m_sender_id) + ", " + str(m_receiver_id) + ", " + str(m_item_id) + ", '" + str(time.strftime('%Y-%m-%d %H:%M:%S')) + """');
+        """
+
+
+localQuery = Query()
+
 
 def query():
-    return Query()
+    return localQuery
