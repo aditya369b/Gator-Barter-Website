@@ -259,7 +259,7 @@ def register():
 def logout():
     try:
         session.pop('sessionUser')
-    except:
+    except KeyError:
         pass
     return redirect('/')
 
