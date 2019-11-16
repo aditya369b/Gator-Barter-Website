@@ -1,61 +1,59 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
 <!-- Main content -->
 <main>
-    <div class="edu-purpose-label">
-        "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration Only”
-        <br>Seller Inbox
+  <div class="edu-purpose-label">
+    "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration
+    Only”
+    <br />Seller Inbox
+  </div>
+
+  <hr />
+  <div class="row seller-inbox-product">
+    <div class="col-lg-2">
+      <img src="{{messageProduct.ii_url}}" alt="img-na" />
     </div>
 
+    <div class="col-lg-10">
+      <h4>{{messageProduct.i_title}}</h4>
+      <p>
+        {{messageProduct.i_desc}}
+      </p>
+    </div>
+  </div>
 
-    <hr>
-        <div class="row seller-inbox-product">
-            <div class="col-lg-2">
-                <img src="{{messageProduct.ii_url}}" alt="img-na">
-            </div>
+  {% for message in messages %}
 
-            <div class="col-lg-10">
-                <h4>{{messageProduct.i_title}}</h4>
-                <p>
-                    {{messageProduct.i_desc}}
-                </p>
-            </div>
-        </div>
+  <hr />
 
-    {% for message in messages %}
-
-    <hr>
-
-    <div class="row seller-inbox">
-        <div class="col-lg-2">
-            <h4>Buyer</h4>
-        </div>
-
-        <div class="col-lg-10">
-            <h4>Message</h4>
-        </div>
+  <div class="row seller-inbox">
+    <div class="col-lg-2">
+      <h4>Buyer</h4>
     </div>
 
-    <div class="row seller-inbox-msg">
-        <div class="col-lg-2">
-            <div class="seller-inbox-buyer">
-                <span class=""></span>
-                <h5>{{message.u_fname}}</h5>
-                <h6>@{{message.u_fname}}_{{message.u_lname}}</h6>
-                <h7> email: {{message.u_email}} </h7>
-            </div>
-        </div>
-        <div class="col-lg-10">
-            <p>
-                {{message.m_text}}
-            </p>
-        </div>
+    <div class="col-lg-10">
+      <h4>Message</h4>
     </div>
-    {% endfor %}
+  </div>
 
-    <!-- <div class="row seller-inbox-msg">
+  <div class="row seller-inbox-msg">
+    <div class="col-lg-2">
+      <div class="seller-inbox-buyer">
+        <span class=""></span>
+        <h5>{{message.u_fname}}</h5>
+        <h6>@{{message.u_fname}}_{{message.u_lname}}</h6>
+        <h7> email: {{message.u_email}} </h7>
+      </div>
+    </div>
+    <div class="col-lg-10">
+        <pre>
+            {{message.m_text}}
+        </pre>
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- <div class="row seller-inbox-msg">
             <div class="col-lg-2">
                 <div class="seller-inbox-buyer">
                     <h3>Richard</h3>
@@ -75,7 +73,6 @@
                 </p>
             </div>
         </div> -->
-
 </main>
 
 {% endblock %}
