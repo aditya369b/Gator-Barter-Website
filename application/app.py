@@ -11,7 +11,7 @@ import gatorUser as user
 import gatorMessage as message
 from queries import query
 
-from flask import Flask, render_template, request, session, redirect, url_for, abort
+from flask import Flask, render_template, request, session, redirect, url_for, abort, flash
 from about_info import dev
 import pymysql
 import jinja2
@@ -80,7 +80,7 @@ def home():
         feedback += "Welcome Back " + \
             session['sessionUser']['u_fname'] + " " + \
             session['sessionUser']['u_lname']
-    
+
     feedback += "\nHere are the latest Items"
 
     try:
@@ -194,6 +194,7 @@ def login():
         data = cursor.fetchone()
         cursor.close()
         if data is None:
+            flash("User not found!")
             print("User not found!")
             return render_template("login.html", code=404, message="Page Not Found")
         print(data)
@@ -201,10 +202,12 @@ def login():
 
         if pwd == userObject.u_pwd:
             print("Authentication Successful")
+            flash("Authentication Successful")
             session['sessionUser'] = userObject.toDict()
             return redirect("/")
         else:
             print("Authentication Failed!")
+            flash("Authentication Failed!")
             return render_template("login.html", code=401, message="Unauthorized")
 
     return render_template("login.html")
@@ -231,6 +234,7 @@ def register():
 
         if data is not None:
             print("Registeration of" + email + " Failed. User Already Exists!")
+            flash("Registeration of" + email + " Failed. User Already Exists!")
             return redirect("/login")
 
         # make new user row in db
@@ -243,6 +247,7 @@ def register():
         db.commit()
         if d == 1:
             print("Registeration of" + email + "Successful")
+            flash("Registeration of" + email + "Successful")
             return redirect("/")
         cursor.close()
 
