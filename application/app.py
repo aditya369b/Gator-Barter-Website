@@ -246,8 +246,8 @@ def register():
 
         db.commit()
         if d == 1:
-            print("Registeration of" + email + "Successful")
-            flash("Registeration of" + email + "Successful")
+            print("Registeration of", email, "Successful")
+            flash("Registeration of", email, "Successful")
             return redirect("/")
         cursor.close()
 
@@ -273,7 +273,7 @@ def item_posting():
 def contact_seller(item_id):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if sessionUser == "":
-        abort(404) # TODO lazy registration
+        abort(404)  # TODO lazy registration
     print(request.form)
 
     if request.method == "GET":
@@ -292,12 +292,14 @@ def contact_seller(item_id):
         seller = cursor.fetchone()
 
         completeMessageList = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
-                                        buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
+                                               buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
         completeMessage = '\n'.join(message for message in completeMessageList)
-        
-        print(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
 
-        cursor.execute(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
+        print(query().INSERT_MESSAGE(completeMessage,
+                                     sessionUser['u_id'], seller[0], item_id))
+
+        cursor.execute(query().INSERT_MESSAGE(completeMessage,
+                                              sessionUser['u_id'], seller[0], item_id))
         db.commit()
         cursor.close()
         redirect("/")
@@ -489,10 +491,10 @@ def admin_user_action(user_id, action):
 def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
     completeMessage = ["This is a message in regaurds to " + itemTitle]
     completeMessage.append("Which was posted at " + str(itemTS))
-    completeMessage.append( "For the price of " + str(itemPrice))
-    completeMessage.append( messageBody)
-    completeMessage.append( buyerName )
-    completeMessage.append( buyerConact )
+    completeMessage.append("For the price of " + str(itemPrice))
+    completeMessage.append(messageBody)
+    completeMessage.append(buyerName)
+    completeMessage.append(buyerConact)
 
     return completeMessage
 
