@@ -17,7 +17,7 @@ import pymysql
 import jinja2
 import bleach  # sql santization lib
 
-import hashlib
+from passlib.hash import sha256_crypt
 import time
 import os
 
@@ -29,14 +29,14 @@ app = Flask(__name__)
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
+                     app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -200,10 +200,11 @@ def login():
         print(data)
         userObject = user.makeUser(data)
 
-        if pwd == userObject.u_pwd:
+        if sha256_crypt.verify(pwd, userObject.u_pwd):
             print("Authentication Successful")
             flash("Authentication Successful")
             session['sessionUser'] = userObject.toDict()
+            session['sessionKey'] = int(time.time()*1000)
             return redirect("/")
         else:
             print("Authentication Failed!")
@@ -220,7 +221,7 @@ def register():
 
     if request.method == "POST":
         email = str(bleach.clean(request.form['email']))
-        password = str(bleach.clean(request.form['password']))
+        password = sha256_crypt.encrypt(str(bleach.clean(request.form['password'])))
         fname = str(bleach.clean(request.form['fname']))
         lname = str(bleach.clean(request.form['lname']))
         created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
@@ -247,7 +248,7 @@ def register():
         db.commit()
         if d == 1:
             print("Registeration of", email, "Successful")
-            flash("Registeration of", email, "Successful")
+            flash("Registeration of "+email, "Successful")
             return redirect("/")
         cursor.close()
 
