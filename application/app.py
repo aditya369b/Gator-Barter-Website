@@ -27,7 +27,7 @@ import os
 app = Flask(__name__)
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
@@ -36,7 +36,7 @@ app.secret_key = os.urandom(32)
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
+                     None, app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -234,8 +234,8 @@ def register():
         data = cursor.fetchone()
 
         if data is not None:
-            print("Registeration of" + email + " Failed. User Already Exists!")
-            flash("Registeration of" + email + " Failed. User Already Exists!")
+            print("Registeration of " + email + " Failed. User Already Exists!")
+            flash("Registeration of " + email + " Failed. User Already Exists!")
             return redirect("/login")
 
         # make new user row in db
@@ -248,7 +248,7 @@ def register():
         db.commit()
         if d == 1:
             print("Registeration of", email, "Successful")
-            flash("Registeration of "+email, "Successful")
+            flash("Registeration of "+email + " Successful")
             return redirect("/")
         cursor.close()
 
