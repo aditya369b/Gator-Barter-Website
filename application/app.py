@@ -11,13 +11,13 @@ import gatorUser as user
 import gatorMessage as message
 from queries import query
 
-from flask import Flask, render_template, request, session, redirect, url_for, abort
+from flask import Flask, render_template, request, session, redirect, url_for, abort, flash
 from about_info import dev
 import pymysql
 import jinja2
 import bleach  # sql santization lib
 
-import hashlib
+from passlib.hash import sha256_crypt
 import time
 import os
 
@@ -27,9 +27,9 @@ import os
 app = Flask(__name__)
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
@@ -80,7 +80,7 @@ def home():
         feedback += "Welcome Back " + \
             session['sessionUser']['u_fname'] + " " + \
             session['sessionUser']['u_lname']
-    
+
     feedback += "\nHere are the latest Items"
 
     try:
@@ -194,17 +194,25 @@ def login():
         data = cursor.fetchone()
         cursor.close()
         if data is None:
+            flash("User not found!")
             print("User not found!")
             return render_template("login.html", code=404, message="Page Not Found")
         print(data)
         userObject = user.makeUser(data)
 
-        if pwd == userObject.u_pwd:
+        if sha256_crypt.verify(pwd, userObject.u_pwd):
             print("Authentication Successful")
+            flash("Authentication Successful")
             session['sessionUser'] = userObject.toDict()
+            session['sessionKey'] = int(time.time()*1000)
+            if 'lazyRegistration' in session:
+                # session.pop('lazyRegistration')
+                # makeAndInsertMessageForSeller()
+                return redirect("/contact-seller/"+session['item_id'])
             return redirect("/")
         else:
             print("Authentication Failed!")
+            flash("Authentication Failed!")
             return render_template("login.html", code=401, message="Unauthorized")
 
     return render_template("login.html")
@@ -217,7 +225,8 @@ def register():
 
     if request.method == "POST":
         email = str(bleach.clean(request.form['email']))
-        password = str(bleach.clean(request.form['password']))
+        password = sha256_crypt.encrypt(
+            str(bleach.clean(request.form['password'])))
         fname = str(bleach.clean(request.form['fname']))
         lname = str(bleach.clean(request.form['lname']))
         created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
@@ -230,7 +239,10 @@ def register():
         data = cursor.fetchone()
 
         if data is not None:
-            print("Registeration of" + email + " Failed. User Already Exists!")
+            print("Registeration of " + email +
+                  " Failed. User Already Exists!")
+            flash("Registeration of " + email +
+                  " Failed. User Already Exists!")
             return redirect("/login")
 
         # make new user row in db
@@ -242,7 +254,14 @@ def register():
 
         db.commit()
         if d == 1:
-            print("Registeration of" + email + "Successful")
+            cursor.execute(query().GET_USER_BY_EMAIL(email))
+            session['sessionUser'] = user.makeUser(cursor.fetchone()).toDict()
+            print("Registeration of", email, "Successful")
+            flash("Registeration of "+email + " Successful")
+            session['sessionKey'] = int(time.time()*1000)
+            if 'lazyRegistration' in session:
+                # session.pop('lazyRegistration')
+                return redirect("/contact-seller/"+session["item_id"])
             return redirect("/")
         cursor.close()
 
@@ -254,7 +273,7 @@ def register():
 def logout():
     try:
         session.pop('sessionUser')
-    except:
+    except KeyError:
         pass
     return redirect('/')
 
@@ -267,36 +286,31 @@ def item_posting():
 @app.route('/contact-seller/<item_id>', methods=['GET', 'POST'])
 def contact_seller(item_id):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-    if sessionUser == "":
-        abort(404) # TODO lazy registration
-    print(request.form)
+    # if sessionUser == "":
+    #     abort(404)  # TODO lazy registration
+    if 'lazyRegistration' in session:
+        makeAndInsertMessageForSeller(
+            session['buyerContact'], session['buyerMessage'], item_id, sessionUser)
+        session.pop('lazyRegistration')
+        return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
 
     if request.method == "GET":
-        print("WHY IS IT GET??")
+        print("Got a Get")
 
     if request.method == "POST":
         buyerContact = str(bleach.clean(request.form['contactType']))
         buyerMessage = str(bleach.clean(request.form['buyerMessage']))
-        print("EITHER")
 
-        cursor = getCursor()[1]
-        cursor.execute(query().APPROVED_ITEM(item_id))
-        item = product.makeProduct(cursor.fetchone())
-
-        cursor.execute(query().USER_FOR_PRODUCT(item_id))
-        seller = cursor.fetchone()
-
-        completeMessageList = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
-                                        buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
-        completeMessage = '\n'.join(message for message in completeMessageList)
-        
-        print(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
-
-        cursor.execute(query().INSERT_MESSAGE(completeMessage, sessionUser['u_id'], seller[0], item_id))
-        db.commit()
-        cursor.close()
-        redirect("/")
-        session['otherFeedback'] = "Message Sent"
+        isRegistered = not sessionUser == ""
+        session['item_id'] = item_id
+        if not isRegistered:
+            session['lazyRegistration'] = True
+            session['buyerContact'] = buyerContact
+            session['buyerMessage'] = buyerMessage
+            print("going to login?")
+            return redirect("/login")
+        makeAndInsertMessageForSeller(
+            buyerContact, buyerMessage, item_id)
         return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
 
     return render_template('contact-seller.html', sessionUser=sessionUser, id=item_id)
@@ -484,12 +498,34 @@ def admin_user_action(user_id, action):
 def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
     completeMessage = ["This is a message in regaurds to " + itemTitle]
     completeMessage.append("Which was posted at " + str(itemTS))
-    completeMessage.append( "For the price of " + str(itemPrice))
-    completeMessage.append( messageBody)
-    completeMessage.append( buyerName )
-    completeMessage.append( buyerConact )
+    completeMessage.append("For the price of " + str(itemPrice))
+    completeMessage.append(messageBody)
+    completeMessage.append(buyerName)
+    completeMessage.append(buyerConact)
 
     return completeMessage
+
+
+def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
+    cursor = getCursor()[1]
+    cursor.execute(query().APPROVED_ITEM(item_id))
+    item = product.makeProduct(cursor.fetchone())
+
+    cursor.execute(query().USER_FOR_PRODUCT(item_id))
+    seller = cursor.fetchone()
+
+    completeMessageList = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
+                                           buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
+    completeMessage = '\n'.join(message for message in completeMessageList)
+
+    print(query().INSERT_MESSAGE(completeMessage,
+                                 sessionUser['u_id'], seller[0], item_id))
+
+    cursor.execute(query().INSERT_MESSAGE(completeMessage,
+                                          sessionUser['u_id'], seller[0], item_id))
+    db.commit()
+    cursor.close()
+    session['otherFeedback'] = "Message Sent"
 
 
 @app.errorhandler(404)
