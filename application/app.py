@@ -534,7 +534,6 @@ def not_found(e):
 
 
 if __name__ == "__main__":
-
     #    server = Server(app.wsgi_app)   # PHILIPTEST
     #    server.serve()  # PHILIPTEST
     app.run("0.0.0.0")

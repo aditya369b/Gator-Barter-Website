@@ -16,6 +16,18 @@ function isTradable(tradable) {
     }
 }
 
+// var condition = $("#yesTradable").is(":checked");
+// var condition2 = $("#noTradable").is(":checked");
+var showFields = $("#showDiv").css("visibility", "visible");
+var hideFields = $("#showDiv").css("visibility", "hidden");
+
+function showWishlist() {
+    return showFields;
+
+function hideWishlist() {
+    return hideFields;
+}
+
 // Choose images
 function chooseFile() {
     $("#fileInput").click();
