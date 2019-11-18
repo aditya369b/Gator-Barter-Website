@@ -17,11 +17,12 @@ import pymysql
 import jinja2
 import bleach  # sql santization lib
 
-import hashlib
+from passlib.hash import sha256_crypt
 import time
 import calendar
 import os
-
+import base64
+import uuid
 
 from werkzeug.utils import secure_filename  ## for input picture loading
 
@@ -32,19 +33,20 @@ from werkzeug.utils import secure_filename  ## for input picture loading
 app = Flask(__name__)
 
 ALLOWED_EXTENSIONS = set([ 'pdf', 'png', 'jpg', 'jpeg'])
+session_file = []
 
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
+                     'Password123', app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -167,6 +169,7 @@ def productPage(product_id):
 
 @app.route("/categories/<categoryName>", methods=["POST", "GET"])
 def selectCategory(categoryName):
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
     cursor = getCursor()[1]
     print(categoryName)
@@ -185,7 +188,7 @@ def selectCategory(categoryName):
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    return render_template("home.html", products=productList, feedback=categoryName)
+    return render_template("home.html", products=productList, feedback=categoryName, sessionUser=sessionUser)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -208,10 +211,19 @@ def login():
         print(data)
         userObject = user.makeUser(data)
 
-        if pwd == userObject.u_pwd:
+        if sha256_crypt.verify(pwd, userObject.u_pwd):
             print("Authentication Successful")
             flash("Authentication Successful")
             session['sessionUser'] = userObject.toDict()
+            session['sessionKey'] = int(time.time()*1000)
+            if 'lazyRegistration' in session:
+                # session.pop('lazyRegistration')
+                # makeAndInsertMessageForSeller()
+                if session['lazyPage'] == 'contact-seller':
+                    return redirect("/contact-seller/"+session['item_id'])
+                elif session['lazyPage'] == 'item-posting':
+                    return redirect("/item-posting")
+
             return redirect("/")
         else:
             print("Authentication Failed!")
@@ -228,7 +240,8 @@ def register():
 
     if request.method == "POST":
         email = str(bleach.clean(request.form['email']))
-        password = str(bleach.clean(request.form['password']))
+        password = sha256_crypt.encrypt(
+            str(bleach.clean(request.form['password'])))
         fname = str(bleach.clean(request.form['fname']))
         lname = str(bleach.clean(request.form['lname']))
         created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
@@ -241,8 +254,10 @@ def register():
         data = cursor.fetchone()
 
         if data is not None:
-            print("Registeration of" + email + " Failed. User Already Exists!")
-            flash("Registeration of" + email + " Failed. User Already Exists!")
+            print("Registeration of " + email +
+                  " Failed. User Already Exists!")
+            flash("Registeration of " + email +
+                  " Failed. User Already Exists!")
             return redirect("/login")
 
         # make new user row in db
@@ -254,8 +269,18 @@ def register():
 
         db.commit()
         if d == 1:
+            cursor.execute(query().GET_USER_BY_EMAIL(email))
+            session['sessionUser'] = user.makeUser(cursor.fetchone()).toDict()
             print("Registeration of", email, "Successful")
-            flash("Registeration of", email, "Successful")
+            flash("Registeration of "+email + " Successful")
+            session['sessionKey'] = int(time.time()*1000)
+            if 'lazyRegistration' in session:
+                # session.pop('lazyRegistration')
+                if session['lazyPage'] == 'contact-seller':
+                    return redirect("/contact-seller/"+session['item_id'])
+                elif session['lazyPage'] == 'item-posting':
+                    return redirect("/item-posting")
+
             return redirect("/")
         cursor.close()
 
@@ -279,12 +304,24 @@ def allowed_file(filename):
 @app.route("/item-posting", methods=["POST", "GET"])
 def item_posting():
 
-    cursor = db.cursor()
+    # cursor = db.cursor()
     print(request.form)
     formsLen = len(request.form)
     images_path = []
 
+    if 'lazyRegistration' in session:
+        print('session file is: ',session_file)
+        insertItemPost(session['item_name'], session['item_category'], session['item_desc'],
+                         session['item_price'], session['is_tradable'], session['item_images'],
+                          session['sessionUser'],True)
+        session_file.clear()
+        session.pop('lazyRegistration')
+        session.pop('lazyPage')
+        print('Rediret from lazy login to home')
+        return render_template('home.html', sessionUser=session['sessionUser'], id=-1)
 
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    # print("Session user", sessionUser)
 
     if request.method == "POST":
         if request.form:
@@ -296,86 +333,54 @@ def item_posting():
             item_desc = request.form['item_desc']
             item_price = request.form['item_price']
             is_tradable = request.form['tradable']
-
-            sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-            print("Session user", sessionUser)
-
+            item_images = []
             if sessionUser == "":
-                return redirect('/login')  ### redirect to login page and add logic here for lazy registration
-            else:
-                user_id = session['sessionUser']['u_id']  ### else get current logged in user's user id
-
-            # print("Please find below details entered by user :", item_name, item_category, item_price, item_desc, is_tradable)
-
-            #### image uploading
-            # if request.form['category'] == 'Electronic':
-            #     UPLOAD_FOLDER = 'static/images/Electronic'
-            #     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-            #
-            # elif request.form['category'] == 'Furniture':
-            #     UPLOAD_FOLDER = 'static/images/Furniture'
-            #     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-            #
-            # elif request.form['category'] == 'Other':
-            #     UPLOAD_FOLDER = 'static/images/Other'
-            #     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-            UPLOAD_FOLDER = 'static/images/'+ request.form['category']        ## store image in separate folder as per category
+                session['item_images'] = []
+            
+            UPLOAD_FOLDER = 'static/images/'+ item_category        ## store image in separate folder as per category
             app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-            print ("Print request.files[1]", request.files,"  and the type is: ", type(request.files))
-
-            query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status) ' \
-                    'VALUES("' + item_name + '", ' \
-                    '"' + item_desc + '", ' \
-                    '"' + item_price + '", ' \
-                    '"' + is_tradable + '",' \
-                    ' "' + str(user_id) + '' \
-                    '", (SELECT c_id from category where c_name="' \
-                    '' + item_category + '"), 0 )'
-
-            print(query)
-            data = cursor.execute(query)
-
-            print("printing response from query", data)
-
-            cursor_id = cursor.lastrowid
-            print("ID", cursor_id)
-
-            unique_variable = 0
-
             for file in request.files.getlist('file'):
-            # file = request.files['file']
-            #     print("single file ")
                 if file.filename == '':
                     print('No file selected for uploading')
+                else:
+                    # session['item_image'].append(base64.b64encode(file.read()).decode('ascii'))
+                    if sessionUser == "":
+                        # session_file.append(file)
+            
+                        if file and allowed_file(file.filename):
 
-                print("printing file:", file)
-                if file and allowed_file(file.filename):
-
-                    filename = secure_filename(file.filename)
+                            filename = secure_filename(file.filename)
 
                     ### unique filename
-                    filename = str(user_id) + '_' + str(cursor_id) + '_' + str(unique_variable) + '.' +filename.rsplit('.', 1)[1].lower()
+                        uuid_val = uuid.uuid1()
+                        filename = str(uuid_val) + '.' +filename.rsplit('.', 1)[1].lower()
+                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        print("file path from item-posting post req is:",file_path)
+                        # file = open(file,"wr")
+                        file.save(file_path)
+                        session['item_images'].append(file_path)
+                    else:
+                        item_images.append(file)
+        
 
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            if sessionUser == "" :
+                session['lazyRegistration'] = True
+                session['lazyPage'] = 'item-posting'
+                session['item_name'] = item_name
+                session['item_category'] = item_category
+                session['item_desc'] = item_desc
+                session['item_price'] = item_price
+                session['is_tradable'] = is_tradable
+                # session['item_userid'] = 
+                # session['item_images'] = None #item_images
+                
+                print("going to login?")
+                return redirect("/login")                
 
-                    images_path.append(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-                unique_variable += 1
-        #####
-
-            for path in images_path:
-
-                query = 'insert into item_image(ii_url,ii_i_id) values("/'+path+'",'+str(cursor_id)+')'
-                print (query)
-                cursor.execute(query)
-            db.commit()
-
-    print("Item has been sent to admin for approval!")
-
-    cursor.close()
-
+            else:
+                # sessionUser = session['sessionUser']
+                insertItemPost(item_name, item_category, item_desc, item_price, is_tradable, item_images, sessionUser, False)
 
 
     if request.method == "GET":
@@ -387,38 +392,33 @@ def item_posting():
 @app.route('/contact-seller/<item_id>', methods=['GET', 'POST'])
 def contact_seller(item_id):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-    if sessionUser == "":
-        abort(404)  # TODO lazy registration
-    print(request.form)
+    # if sessionUser == "":
+    #     abort(404)  # TODO lazy registration
+    if 'lazyRegistration' in session:
+        makeAndInsertMessageForSeller(
+            session['buyerContact'], session['buyerMessage'], item_id, sessionUser)
+        session.pop('lazyRegistration')
+        session.pop('lazyPage')
+        return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
 
     if request.method == "GET":
-        print("WHY IS IT GET??")
+        print("Got a Get")
 
     if request.method == "POST":
         buyerContact = str(bleach.clean(request.form['contactType']))
         buyerMessage = str(bleach.clean(request.form['buyerMessage']))
-        print("EITHER")
 
-        cursor = getCursor()[1]
-        cursor.execute(query().APPROVED_ITEM(item_id))
-        item = product.makeProduct(cursor.fetchone())
-
-        cursor.execute(query().USER_FOR_PRODUCT(item_id))
-        seller = cursor.fetchone()
-
-        completeMessageList = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
-                                               buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
-        completeMessage = '\n'.join(message for message in completeMessageList)
-
-        print(query().INSERT_MESSAGE(completeMessage,
-                                     sessionUser['u_id'], seller[0], item_id))
-
-        cursor.execute(query().INSERT_MESSAGE(completeMessage,
-                                              sessionUser['u_id'], seller[0], item_id))
-        db.commit()
-        cursor.close()
-        redirect("/")
-        session['otherFeedback'] = "Message Sent"
+        isRegistered = not sessionUser == ""
+        session['item_id'] = item_id
+        if not isRegistered:
+            session['lazyRegistration'] = True
+            session['lazyPage'] = 'contact-seller'
+            session['buyerContact'] = buyerContact
+            session['buyerMessage'] = buyerMessage
+            print("going to login?")
+            return redirect("/login")
+        makeAndInsertMessageForSeller(
+            buyerContact, buyerMessage, item_id, sessionUser)
         return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
 
     return render_template('contact-seller.html', sessionUser=sessionUser, id=item_id)
@@ -602,6 +602,81 @@ def admin_user_action(user_id, action):
     else:
         abort(404)
 
+def insertItemPost(item_name, item_category, item_desc, item_price, is_tradable, item_images, sessionUser, isLazyReg):
+
+            cursor = db.cursor()
+            user_id = sessionUser['u_id']  ### else get current logged in user's user id
+            images_path = []
+
+            UPLOAD_FOLDER = 'static/images/'+ item_category        ## store image in separate folder as per category
+            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+            print('Upload folder is: ',UPLOAD_FOLDER)
+            print('App config Upload folder is: ',app.config['UPLOAD_FOLDER'])
+
+            # print ("Print request.files[1]", request.files,"  and the type is: ", type(request.files))
+
+            query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status) ' \
+                    'VALUES("' + item_name + '", ' \
+                    '"' + item_desc + '", ' \
+                    '"' + item_price + '", ' \
+                    '"' + is_tradable + '",' \
+                    ' "' + str(user_id) + '' \
+                    '", (SELECT c_id from category where c_name="' \
+                    '' + item_category + '"), 0 )'
+
+            print(query)
+            data = cursor.execute(query)
+
+            print("printing response from query", data)
+
+            cursor_id = cursor.lastrowid
+            print("ID", cursor_id)
+
+            unique_variable = 0
+
+            if isLazyReg:
+                for file in item_images:
+                    # file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
+                    filename = str(user_id) + '_' + str(cursor_id) + '_' + str(unique_variable) + '.' +file.rsplit('.', 1)[1].lower()
+                    new_path = file.rsplit('/',1)[0] + filename
+                    print("The os rename values are: ",file," and ",new_path)
+                    os.rename(file,new_path)
+                    images_path.append(new_path)
+            else:
+                for file in item_images:
+                # file = request.files['file']
+                #     print("single file ")
+                    # file = base64.b64decode(file)
+
+                    # print("printing file:", file)
+                    if file and allowed_file(file.filename):
+
+                        filename = secure_filename(file.filename)
+
+                        ### unique filename
+                        filename = str(user_id) + '_' + str(cursor_id) + '_' + str(unique_variable) + '.' +filename.rsplit('.', 1)[1].lower()
+                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        print("file path is:",file_path)
+                        # file = open(file,"wr")
+                        file.save(file_path)
+
+                        images_path.append(file_path)
+
+                unique_variable += 1
+        #####
+
+            for path in images_path:
+
+                query = 'insert into item_image(ii_url,ii_i_id) values("/'+path+'",'+str(cursor_id)+')'
+                print (query)
+                cursor.execute(query)
+            db.commit()
+
+    # print("Item has been sent to admin for approval!")
+
+            cursor.close()
+
+
 
 def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
     completeMessage = ["This is a message in regaurds to " + itemTitle]
@@ -614,7 +689,26 @@ def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, ite
     return completeMessage
 
 
+def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
+    cursor = getCursor()[1]
+    cursor.execute(query().APPROVED_ITEM(item_id))
+    item = product.makeProduct(cursor.fetchone())
 
+    cursor.execute(query().USER_FOR_PRODUCT(item_id))
+    seller = cursor.fetchone()
+
+    completeMessageList = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
+                                           buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
+    completeMessage = '\n'.join(message for message in completeMessageList)
+
+    print(query().INSERT_MESSAGE(completeMessage,
+                                 sessionUser['u_id'], seller[0], item_id))
+
+    cursor.execute(query().INSERT_MESSAGE(completeMessage,
+                                          sessionUser['u_id'], seller[0], item_id))
+    db.commit()
+    cursor.close()
+    session['otherFeedback'] = "Message Sent"
 
 
 @app.errorhandler(404)
@@ -623,6 +717,7 @@ def not_found(e):
 
 
 if __name__ == "__main__":
+
     #    server = Server(app.wsgi_app)   # PHILIPTEST
     #    server.serve()  # PHILIPTEST
     app.run("0.0.0.0")
