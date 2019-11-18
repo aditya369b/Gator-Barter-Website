@@ -22,7 +22,7 @@ from passlib.hash import sha256_crypt
 import time
 import os
 
-# from livereload import Server   # PHILIPTEST
+from livereload import Server   # PHILIPTEST
 
 
 app = Flask(__name__)
@@ -30,9 +30,9 @@ app = Flask(__name__)
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
+
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
