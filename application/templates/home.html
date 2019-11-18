@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -10,8 +7,38 @@
     <div class="edu-purpose-label">
         "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration Only”
     </div>
-    <div class="feedback">
-        {{feedback}}
+
+    <div class="dropdown-fb-col">
+        <span class="sort-dropdown">
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown">Sort By</button>
+    
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="/"><i class="fas fa-sort-alpha-down"> Alphabetical: A to Z</i></a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/"><i class="fas fa-sort-alpha-up"> Alphabetical: Z to A</i></a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/"><i class="fas fa-money-bill-alt"> Price: Low to High</i></a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/"><i class="fas fa-money-bill"> Price: High to Low</i></a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/"><i class="fas fa-history"> Date: Oldest</i></a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/"><i class="fas fa-clock"> Date: Newest</i></a>
+                    </li>
+                </ul>
+            </div>
+        </span>
+    
+        <span class="feedback">
+            {{feedback}}
+        </span>
     </div>
 
     <div class="container-fluid content-row">

@@ -58,10 +58,6 @@ a:hover {
     font-size: 2rem;
 }
 
-.dropdown-menu {
-    text-align: right;
-}
-
 .dropdown-menu li a:hover {
     background-color: #FFCC33;
 }
@@ -120,11 +116,26 @@ input {
 
 .feedback {
     font-style: italic;
-    padding: 0.5rem 1.5rem;
-    text-align: right;
-    margin: 0;
+    float: right;
+    font-size: 1.25rem;
 }
 
+.sort-dropdown {
+    float: left;
+}
+
+.sort-dropdown div button {
+    background-color: #330033;
+    color: #FFCC33;
+    padding: 0.5rem 4.5rem;
+}
+
+.dropdown-fb-col {
+    display: block;
+    padding-bottom: 4rem;
+    margin: 0 1rem;
+    /* margin: 0 1rem; */
+}
 
 /* Listing Section */
 
@@ -238,6 +249,13 @@ footer {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Contact Seller Section */
+
+.contact-seller {
+    text-align: center;
+    margin: 0 2rem;
 }
 
 /* Item Posting Section */
@@ -418,6 +436,141 @@ input[type=checkbox] {
     margin: 2rem;
 }
 
+/* User Dashboard Section */
+
+.seller-listing {
+    border-radius: 25px;
+    border: 1px solid #330033;
+    padding: 20px;
+    margin: 0.5rem 0;
+}
+
+.item-img-col {
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.item-desc-col {
+    margin: 1rem 0;
+    vertical-align: text-bottom;
+    text-align: left;
+}
+
+.item-cond-col {
+    margin: 1rem 0;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.item-cond-col h5 {
+    text-align: left;
+}
+
+.item-cond-col h5 span {
+    float: right;
+}
+
+.item-cond-col a .fa-envelope {
+    color: white;
+}
+
+.sold-checkbox h5 {
+    text-align: left;
+    vertical-align: top;
+    padding: 6px 2px 0 2px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #28a745;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #28a745;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Seller Inbox Section */
+
+.seller-inbox-product {
+    margin: 1rem 2rem;
+}
+
+.seller-inbox-product img {
+    max-width: 250px;
+    max-height: 200px;
+}
+
+.seller-inbox {
+    margin: 1rem 2rem;
+    text-align: center;
+}
+
+.seller-inbox-msg {
+    margin: 1rem 2rem;
+    border-radius: 25px;
+    background-color: #FFCC33;
+}
+
+.seller-inbox-msg p {
+    padding: 20px 0;
+}
+
+.seller-inbox-buyer {
+    padding: 30px 0;
+    text-align: center;
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
 /* about page stuff*/
 .abouttext {
     font-size: 24px;
@@ -469,3 +622,22 @@ input[type=checkbox] {
     color: black;
     text-align: center;
 }
+
+/* Extra small devices (< 576px; phone) */
+@media screen and (max-width: 575px) {}
+
+/* Small devices (≥ 576px; phone) */
+@media screen and (max-width: 767px) {
+    .item-desc-col {
+        text-align: center;
+    }
+}
+
+/* Medium devices (≥ 768px; tablet) */
+@media (max-width: 991px) {}
+
+/* Large devices (≥ 992px; desktop) */
+@media (max-width: 1199px) {}
+
+/* Extra large devices (≥ 1200px; wide desktop) */
+@media (min-width: 1200px) {}
