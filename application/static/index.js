@@ -16,15 +16,13 @@ function isTradable(tradable) {
     }
 }
 
-// var condition = $("#yesTradable").is(":checked");
-// var condition2 = $("#noTradable").is(":checked");
-var showFields = $("#showDiv").css("visibility", "visible");
-var hideFields = $("#showDiv").css("visibility", "hidden");
-
 function showWishlist() {
+    var showFields = $("#showDiv").css("display", "block");
     return showFields;
+}
 
 function hideWishlist() {
+    var hideFields = $("#showDiv").css("display", "none");
     return hideFields;
 }
 
