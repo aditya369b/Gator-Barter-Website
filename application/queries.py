@@ -106,7 +106,7 @@ class Query():
     ON c.c_id = i.i_c_id
     WHERE i.i_status = 1
     AND i.i_created_ts IS NOT NULL
-    ORDER BY i.i_created_ts
+    ORDER BY i.i_created_ts DESC
     LIMIT """ + str(n) + """;
     """
 
