@@ -331,6 +331,10 @@ footer {
     margin: 0.5rem 0;
 }
 
+.radio-spacing {
+    padding-right: 0.3rem;
+}
+
 /* Login Section */
 
 #login-page {
