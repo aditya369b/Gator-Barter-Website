@@ -613,16 +613,18 @@ def insertItemPost(item_name, item_category, item_desc, item_price, is_tradable,
             print('Upload folder is: ',UPLOAD_FOLDER)
             print('App config Upload folder is: ',app.config['UPLOAD_FOLDER'])
 
+            ts = time.strftime('%Y-%m-%d %H:%M:%S')
+
             # print ("Print request.files[1]", request.files,"  and the type is: ", type(request.files))
 
-            query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status) ' \
+            query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status, i_created_ts, i_updated_ts) ' \
                     'VALUES("' + item_name + '", ' \
                     '"' + item_desc + '", ' \
                     '"' + item_price + '", ' \
                     '"' + is_tradable + '",' \
                     ' "' + str(user_id) + '' \
                     '", (SELECT c_id from category where c_name="' \
-                    '' + item_category + '"), 0 )'
+                    '' + item_category + '"), 0, \'' +  ts + "\', \'" + ts + '\'  );'
 
             print(query)
             data = cursor.execute(query)
