@@ -33,26 +33,38 @@
 
 <body>
 
-    <form id="item-posting-page" class="col-sm-10" action="/item-posting.php" method="post">
+    <form id="item-posting-page" class="col-sm-10" action="/item-posting" method="post" name="item_form" onsubmit="return validateForm()" enctype="multipart/form-data">
+
         <div class="form-group">
-            <input type="text" class="form-control" id="item-name" placeholder="Item name">
+            <input type="text" class="form-control" id="item-name" name="item_title" placeholder="Item name">
         </div>
 
         <div class="dropdown show">
-            <a class="btn btn-warning dropdown-toggle item-category-toggle" href="#" role="button" id="dropdownMenuLink"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Item category
-            </a>
+            <!--<a class="btn btn-warning dropdown-toggle item-category-toggle" href="#" role="button" id="dropdownMenuLink"-->
+                <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                <!--Item category-->
+            <!--</a>-->
 
-            <div class="dropdown-menu dropdown-menu-right item-category-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item category-item" href="#"><i class="fas fa-laptop"> Electronic</i></a>
-                <a class="dropdown-item category-item" href="#"><i class="fas fa-couch"> Furniture</i></a>
-                <a class="dropdown-item category-item" href="#"><i class="fas fa-question-circle"> Other</i></a>
-            </div>
+            <!--<div class="dropdown-menu dropdown-menu-right item-category-menu" aria-labelledby="dropdownMenuLink">-->
+                <!--<a class="dropdown-item category-item" href="#"><i class="fas fa-laptop"> Electronic</i></a>-->
+                <!--<a class="dropdown-item category-item" href="#"><i class="fas fa-couch"> Furniture</i></a>-->
+                <!--<a class="dropdown-item category-item" href="#"><i class="fas fa-question-circle"> Other</i></a>-->
+            <!--</div>-->
+            <select name="category">
+                    <option value="">select category</option>
+                    <option value="Electronic">Electronic</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Other">Other</option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <input type="number" class="form-control" id="item-price" name="item_price" placeholder="Item price">
         </div>
 
         <div class="form-group item-desc-field">
-            <textarea class="form-control" id="item-desc" rows="10"
+            <textarea class="form-control" id="item-desc" name="item_desc" rows="10"
                 placeholder="Add a description for the item you are listing..."></textarea>
         </div>
 
@@ -61,19 +73,30 @@
             <p>Drag your item photos here</p>
             <p>&#151; or &#151;</p>
             <div style="height:0px;overflow:hidden">
-                <input type="file" id="fileInput" name="fileInput" />
+                <input type="file" id="fileInput" name="file" accept="image/*" multiple/>
             </div>
             <button type="button" onclick="chooseFile();">Select a photo from your computer</button>
+            <!--&lt;!&ndash;<p>&ndash;&gt;-->
+	            <!--{% with messages = get_flashed_messages() %}-->
+	                <!--{% if messages %}-->
+                        <!--<ul class=flashes>-->
+		                <!--{% for message in messages %}-->
+		                    <!--<li>{{ message }}</li>-->
+		                <!--{% endfor %}-->
+		                <!--</ul>-->
+	                <!--{% endif %}-->
+	            <!--{% endwith %}-->
+            <!--&lt;!&ndash;</p>&ndash;&gt;-->
         </div>
 
         <div class="tradable-check">
             <p>Would you like to trade items from your wish list for this item?</p>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="yesOption" id="yesOption1" value="option1" checked>
+                <input class="form-check-input" type="radio" name="tradable" id="yesOption1" value="1">
                 <label class="form-check-label" for="yesOption1"> Yes</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="noOption" id="noOption2" value="option2">
+                <input class="form-check-input" type="radio" name="tradable" id="noOption2" value="0">
                 <label class="form-check-label" for="noOption2"> No</label>
             </div>
         </div>
@@ -92,6 +115,46 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Custom JS -->
     <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
+
+    <script>
+        function validateForm() {
+            if (document.forms["item_form"]["item_title"].value == "")
+            {
+                alert("Title must be filled out");
+                return false;
+            }
+            if(document.forms["item_form"]["category"].value == "")
+            {
+                alert("Category must be filled out");
+                return false;
+            }
+            if(document.forms["item_form"]["item_desc"].value == "")
+            {
+                alert("Description must be filled out");
+                return false;
+            }
+            if(document.forms["item_form"]["item_price"].value == "")
+            {
+                alert("Price must be filled out. Put 0 if, it is a free give away.");
+                return false;
+            }
+
+            if(document.forms["item_form"]["tradable"].value == "")
+            {
+                alert("Select appropriate option for - Would you like to trade this item?");
+                return false;
+            }
+
+            if(document.forms["item_form"]["fileInput"].value == "")
+            {
+                alert("Select a picture of item you wish to sell!");
+                return false;
+            }
+
+            return true;
+        }
+</script>
+
 </body>
 
 </html>
