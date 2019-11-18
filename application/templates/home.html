@@ -36,9 +36,16 @@
             </div>
         </span>
     
-        <span class="feedback">
-            {{feedback}}
-        </span>
+    <div class="feedback">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class="list-unstyled">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %} </ul>
+            {% endif %}
+            {% endwith %}
+        {{feedback}}
     </div>
 
     <div class="container-fluid content-row">
@@ -68,6 +75,7 @@
                                     Tradable
                                 </div>
                             </div>
+
                         </div>
 
                         <div class="card-text">
@@ -79,6 +87,8 @@
                             onclick="window.open('/products/{{imageRedirect}}')">More Details</a>
                     </div>
                 </div>
+                {% endfor %}
+                <!-- Load all item listings -->
             </div>
             {% endfor %}
             <!-- Load all item listings -->
