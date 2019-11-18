@@ -1,5 +1,6 @@
-INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("jsmith@mail.sfsu.edu", "passsword","Joe", "Smith", 0);
-INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("jstevens@mail.sfsu.edu", "passsword","Jane", "Stevens", 0);
-INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("ealderson@mail.sfsu.edu", "passsword","Elliot", "Alderson", 1);
-INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("jhenry@mail.sfsu.edu", "passsword","Jack", "Henry", 0);
-INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("sadams@mail.sfsu.edu", "passsword","Sam", "Adams", 0);
+INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("jsmith@mail.sfsu.edu", "$5$rounds=535000$nuXafy8TPvKtl4Vz$kcAMJ5u/WgzQzl4fRqUMecwm3gEFr0GyM7GBZe/Mlo4","Joe", "Smith", 0);
+INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("jstevens@mail.sfsu.edu", "$5$rounds=535000$8LT7xqCFxQLiFJpm$lPXqv6/NFGyQ..ICUwA.lhi3vibEC/XLIoKOY/wkOM8","Jane", "Stevens", 0);
+INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("ealderson@mail.sfsu.edu", "$5$rounds=535000$6vzQgodnzXsTn/Bw$ZmM6r8CJql6A6GWZ4LGaOquF5qYsxA76Lhlb2y8ICkC","Elliot", "Alderson", 1);
+INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("jhenry@mail.sfsu.edu", "$5$rounds=535000$TyeHSqrmIQ1LZdsU$uObTUjAFzRXjJBZ9q6pbizU/XRPzCxkoAoqWGsc885A","Jack", "Henry", 0);
+INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("sadams@mail.sfsu.edu", "$5$rounds=535000$kx8rJDsweerxoAos$9wg3wB8hcabQQDLU70Mc5w28w0I2l3Fi3EHNEgrJUA8","Sam", "Adams", 0);
+INSERT INTO `user`(u_email, u_pass, u_fname,  u_lname, u_is_admin ) VALUES ("rhendricks@mail.sfsu.edu", "$5$rounds=535000$TbmxAKoHrnHX9/pt$fzowOSWjtlxqZI9gFm4ESBMfmbl6iD37197rp.0lQ58","Richard", "Hendricks", 1);

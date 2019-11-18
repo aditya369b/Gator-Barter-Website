@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Main content -->
+<main>
+    <div class="edu-purpose-label">
+        "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration Only”
+        <br>User Dashboard
+    </div>
+
+    <ul class="nav nav-pills nav-justified nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="pill" href="#item">Item</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Item Tab -->
+        <div id="item" class="tab-pane container-fluid active tab-content">
+            <!-- Load items -->
+            <div class="container-fluid content-row seller-listing">
+
+                {% for product in productList %}
+                <div class="row">
+                    <!-- Item image column -->
+                    <div class="col-lg-2">
+                        <img class="item-img-col" src="{{product.ii_url}}" alt="image-na">
+                    </div>
+                    <!-- Item name description column -->
+                    <div class="col-lg-7">
+                        <div class="item-desc-col">
+                            <h4>{{product.i_title}}</h4>
+
+                            <p>
+                                {{product.i_desc}}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Item condition column -->
+                    <div class="col-lg-3">
+                        <div class="item-cond-col">
+                            <h5>Status: <span>
+                            {% if product.i_status == 0 %}
+                                Pending
+                            {% elif product.i_status == 1 %}
+                                Approved
+                            {% elif product.i_status == -1 %}
+                                Rejected
+                            {% elif product.i_status == 2 %}
+                                Sold
+                            {% else %}
+                                Unknown Status Code: {{product.i_status}}
+                            {% endif %}
+                            
+                            </span></h5>
+
+                            <a class="btn btn-success btn-block" href="/user-dashboard/{{product.i_id}}/sold">
+                                <i class="fas fa-check-circle"> Mark Item as Sold</i>
+                            </a>
+
+                            <a class="btn btn-info btn-block" href="/seller-inbox/{{product.i_id}}">
+                                <i class="fas fa-envelope"> Inbox</i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</main>
+
+{% endblock %}

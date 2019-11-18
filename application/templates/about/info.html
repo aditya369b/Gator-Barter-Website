@@ -1,40 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+{% extends "base.html" %}
 
-<head>
-  <meta charset="utf-8">
-  <title>About Us</title>
-
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/6ab52acb52.js"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
-  <!-- CSS Stylesheets -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/stylesheet.css') }}">
-
-</head>
-
-<body>
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">Gater Barter</a>
-      </div>
-      <ul class="nav navbar-nav">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Register</a></li>
-        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
-    </div>
-  </nav>
+{% block content %}
   <!-- Member Description Template -->
   <section id="member-desc">
-    <div class="container-fluid">
+    <div class="container-fluid" style="text-align:center">
       <img src={{ image }} alt="man" class="avatar">
       <!-- Change to your full name -->
       <h2>{{ name }}</h2>
@@ -44,13 +13,12 @@
         <div class="col-md-4">
         </div>
         <div class="col-md-4">
-          <p style="">
+          <p>
             <!-- Add description in here -->
             {{ description }}
           </p>
         </div>
       </div>
-
 
       <a href={{ linkedin }}><i class="social-icon fab fa-linkedin"></i></a>
       <a href={{ github }}><i class="social-icon fab fa-github"></i></a>
@@ -58,8 +26,5 @@
     </div>
   </section>
 
-  <!-- Footer -->
+  {% endblock %}
 
-</body>
-
-</html>
