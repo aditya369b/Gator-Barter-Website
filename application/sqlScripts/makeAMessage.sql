@@ -1,0 +1,1 @@
+INSERT INTO `message`(m_text, m_sender_id, m_receiver_id, m_item_id, m_sent_ts  ) VALUES ("Hello, I am interested in the Black Couch\n Please reach out to me.\n- Jane Stevens", 2, 1, 7, "2019-11-14 12:16:30");
