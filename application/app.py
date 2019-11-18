@@ -19,15 +19,23 @@ import bleach  # sql santization lib
 
 from passlib.hash import sha256_crypt
 import time
+import calendar
 import os
+
+
+from werkzeug.utils import secure_filename  ## for input picture loading
+
 
 # from livereload import Server   # PHILIPTEST
 
 
 app = Flask(__name__)
 
+ALLOWED_EXTENSIONS = set([ 'pdf', 'png', 'jpg', 'jpeg'])
+
+
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = None
+app.config['MYSQL_DATABASE_PASSWORD'] = 'Password123'
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
@@ -36,7 +44,7 @@ app.secret_key = os.urandom(32)
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
+                     app.config['MYSQL_DATABASE_PASSWORD'], app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -278,9 +286,116 @@ def logout():
     return redirect('/')
 
 
-@app.route('/item-posting')
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route("/item-posting", methods=["POST", "GET"])
 def item_posting():
-    return render_template('item-posting.html')
+
+    cursor = db.cursor()
+    print(request.form)
+    formsLen = len(request.form)
+    images_path = []
+
+
+
+    if request.method == "POST":
+        if request.form:
+            print("printing request form", request.form)
+
+        if formsLen > 0:
+            item_name = request.form['item_title']
+            item_category = request.form['category']
+            item_desc = request.form['item_desc']
+            item_price = request.form['item_price']
+            is_tradable = request.form['tradable']
+
+            sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+            print("Session user", sessionUser)
+
+            if sessionUser == "":
+                return redirect('/login')  ### redirect to login page and add logic here for lazy registration
+            else:
+                user_id = session['sessionUser']['u_id']  ### else get current logged in user's user id
+
+            # print("Please find below details entered by user :", item_name, item_category, item_price, item_desc, is_tradable)
+
+            #### image uploading
+            # if request.form['category'] == 'Electronic':
+            #     UPLOAD_FOLDER = 'static/images/Electronic'
+            #     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+            #
+            # elif request.form['category'] == 'Furniture':
+            #     UPLOAD_FOLDER = 'static/images/Furniture'
+            #     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+            #
+            # elif request.form['category'] == 'Other':
+            #     UPLOAD_FOLDER = 'static/images/Other'
+            #     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+            UPLOAD_FOLDER = 'static/images/'+ request.form['category']        ## store image in separate folder as per category
+            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+            print ("Print request.files[1]", request.files,"  and the type is: ", type(request.files))
+
+            query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status) ' \
+                    'VALUES("' + item_name + '", ' \
+                    '"' + item_desc + '", ' \
+                    '"' + item_price + '", ' \
+                    '"' + is_tradable + '",' \
+                    ' "' + str(user_id) + '' \
+                    '", (SELECT c_id from category where c_name="' \
+                    '' + item_category + '"), 0 )'
+
+            print(query)
+            data = cursor.execute(query)
+
+            print("printing response from query", data)
+
+            cursor_id = cursor.lastrowid
+            print("ID", cursor_id)
+
+            unique_variable = 0
+
+            for file in request.files.getlist('file'):
+            # file = request.files['file']
+            #     print("single file ")
+                if file.filename == '':
+                    print('No file selected for uploading')
+
+                print("printing file:", file)
+                if file and allowed_file(file.filename):
+
+                    filename = secure_filename(file.filename)
+
+                    ### unique filename
+                    filename = str(user_id) + '_' + str(cursor_id) + '_' + str(unique_variable) + '.' +filename.rsplit('.', 1)[1].lower()
+
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                    images_path.append(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                unique_variable += 1
+        #####
+
+            for path in images_path:
+
+                query = 'insert into item_image(ii_url,ii_i_id) values("/'+path+'",'+str(cursor_id)+')'
+                print (query)
+                cursor.execute(query)
+            db.commit()
+
+    print("Item has been sent to admin for approval!")
+
+    cursor.close()
+
+
+
+    if request.method == "GET":
+        return render_template("item-posting.html")
+
+    return redirect('/')
 
 
 @app.route('/contact-seller/<item_id>', methods=['GET', 'POST'])
@@ -310,7 +425,7 @@ def contact_seller(item_id):
             print("going to login?")
             return redirect("/login")
         makeAndInsertMessageForSeller(
-            buyerContact, buyerMessage, item_id)
+            buyerContact, buyerMessage, item_id, sessionUser)
         return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
 
     return render_template('contact-seller.html', sessionUser=sessionUser, id=item_id)
