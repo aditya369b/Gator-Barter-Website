@@ -164,6 +164,22 @@ input {
     background-color: #330033;
 }
 
+/* .more-details-btn {
+    margin: 0 auto;
+    position: absolute;
+    bottom: -1;
+} */
+
+.show-more-btn {
+    margin: 0 auto 1rem auto;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    color: #FFCC33;
+    background-color: #330033;
+}
+
 /* Footer Section */
 
 footer {
@@ -384,8 +400,6 @@ input[type=checkbox] {
     text-align: center;
     margin: 1.5rem 0;
 }
-
-/* Admin Dashboard Section */
 
 .nav-tabs .nav-item .nav-link {
     color: black;

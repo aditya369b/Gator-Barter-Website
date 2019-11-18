@@ -47,6 +47,5 @@ class Product():
         'c_status' : self.c_status
         }
 
-
 def makeProduct(productTuple):
     return Product(*productTuple)
