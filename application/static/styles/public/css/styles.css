@@ -58,10 +58,6 @@ a:hover {
     font-size: 2rem;
 }
 
-.dropdown-menu {
-    text-align: right;
-}
-
 .dropdown-menu li a:hover {
     background-color: #FFCC33;
 }
@@ -119,12 +115,27 @@ input {
 }
 
 .feedback {
-    font-style: italic;
-    padding: 0.5rem 1.5rem;
-    text-align: right;
-    margin: 0;
+    font-style: italic;	    font-style: italic;
+    padding: 0.5rem 1.5rem;	    float: right;
+    text-align: right;	    font-size: 1.25rem;
+    margin: 0;	}
+
+.sort-dropdown {
+    float: left;
 }
 
+.sort-dropdown div button {
+    background-color: #330033;
+    color: #FFCC33;
+    padding: 0.5rem 4.5rem;
+}
+
+.dropdown-fb-col {
+    display: block;
+    padding-bottom: 4rem;
+    margin: 0 1rem;
+    /* margin: 0 1rem; */
+}
 
 /* Listing Section */
 
