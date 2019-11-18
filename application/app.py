@@ -167,6 +167,7 @@ def productPage(product_id):
 
 @app.route("/categories/<categoryName>", methods=["POST", "GET"])
 def selectCategory(categoryName):
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
     cursor = getCursor()[1]
     print(categoryName)
@@ -185,7 +186,7 @@ def selectCategory(categoryName):
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    return render_template("home.html", products=productList, feedback=categoryName)
+    return render_template("home.html", products=productList, feedback=categoryName, sessionUser=sessionUser)
 
 
 @app.route("/login", methods=['GET', 'POST'])
