@@ -39,14 +39,14 @@ session_file = []
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     'Password123', app.config['MYSQL_DATABASE_DB'])
+                     None, app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
