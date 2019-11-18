@@ -332,7 +332,7 @@ def item_posting():
             item_category = request.form['category']
             item_desc = request.form['item_desc']
             item_price = request.form['item_price']
-            is_tradable = request.form['tradable']
+            is_tradable = str(1) if 'isTradable' in request.form else str(0)
             item_images = []
             if sessionUser == "":
                 session['item_images'] = []
