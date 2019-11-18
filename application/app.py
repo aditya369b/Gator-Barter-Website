@@ -16,7 +16,6 @@ from about_info import dev
 import pymysql
 import jinja2
 import bleach  # sql santization lib
-# from livereload import Server   # PHILIPTEST
 
 from passlib.hash import sha256_crypt
 import time
@@ -30,7 +29,6 @@ app = Flask(__name__)
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
@@ -60,6 +58,7 @@ print("Database version : %s " % data)
 cursor.execute(query().TEST_USER)
 # sessionUser = user.makeUser(cursor.fetchone())
 cursor.close()
+
 
 @app.route("/", methods=["POST", "GET"])
 def home():
@@ -138,6 +137,7 @@ def productPage(product_id):
 
     cursor = getCursor()[1]
     product_id = str(bleach.clean(product_id))  # sanitizing a bad redirect
+
     cursor.execute(query().APPROVED_ITEM(product_id))
     data = cursor.fetchall()
     if len(data) == 0:
@@ -267,6 +267,7 @@ def register():
 
     print("Simple Register Page Click")
     return render_template("register.html")
+
 
 @app.route("/logout")
 def logout():
@@ -427,18 +428,9 @@ def admin_page(user_id):
             productObject = product.makeProduct(d)
             approvedProducts.append(productObject)
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
     return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts)
 
-    query = """
-    SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
-    FROM item AS i
-    JOIN item_image AS ii
-    ON i.i_id = ii.ii_i_id
-    JOIN category as c
-    ON c.c_id = i.i_c_id
-    WHERE i.i_status = 0
-    AND i.i_sold_ts IS NULL;
-    """
 
 @app.route("/admin/item/<item_id>/<action>")
 def admin_item_action(item_id, action):
@@ -479,16 +471,6 @@ def admin_item_action(item_id, action):
     else:
         abort(404)
 
-@app.route("/admin/item/<item_id>/<action>")
-def admin_item_action(item_id, action):
-    item_id = int(item_id)
-    if testUser.u_id < 1:
-        abort(404)
-    connection, cursor = makeCursor()
-    print(connection, cursor)
-    cursor.execute("SELECT MAX(item.i_id) FROM item")
-    data = cursor.fetchone()
-    print(data)
 
 @app.route("/admin/user/<user_id>/<action>")
 def admin_user_action(user_id, action):
@@ -523,16 +505,6 @@ def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, ite
 
     return completeMessage
 
-@app.route("/admin/user/<user_id>/<action>")
-def admin_user_action(user_id, action):
-    user_id = int(user_id)
-    if testUser.u_id < 1:
-        abort(404)
-    connection, cursor = makeCursor()
-    cursor.execute("SELECT MAX(user.u_id) FROM user")
-
-    if not 0 < user_id <= int(cursor.fetchone()[0]):
-        abort(404)
 
 def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
     cursor = getCursor()[1]
