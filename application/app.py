@@ -46,7 +46,7 @@ app.secret_key = os.urandom(32)
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
+                     None , app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -638,7 +638,7 @@ def insertItemPost(item_name, item_category, item_desc, item_price, is_tradable,
                 for file in item_images:
                     # file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
                     filename = str(user_id) + '_' + str(cursor_id) + '_' + str(unique_variable) + '.' +file.rsplit('.', 1)[1].lower()
-                    new_path = file.rsplit('/',1)[0] + filename
+                    new_path = file.rsplit('/',1)[0] + '/' + filename
                     print("The os rename values are: ",file," and ",new_path)
                     os.rename(file,new_path)
                     images_path.append(new_path)
