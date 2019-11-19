@@ -25,7 +25,7 @@
 
 
 ## Configuration Information
-1. Server URL - https://3.132.140.242
+1. Server URL - https://gatorbater.store (IP: 3.132.140.242)
 2. SSH username - ubuntu
 3. SSH key - Uploaded to the credentials folder.
 4. Instructions on how to use the above information are as follows:
