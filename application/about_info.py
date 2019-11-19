@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+
+"""
+File used to make the about pages dynamic
+dictionary objects that the main file uses
+
+Made by Team Lead
+"""
+
 desc_abodi = 'I am a Computer Science Graduate student at San Francisco State University. I have worked in Database Administration domain for 1.5 years at Cognizant Technology Solutions. I will be leading the Software Engineering team to build a website for an online market place for SF state students.'
 desc_akasar = "Pursuing Master's in Computer Science from San Francisco State University. Worked as a Software Engineer in Spring Computing Technologies using Java platform."
 desc_akohanim = "Experienced Teaching Assistant with a demonstrated history of working in the higher education industry. Skilled in Microsoft Word, Discrete Mathematics, Java, HTML, and Leadership. Strong education professional with a Bachelor's degree focused in Computer Science from San Francisco State University."

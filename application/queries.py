@@ -1,5 +1,14 @@
 #!/usr/bin env python3
 
+"""
+Querries for the data basse
+
+Some are dynamic and take in a paramater. 
+ideally we will have all the queries in here
+but currently some still reside in the main file
+
+"""
+
 import time
 localQuery = None
 
@@ -106,7 +115,7 @@ class Query():
     ON c.c_id = i.i_c_id
     WHERE i.i_status = 1
     AND i.i_created_ts IS NOT NULL
-    ORDER BY i.i_created_ts
+    ORDER BY i.i_created_ts DESC
     LIMIT """ + str(n) + """;
     """
 

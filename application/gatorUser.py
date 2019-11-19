@@ -2,7 +2,15 @@ from flask import json, jsonify
 
 import time
 
+"""
+User class to dynamically use data retrieved from the data base
 
+toDict() method used for the session dictionary bacause Dictionary 
+objects are hashable
+
+Timestamps are used in ISO format
+
+"""
 class User():
     def __init__(
             self,
