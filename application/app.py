@@ -1,4 +1,17 @@
 """
+Main Python File for running Flask
+Handels the routs and backend logic
+
+Session used with a unique key per thread keeping user session persistant.
+Please consult Back-End Lead if any questions arise from this file
+
+item status:
+-2 - removed
+-1 - rejected 
+0 - pending
+1 - approved
+2 - sold
+
 Template Taken From: https://github.com/tecladocode/simple-flask-template-app by Alex Kohanim
 More blog posts from the original author: https://blog.tecladocode.com/
 Might incorperate some features mentioned in the blog post(s)

@@ -1,5 +1,12 @@
 from flask import json, jsonify
 
+"""
+Product class to dynamically use data retrieved from the data base
+
+toDict() method used for the session dictionary bacause Dictionary 
+objects are hashable
+
+"""
 
 class Product():
     def __init__(
