@@ -12,7 +12,7 @@
         <div class="dropdown-fb-col">
             <span class="sort-dropdown">
                 <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown">Sort By</button>
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown">{{sortOption}}</button>
 
                     <ul class="dropdown-menu">
                         <li>
@@ -41,15 +41,20 @@
             </span>
 
             <div class="feedback">
+                <ul class="list-unstyled">
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                <ul class="list-unstyled">
                     {% for message in messages %}
                     <li>{{ message }}</li>
-                    {% endfor %} </ul>
+                    {% endfor %} 
                 {% endif %}
                 {% endwith %}
-                {{feedback}}
+                {% for feed in feedback %}
+                    {% if feed|length > 0 %}
+                     <li>{{feed}}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
             </div>
         </div>
 
