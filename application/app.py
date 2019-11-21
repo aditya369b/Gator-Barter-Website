@@ -12,6 +12,7 @@ item status:
 1 - approved
 2 - sold
 
+
 Template Taken From: https://github.com/tecladocode/simple-flask-template-app by Alex Kohanim
 More blog posts from the original author: https://blog.tecladocode.com/
 Might incorperate some features mentioned in the blog post(s)
@@ -37,7 +38,7 @@ import os
 import base64
 import uuid
 
-from werkzeug.utils import secure_filename  ## for input picture loading
+from werkzeug.utils import secure_filename  # for input picture loading
 
 
 # from livereload import Server   # PHILIPTEST
@@ -45,7 +46,7 @@ from werkzeug.utils import secure_filename  ## for input picture loading
 
 app = Flask(__name__)
 
-ALLOWED_EXTENSIONS = set([ 'pdf', 'png', 'jpg', 'jpeg'])
+ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
 session_file = []
 
 
@@ -59,7 +60,7 @@ app.secret_key = os.urandom(32)
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None , app.config['MYSQL_DATABASE_DB'])
+                     None, app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -85,32 +86,64 @@ cursor.close()
 
 @app.route("/", methods=["POST", "GET"])
 def home():
+    n = 5  # number of most recent items to grab
     productList = []
     cursor = getCursor()[1]
-    cursor.execute(query().MOST_RECENT_ITEMS(5))
+    cursor.execute(query().MOST_RECENT_ITEMS(n))
     data = cursor.fetchall()
-
+    feedback = []
     for d in data:
         if len(d) == 16:
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
     cursor.close()
-    otherFeedback = "" if 'otherFeedback' not in session else session['otherFeedback'] + " "
-    feedback = otherFeedback
+    feedback.append("" if 'otherFeedback' not in session else session['otherFeedback'])
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if 'sessionUser' in session:
-        feedback += "Welcome Back " + \
+        feedback.append("Welcome Back " + \
             session['sessionUser']['u_fname'] + " " + \
-            session['sessionUser']['u_lname']
+            session['sessionUser']['u_lname'])
 
-    feedback += "\nHere are the latest Items"
+    feedback.append("Here are the latest Items")
 
     try:
         session.pop('otherFeedback')
     except KeyError:
         pass
-    return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
+#  Reseting filter options
+    if 'currentCategory' in session:
+        session.pop('currentCategory')
+    if 'sortOption' in session:
+        session.pop('sortOption')
+# Storing previous query for filtering
+    session['previousQuery'] = [product.toDict() for product in productList]
+
+    return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
+
+
+@app.route('/apply_filter/<filter_type>')
+def applyFilter(filter_type):
+    session['sortOption'] = filter_type
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    feedback = []
+    cursor = getCursor()[1]
+
+    if 'previousQuery' in session:
+        data = session['previousQuery']
+    else:
+        cursor.execute(query().ALL_APPROVED_LISTINGS())
+        data = [product.makeProduct(d).toDict() for d in cursor.fetchall()]
+
+    if 'currentCategory' in session:
+        feedback.append(session['currentCategory'])
+        data = [d for d in data if d['c_name'] == session['currentCategory']]
+
+    data = filter_data(data, filter_type)
+    feedback.append(filter_type)
+    
+    return render_template("home.html", products=data,sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'] )
 
 
 @app.route('/results', methods=['POST', 'GET'])
@@ -122,7 +155,7 @@ def searchPage():
 
     formsLen = len(request.form)
 
-    feedback, data = "", ""
+    feedback, data = [], ""
     if formsLen > 0:
         search = request.form['text']
 
@@ -135,7 +168,7 @@ def searchPage():
 
     if len(data) == 0:
         if formsLen > 0:
-            feedback = "No Results, Consider these Items"
+            feedback.append("No Results, Consider these Items")
         cursor.execute(query().ALL_APPROVED_LISTINGS())
         data = cursor.fetchall()
     cursor.close()
@@ -144,15 +177,55 @@ def searchPage():
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
-    if feedback == "" and formsLen != 0:
+
+    session['previousQuery'] = [productObject.toDict() for productObject in productList]
+
+    if 'currentCategory' in  session:
+        session.pop('currentCategory')
+    data = session['previousQuery']
+
+    if len(feedback) == 0 and formsLen != 0:
         if len(data) == 1:
-            feedback = str(len(data)) + " Result Found"
+            feedback.append(str(len(data)) + " Result Found")
         else:
-            feedback = str(len(data)) + " Results Found"
+            feedback.append(str(len(data)) + " Results Found")
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
-    return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
+
+
+@app.route("/categories/<categoryName>", methods=["POST", "GET"])
+def selectCategory(categoryName):
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    cursor = getCursor()[1]
+    print(categoryName)
+    feedback = []
+
+    if 'previousQuery' in session:  # Some sort of filtering before
+        data = session['previousQuery']
+        print("data from  prev query in Category ", data)
+    else:
+        cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
+        data = [product.makeProduct(d).toDict() for d in cursor.fetchall()]
+    cursor.close()
+
+    data = [d for d in data if d['c_name'] == categoryName]
+
+    if len(data) == 0:
+        feedback.append("No Results Found, Consider these")
+        data = session['previousQuery']
+    else:
+        feedback.append(categoryName)
+
+    session['currentCategory'] = categoryName
+    productList = []
+
+    if 'sortOption' in session:
+        data = filter_data(data, session['sortOption'])
+
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
 
 
 @app.route("/products/<product_id>", methods=["POST", "GET"])
@@ -178,30 +251,6 @@ def productPage(product_id):
         abort(404)
     print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
-
-
-@app.route("/categories/<categoryName>", methods=["POST", "GET"])
-def selectCategory(categoryName):
-    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-
-    cursor = getCursor()[1]
-    print(categoryName)
-
-    cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
-    data = cursor.fetchall()
-    cursor.close()
-
-    if len(data) == 0:
-        abort(404)
-
-    productList = []
-
-    for d in data:
-        if len(d) > 11:
-            productObject = product.makeProduct(d)
-            productList.append(productObject)
-
-    return render_template("home.html", products=productList, feedback=categoryName, sessionUser=sessionUser)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -323,10 +372,10 @@ def item_posting():
     images_path = []
 
     if 'lazyRegistration' in session:
-        print('session file is: ',session_file)
+        print('session file is: ', session_file)
         insertItemPost(session['item_name'], session['item_category'], session['item_desc'],
-                         session['item_price'], session['is_tradable'], session['item_images'],
-                          session['sessionUser'],True)
+                       session['item_price'], session['is_tradable'], session['item_images'],
+                       session['sessionUser'], True)
         session_file.clear()
         session.pop('lazyRegistration')
         session.pop('lazyPage')
@@ -349,8 +398,9 @@ def item_posting():
             item_images = []
             if sessionUser == "":
                 session['item_images'] = []
-            
-            UPLOAD_FOLDER = 'static/images/'+ item_category        ## store image in separate folder as per category
+
+            # store image in separate folder as per category
+            UPLOAD_FOLDER = 'static/images/' + item_category
             app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
             for file in request.files.getlist('file'):
@@ -360,24 +410,25 @@ def item_posting():
                     # session['item_image'].append(base64.b64encode(file.read()).decode('ascii'))
                     if sessionUser == "":
                         # session_file.append(file)
-            
+
                         if file and allowed_file(file.filename):
 
                             filename = secure_filename(file.filename)
 
-                    ### unique filename
+                    # unique filename
                         uuid_val = uuid.uuid1()
-                        filename = str(uuid_val) + '.' +filename.rsplit('.', 1)[1].lower()
-                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        print("file path from item-posting post req is:",file_path)
+                        filename = str(uuid_val) + '.' + \
+                            filename.rsplit('.', 1)[1].lower()
+                        file_path = os.path.join(
+                            app.config['UPLOAD_FOLDER'], filename)
+                        print("file path from item-posting post req is:", file_path)
                         # file = open(file,"wr")
                         file.save(file_path)
                         session['item_images'].append(file_path)
                     else:
                         item_images.append(file)
-        
 
-            if sessionUser == "" :
+            if sessionUser == "":
                 session['lazyRegistration'] = True
                 session['lazyPage'] = 'item-posting'
                 session['item_name'] = item_name
@@ -385,16 +436,16 @@ def item_posting():
                 session['item_desc'] = item_desc
                 session['item_price'] = item_price
                 session['is_tradable'] = is_tradable
-                # session['item_userid'] = 
+                # session['item_userid'] =
                 # session['item_images'] = None #item_images
-                
+
                 print("going to login?")
-                return redirect("/login")                
+                return redirect("/login")
 
             else:
                 # sessionUser = session['sessionUser']
-                insertItemPost(item_name, item_category, item_desc, item_price, is_tradable, item_images, sessionUser, False)
-
+                insertItemPost(item_name, item_category, item_desc,
+                               item_price, is_tradable, item_images, sessionUser, False)
 
     if request.method == "GET":
         return render_template("item-posting.html")
@@ -615,82 +666,87 @@ def admin_user_action(user_id, action):
     else:
         abort(404)
 
+
 def insertItemPost(item_name, item_category, item_desc, item_price, is_tradable, item_images, sessionUser, isLazyReg):
 
-            cursor = db.cursor()
-            user_id = sessionUser['u_id']  ### else get current logged in user's user id
-            images_path = []
+    cursor = db.cursor()
+    user_id = sessionUser['u_id']  # else get current logged in user's user id
+    images_path = []
 
-            UPLOAD_FOLDER = 'static/images/'+ item_category        ## store image in separate folder as per category
-            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-            print('Upload folder is: ',UPLOAD_FOLDER)
-            print('App config Upload folder is: ',app.config['UPLOAD_FOLDER'])
+    # store image in separate folder as per category
+    UPLOAD_FOLDER = 'static/images/' + item_category
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    print('Upload folder is: ', UPLOAD_FOLDER)
+    print('App config Upload folder is: ', app.config['UPLOAD_FOLDER'])
 
-            ts = time.strftime('%Y-%m-%d %H:%M:%S')
+    ts = time.strftime('%Y-%m-%d %H:%M:%S')
 
-            # print ("Print request.files[1]", request.files,"  and the type is: ", type(request.files))
+    # print ("Print request.files[1]", request.files,"  and the type is: ", type(request.files))
 
-            query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status, i_created_ts, i_updated_ts) ' \
-                    'VALUES("' + item_name + '", ' \
-                    '"' + item_desc + '", ' \
-                    '"' + item_price + '", ' \
-                    '"' + is_tradable + '",' \
-                    ' "' + str(user_id) + '' \
-                    '", (SELECT c_id from category where c_name="' \
-                    '' + item_category + '"), 0, \'' +  ts + "\', \'" + ts + '\'  );'
+    query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status, i_created_ts, i_updated_ts) ' \
+            'VALUES("' + item_name + '", ' \
+            '"' + item_desc + '", ' \
+            '"' + item_price + '", ' \
+            '"' + is_tradable + '",' \
+            ' "' + str(user_id) + '' \
+            '", (SELECT c_id from category where c_name="' \
+            '' + item_category + '"), 0, \'' + ts + "\', \'" + ts + '\'  );'
 
-            print(query)
-            data = cursor.execute(query)
+    print(query)
+    data = cursor.execute(query)
 
-            print("printing response from query", data)
+    print("printing response from query", data)
 
-            cursor_id = cursor.lastrowid
-            print("ID", cursor_id)
+    cursor_id = cursor.lastrowid
+    print("ID", cursor_id)
 
-            unique_variable = 0
+    unique_variable = 0
 
-            if isLazyReg:
-                for file in item_images:
+    if isLazyReg:
+        for file in item_images:
                     # file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
-                    filename = str(user_id) + '_' + str(cursor_id) + '_' + str(unique_variable) + '.' +file.rsplit('.', 1)[1].lower()
-                    new_path = file.rsplit('/',1)[0] + '/' + filename
-                    print("The os rename values are: ",file," and ",new_path)
-                    os.rename(file,new_path)
-                    images_path.append(new_path)
-            else:
-                for file in item_images:
-                # file = request.files['file']
-                #     print("single file ")
-                    # file = base64.b64decode(file)
+            filename = str(user_id) + '_' + str(cursor_id) + '_' + \
+                str(unique_variable) + '.' + file.rsplit('.', 1)[1].lower()
+            new_path = file.rsplit('/', 1)[0] + '/' + filename
+            print("The os rename values are: ", file, " and ", new_path)
+            os.rename(file, new_path)
+            images_path.append(new_path)
+    else:
+        for file in item_images:
+            # file = request.files['file']
+            #     print("single file ")
+            # file = base64.b64decode(file)
 
-                    # print("printing file:", file)
-                    if file and allowed_file(file.filename):
+            # print("printing file:", file)
+            if file and allowed_file(file.filename):
 
-                        filename = secure_filename(file.filename)
+                filename = secure_filename(file.filename)
 
-                        ### unique filename
-                        filename = str(user_id) + '_' + str(cursor_id) + '_' + str(unique_variable) + '.' +filename.rsplit('.', 1)[1].lower()
-                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        print("file path is:",file_path)
-                        # file = open(file,"wr")
-                        file.save(file_path)
+                # unique filename
+                filename = str(user_id) + '_' + str(cursor_id) + '_' + \
+                    str(unique_variable) + '.' + \
+                    filename.rsplit('.', 1)[1].lower()
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                print("file path is:", file_path)
+                # file = open(file,"wr")
+                file.save(file_path)
 
-                        images_path.append(file_path)
+                images_path.append(file_path)
 
-                unique_variable += 1
+        unique_variable += 1
         #####
 
-            for path in images_path:
+    for path in images_path:
 
-                query = 'insert into item_image(ii_url,ii_i_id) values("/'+path+'",'+str(cursor_id)+')'
-                print (query)
-                cursor.execute(query)
-            db.commit()
+        query = 'insert into item_image(ii_url,ii_i_id) values("/' + \
+            path+'",'+str(cursor_id)+')'
+        print(query)
+        cursor.execute(query)
+    db.commit()
 
     # print("Item has been sent to admin for approval!")
 
-            cursor.close()
-
+    cursor.close()
 
 
 def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
@@ -703,6 +759,22 @@ def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, ite
 
     return completeMessage
 
+def filter_data(data, filter_type):
+    if filter_type == "alpha_desc":
+        data = sorted(data, key=lambda k: k['i_title'])
+    elif filter_type == "alpha_asc":
+        data = sorted(data, key=lambda k: k['i_title'], reverse=True) 
+    elif filter_type == "price_asc":
+        data = sorted(data, key=lambda k: k['i_price']) 
+    elif filter_type == "price_desc":
+        data = sorted(data, key=lambda k: k['i_price'], reverse=True)
+    elif filter_type == "date_asc":
+        data = sorted(data, key=lambda k: k['i_create_ts'])  
+    elif filter_type == "date_desc":
+        data = sorted(data, key=lambda k: k['i_create_ts'], reverse=True)
+    else:
+        abort(404)
+    return data
 
 def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
     cursor = getCursor()[1]
