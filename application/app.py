@@ -98,12 +98,13 @@ def home():
             productList.append(productObject)
 
     cursor.close()
-    feedback.append("" if 'otherFeedback' not in session else session['otherFeedback'])
+    feedback.append(
+        "" if 'otherFeedback' not in session else session['otherFeedback'])
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     if 'sessionUser' in session:
-        feedback.append("Welcome Back " + \
-            session['sessionUser']['u_fname'] + " " + \
-            session['sessionUser']['u_lname'])
+        feedback.append("Welcome Back " +
+                        session['sessionUser']['u_fname'] + " " +
+                        session['sessionUser']['u_lname'])
 
     feedback.append("Here are the latest Items")
 
@@ -118,8 +119,9 @@ def home():
         session.pop('sortOption')
 # Storing previous query for filtering
     session['previousQuery'] = [product.toDict() for product in productList]
+    currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
 
-    return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
+    return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch)
 
 
 @app.route('/apply_filter/<filter_type>')
@@ -142,45 +144,54 @@ def applyFilter(filter_type):
 
     data = filter_data(data, filter_type)
     feedback.append(filter_type)
-    
-    return render_template("home.html", products=data,sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'] )
+    currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
+
+    return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch)
 
 
 @app.route('/results', methods=['POST', 'GET'])
 def searchPage():
-
-    cursor = getCursor()[1]
-
     print(len(request.form))
-
+    currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
     formsLen = len(request.form)
 
     feedback, data = [], ""
-    if formsLen > 0:
-        search = request.form['text']
-
-        search = str(bleach.clean(search))  # sanitizing a bad search
-        cursor.execute(query().SEARCH_QUERY(search))
-
-        data = cursor.fetchall()
-        print("All items?", data)
     productList = []
+    if request.method == 'GET':
+        pass
+        # currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
 
-    if len(data) == 0:
+    if request.method == 'POST':
+        cursor = getCursor()[1]
         if formsLen > 0:
-            feedback.append("No Results, Consider these Items")
-        cursor.execute(query().ALL_APPROVED_LISTINGS())
-        data = cursor.fetchall()
-    cursor.close()
+            search = request.form['text']
+
+            search = str(bleach.clean(search))  # sanitizing a bad search
+            print("search recieved:", search)
+            session['currentSearch'] = search
+            print("sessions's search", session['currentSearch'])
+            currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
+            cursor.execute(query().SEARCH_QUERY(search))
+
+            data = cursor.fetchall()
+            print("All items?", data)
+
+        if len(data) == 0:
+            if formsLen > 0:
+                feedback.append("No Results, Consider these Items")
+            cursor.execute(query().ALL_APPROVED_LISTINGS())
+            data = cursor.fetchall()
+        cursor.close()
 
     for d in data:
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    session['previousQuery'] = [productObject.toDict() for productObject in productList]
+    session['previousQuery'] = [productObject.toDict()
+                                for productObject in productList]
 
-    if 'currentCategory' in  session:
+    if 'currentCategory' in session:
         session.pop('currentCategory')
     data = session['previousQuery']
 
@@ -191,8 +202,9 @@ def searchPage():
             feedback.append(str(len(data)) + " Results Found")
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    # currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
 
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch)
 
 
 @app.route("/categories/<categoryName>", methods=["POST", "GET"])
@@ -225,7 +237,9 @@ def selectCategory(categoryName):
     if 'sortOption' in session:
         data = filter_data(data, session['sortOption'])
 
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
+    currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
+
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch)
 
 
 @app.route("/products/<product_id>", methods=["POST", "GET"])
@@ -759,22 +773,24 @@ def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, ite
 
     return completeMessage
 
+
 def filter_data(data, filter_type):
     if filter_type == "alpha_desc":
         data = sorted(data, key=lambda k: k['i_title'])
     elif filter_type == "alpha_asc":
-        data = sorted(data, key=lambda k: k['i_title'], reverse=True) 
+        data = sorted(data, key=lambda k: k['i_title'], reverse=True)
     elif filter_type == "price_asc":
-        data = sorted(data, key=lambda k: k['i_price']) 
+        data = sorted(data, key=lambda k: k['i_price'])
     elif filter_type == "price_desc":
         data = sorted(data, key=lambda k: k['i_price'], reverse=True)
     elif filter_type == "date_asc":
-        data = sorted(data, key=lambda k: k['i_create_ts'])  
+        data = sorted(data, key=lambda k: k['i_create_ts'])
     elif filter_type == "date_desc":
         data = sorted(data, key=lambda k: k['i_create_ts'], reverse=True)
     else:
         abort(404)
     return data
+
 
 def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
     cursor = getCursor()[1]
