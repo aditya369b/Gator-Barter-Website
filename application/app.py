@@ -12,7 +12,7 @@ item status:
 1 - approved
 2 - sold
 
-TODO: For Alex, store previous query in session as a list
+TODO: For Alex, sore the actual query as dict.
 
 Template Taken From: https://github.com/tecladocode/simple-flask-template-app by Alex Kohanim
 More blog posts from the original author: https://blog.tecladocode.com/
@@ -113,13 +113,39 @@ def home():
         session.pop('otherFeedback')
     except KeyError:
         pass
-    session['previousQuery'] = ["MOST_RECENT_ITEMS", str(n)]
-    return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
+#  Reseting filter options
+    if 'currentCategory' in session:
+        session.pop('currentCategory')
+    if 'sortOption' in session:
+        session.pop('sortOption')
+# Storing previous query for filtering
+    session['previousQuery'] = [product.toDict() for product in productList]
+
+    return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser)
 
 
 @app.route('/apply_filter/<filter_type>')
 def applyFilter(filter_type):
-    pass
+    session['sortOption'] = filter_type
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    feedback = ""
+    cursor = getCursor()[1]
+
+    if 'previousQuery' in session:
+        data = session['previousQuery']
+    else:
+        cursor.execute(query().ALL_APPROVED_LISTINGS())
+        data = [user(d).toDict() for d in cursor.fetchall()]
+
+    if 'currentCategory' in session:
+        feedback += session['currentCategory']
+        data = [d for d in data if d['c_name'] == session['currentCategory']]
+
+    data = filter_data(data, filter_type)
+    feedback += filter_type    
+    
+    return render_template("home.html", products=data,sessionUser=sessionUser, feedback=feedback )
 
 
 @app.route('/results', methods=['POST', 'GET'])
@@ -153,15 +179,55 @@ def searchPage():
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
+
+    session['previousQuery'] = [productObject.toDict() for productObject in productList]
+
+    if 'currentCategory' in  session:
+        session.pop('currentCategroy')
+    data = session['previousQuery']
+
     if feedback == "" and formsLen != 0:
         if len(data) == 1:
-            feedback = str(len(data)) + " Result Found"
+            feedback += str(len(data)) + " Result Found"
         else:
-            feedback = str(len(data)) + " Results Found"
+            feedback += str(len(data)) + " Results Found"
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
-    return render_template("home.html", products=productList, feedback=feedback, sessionUser=sessionUser)
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser)
+
+
+@app.route("/categories/<categoryName>", methods=["POST", "GET"])
+def selectCategory(categoryName):
+    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    cursor = getCursor()[1]
+    print(categoryName)
+    feedback = ""
+
+    if session['previousQuery']:  # Some sort of filtering before
+        data = session['previousQuery']
+        print("data from  prev query in Category ", data)
+    else:
+        cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
+        data = [user(d).toDict() for d in cursor.fetchall()]
+    cursor.close()
+
+    data = [d for d in data if d['c_name'] == categoryName]
+
+    if len(data) == 0:
+        feedback += "No Results Found, Consider these"
+        data = session['previousQuery']
+    else:
+        feedback += categoryName
+
+    session['currentCategory'] = categoryName
+    productList = []
+
+    if 'sort_option' in session:
+        filter_data(data, session['sort_option'])
+
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser)
 
 
 @app.route("/products/<product_id>", methods=["POST", "GET"])
@@ -187,30 +253,6 @@ def productPage(product_id):
         abort(404)
     print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
-
-
-@app.route("/categories/<categoryName>", methods=["POST", "GET"])
-def selectCategory(categoryName):
-    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-
-    cursor = getCursor()[1]
-    print(categoryName)
-
-    cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
-    data = cursor.fetchall()
-    cursor.close()
-
-    if len(data) == 0:
-        abort(404)
-
-    productList = []
-
-    for d in data:
-        if len(d) > 11:
-            productObject = product.makeProduct(d)
-            productList.append(productObject)
-
-    return render_template("home.html", products=productList, feedback=categoryName, sessionUser=sessionUser)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -719,6 +761,22 @@ def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, ite
 
     return completeMessage
 
+def filter_data(data, filter_type):
+    if filter_type == "alpha_desc":
+        data = sorted(data, key=lambda k: k['i_title']) 
+    elif filter_type == "alpha_asc":
+        data = sorted(data, key=lambda k: k['i_title'], reverse=True) 
+    elif filter_type == "price_asc":
+        data = sorted(data, key=lambda k: k['i_price']) 
+    elif filter_type == "price_desc":
+        data = sorted(data, key=lambda k: k['i_price'], reverse=True)
+    elif filter_type == "date_asc":
+        data = sorted(data, key=lambda k: k['i_create_ts'])  
+    elif filter_type == "date_desc":
+        data = sorted(data, key=lambda k: k['i_create_ts'], reverse=True)
+    else:
+        abort(404)
+    return data
 
 def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
     cursor = getCursor()[1]

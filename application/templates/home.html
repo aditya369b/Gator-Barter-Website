@@ -56,14 +56,14 @@
         <div class="container-fluid content-row">
             <div class="row">
                 {% for product in products %}
-                {% set imageRedirect = product.i_id %}
-                {% set imageSrc = product.ii_url %}
-                {% set itemDesc = product.i_desc %}
-                {% set itemTitle = product.i_title %}
-                {% set itemCategory = product.c_name %}
-                {% set itemPrice = product.i_price %}
-                {% set isTradable = product.i_is_tradable %}
-                {% set userId = product.i_u_id %}
+                {% set imageRedirect = product['i_id'] %}
+                {% set imageSrc = product['ii_url'] %}
+                {% set itemDesc = product['i_desc'] %}
+                {% set itemTitle = product['i_title'] %}
+                {% set itemCategory = product['c_name'] %}
+                {% set itemPrice = product['i_price'] %}
+                {% set isTradable = product['i_is_tradable'] %}
+                {% set userId = product['i_u_id'] %}
                 <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
                     <div class="card mb-3 h-100">
                         <img src="{{imageSrc}}" class="card-img-top h-50" alt="{{imageSrc}}">
