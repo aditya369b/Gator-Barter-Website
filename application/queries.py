@@ -1,5 +1,14 @@
 #!/usr/bin env python3
 
+"""
+Querries for the data basse
+
+Some are dynamic and take in a paramater. 
+ideally we will have all the queries in here
+but currently some still reside in the main file
+
+"""
+
 import time
 localQuery = None
 

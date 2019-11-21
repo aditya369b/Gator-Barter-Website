@@ -25,7 +25,7 @@
 
 
 ## Configuration Information
-1. Server URL - http://ec2-18-189-193-11.us-east-2.compute.amazonaws.com or IP - http://18.189.193.11
+1. Server URL - https://gatorbater.store (IP: 3.132.140.242)
 2. SSH username - ubuntu
 3. SSH key - Uploaded to the credentials folder.
 4. Instructions on how to use the above information are as follows:

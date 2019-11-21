@@ -12,58 +12,63 @@
         <div class="dropdown-fb-col">
             <span class="sort-dropdown">
                 <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown">Sort By</button>
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown">{{sortOption}}</button>
 
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" href="/"><i class="fas fa-sort-alpha-down"> Alphabetical: A to
+                            <a class="dropdown-item" href="/apply_filter/alpha_desc"><i class="fas fa-sort-alpha-down"> Alphabetical: A to
                                     Z</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/"><i class="fas fa-sort-alpha-up"> Alphabetical: Z to
+                            <a class="dropdown-item" href="/apply_filter/alpha_asc"><i class="fas fa-sort-alpha-up"> Alphabetical: Z to
                                     A</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/"><i class="fas fa-money-bill-alt"> Price: Low to
+                            <a class="dropdown-item" href="/apply_filter/price_asc"><i class="fas fa-money-bill-alt"> Price: Low to
                                     High</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/"><i class="fas fa-money-bill"> Price: High to Low</i></a>
+                            <a class="dropdown-item" href="/apply_filter/price_desc"><i class="fas fa-money-bill"> Price: High to Low</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/"><i class="fas fa-history"> Date: Oldest</i></a>
+                            <a class="dropdown-item" href="/apply_filter/date_asc"><i class="fas fa-history"> Date: Oldest</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/"><i class="fas fa-clock"> Date: Newest</i></a>
+                            <a class="dropdown-item" href="/apply_filter/date_desc"><i class="fas fa-clock"> Date: Newest</i></a>
                         </li>
                     </ul>
                 </div>
             </span>
 
             <div class="feedback">
+                <ul class="list-unstyled">
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                <ul class="list-unstyled">
                     {% for message in messages %}
                     <li>{{ message }}</li>
-                    {% endfor %} </ul>
+                    {% endfor %} 
                 {% endif %}
                 {% endwith %}
-                {{feedback}}
+                {% for feed in feedback %}
+                    {% if feed|length > 0 %}
+                     <li>{{feed}}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
             </div>
         </div>
 
         <div class="container-fluid content-row">
             <div class="row">
                 {% for product in products %}
-                {% set imageRedirect = product.i_id %}
-                {% set imageSrc = product.ii_url %}
-                {% set itemDesc = product.i_desc %}
-                {% set itemTitle = product.i_title %}
-                {% set itemCategory = product.c_name %}
-                {% set itemPrice = product.i_price %}
-                {% set isTradable = product.i_is_tradable %}
-                {% set userId = product.i_u_id %}
+                {% set imageRedirect = product['i_id'] %}
+                {% set imageSrc = product['ii_url'] %}
+                {% set itemDesc = product['i_desc'] %}
+                {% set itemTitle = product['i_title'] %}
+                {% set itemCategory = product['c_name'] %}
+                {% set itemPrice = product['i_price'] %}
+                {% set isTradable = product['i_is_tradable'] %}
+                {% set userId = product['i_u_id'] %}
                 <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
                     <div class="card mb-3 h-100">
                         <img src="{{imageSrc}}" class="card-img-top h-50" alt="{{imageSrc}}">
