@@ -117,40 +117,34 @@
                 <form action="/results" method="POST">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="dropdown show">
-                               
-                                <select name="category">
-                                        {%if categoryName == 'Categories' %}
-                                        <option selected value = "Categories">{{categoryName}}</option>
-                                        {% else %}
-                                        <option value = "Categories">Categories</option>
-                                        {% endif %}
 
-                                        {% for cat in categories %}
-                                        {% if cat == categoryName%}
-                                        <option selected value = {{ cat }}>{{cat}}</option>
-                                        {% else %}
-                                        <option value = {{ cat }}>{{cat}}</option>
-                                        {%endif%}
-                                        {% endfor %}
+                            <form action="">
+                                <select name="category" class="yellow-select category-select-padding">
+                                    {%if categoryName == 'Categories' %}
+                                    <option selected value="Categories">{{categoryName}}</option>
+                                    {% else %}
+                                    <option value="Categories">Categories</option>
+                                    {% endif %}
 
-                                        <!-- <option value=>select category</option>
-                                        <option value="Electronic">Electronic</option>
-                                        <option value="Furniture">Furniture</option>
-                                        <option value="Other">Other</option> -->
+                                    {% for cat in categories %}
+                                    {% if cat == categoryName%}
+                                    <option selected value={{ cat }}>{{cat}}</option>
+                                    {% else %}
+                                    <option value={{ cat }}>{{cat}}</option>
+                                    {%endif%}
+                                    {% endfor %}
+
+                                    <!-- <option value=>select category</option>
+                                    <option value="Electronic">Electronic</option>
+                                    <option value="Furniture">Furniture</option>
+                                    <option value="Other">Other</option> -->
                                 </select>
-                            </div>
-
-                            <div class="col-lg-9">
                                 <!-- Search bar -->
-                                <input type="text" placeholder="Search for books, electronics, furnitures..."
+                                <input class="search-bar" type="text" placeholder="Search for books, electronics, furnitures..."
                                     name="text" value="{{currentSearch}}" maxlength="40">
-                            </div>
-
-                            <div class="col-lg-1">
                                 <!-- Search button -->
                                 <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
-                            </div>
+                            </form>
 
                         </div>
                     </div>

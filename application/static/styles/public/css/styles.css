@@ -18,6 +18,11 @@ a:hover {
     color: #c89b00;
 }
 
+select {
+    text-align: center;
+    text-align-last: center;
+}
+
 
 /* Navigation Bar Section */
 
@@ -71,6 +76,22 @@ a:hover {
     border-color: #FFCC33;
 }
 
+.yellow-select {
+    -webkit-border-radius: 0;
+    border: 0;
+    outline: 1px solid #ffcc33;
+    outline-offset: -1px;
+    background-color: #FFCC33;
+    border-color: #FFCC33;
+    color: #330033;
+    height: 2.65rem;
+}
+
+.category-select-padding {
+    margin: 1.05rem 0 0 1rem;
+    width: 10%;
+}
+
 /* Search Bar Section */
 
 .search-container {
@@ -100,8 +121,12 @@ input {
     color: #330033;
     border-color: #FFCC33;
     padding: 0.5rem 0rem;
-    margin: 1rem 0.20rem 1rem 0;
-    width: 100%;
+    margin: 1.05rem 0.20rem 1.05rem 0;
+    width: 5%;
+}
+
+.search-bar {
+    width: 82%;
 }
 
 
