@@ -117,8 +117,7 @@
                 <form action="/results" method="POST">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="dropdown col-lg-2">
-                                <!-- Filter button -->
+                            <!-- <div class="dropdown col-lg-2">
                                 <button class="dropdown-toggle category-btn" type="button"
                                     data-toggle="dropdown">Category</button>
 
@@ -139,18 +138,27 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> -->
 
-                            <div class="col-lg-9">
+
+                            <form action="">
+                                <!-- Category Select -->
+                                <select class="yellow-select category-select-padding">
+                                    <optgroup label="Category">
+                                        <option value="none" selected disabled hidden>
+                                            Category
+                                        </option>
+                                        <option value="Electronic">Electronic</option>
+                                        <option value="Furniture">Furniture</option>
+                                        <option value="Other">Other</option>
+                                    </optgroup>
+                                </select>
                                 <!-- Search bar -->
-                                <input type="text" placeholder="Search for books, electronics, furnitures..."
+                                <input class="search-bar" type="text" placeholder="Search for books, electronics, furnitures..."
                                     name="text">
-                            </div>
-
-                            <div class="col-lg-1">
                                 <!-- Search button -->
-                                <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
-                            </div>
+                                <button class="search-btn" type="submit"><i class="fas fa-search"></i></button></form>
+
 
                         </div>
                     </div>
