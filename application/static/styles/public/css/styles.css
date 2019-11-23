@@ -18,8 +18,19 @@ a:hover {
     color: #c89b00;
 }
 
+select {
+    text-align: center;
+    text-align-last: center;
+}
+
 
 /* Navigation Bar Section */
+
+.edu-label {
+    background-color: #FFCC33;
+    color: #330033;
+    text-align: center;
+}
 
 .navbar {
     background-color: #330033;
@@ -29,18 +40,14 @@ a:hover {
 .navbar-brand {
     color: #FFCC33;
     font-family: 'Pacifico', cursive;
-    font-size: 2.17rem;
+    /* font-size: 2.17rem; */
+    font-size: 1.5rem;
     padding-left: 4px;
-}
-
-.navbar-subtext {
-    font-family: 'Pacifico', cursive;
-    font-size: 14px;
 }
 
 .navbar-link {
     color: #FFCC33;
-    font-size: 1.25rem;
+    font-size: 1rem;
 }
 
 .navbar-btn {
@@ -84,8 +91,7 @@ a:hover {
 
 .category-select-padding {
     margin: 1.05rem 0 0 1rem;
-    width: 15%;
-    text-indent: 4rem;
+    width: 10%;
 }
 
 /* Search Bar Section */
@@ -122,44 +128,52 @@ input {
 }
 
 .search-bar {
-    width: 77%;
+    /* width: 77%; */
+    width: 82%;
 }
 
 
 /* Main Content Section */
 
-.edu-purpose-label {
-    font-size: 25px;
-    font-weight: bold;
-    text-align: center;
-    padding: 0.5rem;
+.feedback {
+    padding: 0.75rem 0rem;
+    float: left;
+    text-align: right;
+    font-size: 1rem;
 }
 
-.feedback {
-    font-style: italic;
-    font-style: italic;
-    padding: 0.5rem 1.5rem;
+.purple-select {
+    /* -webkit-border-radius: 0; */
+    border: 0;
+    outline: 1px solid #330033;
+    outline-offset: -1px;
+    background-color: #330033;
+    border-color: #330033;
+    color: #FFCC33;
+    height: 2.65rem;
+}
+
+.filter-select-padding {
     float: right;
-    text-align: right;
-    font-size: 1.25rem;
-    margin: 0;
+    width: 10%;
+    margin: 0 0.75rem 0 0;
 }
 
 .sort-dropdown {
-    float: left;
+    float: right;
 }
 
 .sort-dropdown div button {
     background-color: #330033;
     color: #FFCC33;
     padding: 0.5rem 4.5rem;
+    margin: 0 0.75rem;
 }
 
 .dropdown-fb-col {
     display: block;
-    padding-bottom: 4rem;
+    padding: 1rem 0 4rem 0;
     margin: 0 1rem;
-    /* margin: 0 1rem; */
 }
 
 /* Listing Section */

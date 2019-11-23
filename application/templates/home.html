@@ -4,13 +4,38 @@
 
 <!-- Main content -->
 <main>
-    <div class="edu-purpose-label">
-        "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration Only”
-    </div>
-
     <div>
         <div class="dropdown-fb-col">
-            <span class="sort-dropdown">
+            <div class="feedback">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class="list-unstyled">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %} </ul>
+                {% endif %}
+                {% endwith %}
+                {{feedback}}
+            </div>
+
+            <!-- Category Select -->
+            <div class="dr">
+                <select class="purple-select filter-select-padding">
+                    <optgroup label="Sort By">
+                        <option value="none" selected disabled hidden>
+                            Sort By
+                        </option>
+                        <option value="sort-az">A to Z</option>
+                        <option value="sort-za">Z to A</option>
+                        <option value="sort-low-high">Low to High</option>
+                        <option value="sort-high-low">High to Low</option>
+                        <option value="sort-oldest">Oldest</option>
+                        <option value="sort-newest">Newest</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- <span class="sort-dropdown">
                 <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown">Sort By</button>
 
@@ -38,19 +63,8 @@
                         </li>
                     </ul>
                 </div>
-            </span>
-
-            <div class="feedback">
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul class="list-unstyled">
-                    {% for message in messages %}
-                    <li>{{ message }}</li>
-                    {% endfor %} </ul>
-                {% endif %}
-                {% endwith %}
-                {{feedback}}
-            </div>
+            </span> -->
+            
         </div>
 
         <div class="container-fluid content-row">
