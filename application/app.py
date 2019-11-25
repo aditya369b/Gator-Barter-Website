@@ -53,14 +53,14 @@ session_file = []
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
+                     'Password123', app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -432,7 +432,8 @@ def item_posting():
         session.pop('lazyRegistration')
         session.pop('lazyPage')
         print('Rediret from lazy login to home')
-        return render_template('home.html', sessionUser=session['sessionUser'], id=-1,categoryName="Catogory")
+        # return render_template('home.html', sessionUser=session['sessionUser'], id=-1,categoryName="Catogory")
+        return redirect("/")
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     # print("Session user", sessionUser)
@@ -444,7 +445,7 @@ def item_posting():
         if formsLen > 0:
             item_name = request.form['item_title']
             item_category = request.form['category']
-            item_desc = request.form['item_desc']
+            item_desc = bleach.clean(request.form['item_desc']
             item_price = request.form['item_price']
             is_tradable = str(1) if 'isTradable' in request.form else str(0)
             item_images = []
@@ -598,21 +599,48 @@ def admin_dashboard():
 def about():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
-    return render_template("about/about.html", sessionUser=sessionUser)
+    categories = []
+    cursor = getCursor()[1]
+    cursor.execute(query().fetchAllCategories())
+    
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+
+    cursor.close()
+
+    currentSearch = ""
+    categoryName = "Categories"
+    session['categories'] = categories
+
+    return render_template("about/about.html", sessionUser=sessionUser,
+                            currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/about/<member>")
 def about_mem(member):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    
+    categories = []
+    cursor = getCursor()[1]
+    cursor.execute(query().fetchAllCategories())
 
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+
+    cursor.close()
+
+    currentSearch = ""
+    categoryName = "Categories"
+    session['categories'] = categories
+    
     return render_template("about/info.html", name=dev[member]['name'],
                            title=dev[member]['title'],
                            image=dev[member]['img'],
                            description=dev[member]['description'],
                            linkedin=dev[member]['linkedin'],
                            github=dev[member]['github'],
-                           email=dev[member]['email'], sessionUser=sessionUser
-                           )
+                           email=dev[member]['email'], sessionUser=sessionUser,
+                           currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/admin/<user_id>")
