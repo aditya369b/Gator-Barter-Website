@@ -120,10 +120,10 @@
 
                             <form action="">
                                 <select name="category" class="yellow-select category-select-padding">
-                                    {%if categoryName == 'Categories' %}
+                                    {%if categoryName == 'All' %}
                                     <option selected value="Categories">{{categoryName}}</option>
                                     {% else %}
-                                    <option value="Categories">Categories</option>
+                                    <option value="Categories">All</option>
                                     {% endif %}
 
                                     {% for cat in categories %}

@@ -129,7 +129,7 @@ def home():
 # Storing previous query for filtering
     session['previousQuery'] = [product.toDict() for product in productList]
     currentSearch = ""
-    categoryName = "Categories"
+    categoryName = "All"
     session['categories'] = categories
 
     return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser,
