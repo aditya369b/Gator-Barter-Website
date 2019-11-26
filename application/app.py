@@ -88,9 +88,16 @@ cursor.close()
 def home():
     n = 5  # number of most recent items to grab
     productList = []
+    categories = []
     cursor = getCursor()[1]
     cursor.execute(query().MOST_RECENT_ITEMS(n))
     data = cursor.fetchall()
+
+    cursor.execute(query().fetchAllCategories())
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+    print("categories fetched are: ",categories," and type is: ")
+
     feedback = []
     for d in data:
         if len(d) == 16:
@@ -117,20 +124,30 @@ def home():
         session.pop('currentCategory')
     if 'sortOption' in session:
         session.pop('sortOption')
+    if 'previousQuery' in session:
+        session.pop('previousQuery')
 # Storing previous query for filtering
     session['previousQuery'] = [product.toDict() for product in productList]
-    currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
+    currentSearch = ""
+    categoryName = "All"
+    session['categories'] = categories
 
-    return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch)
+    return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser,
+                     sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route('/apply_filter/<filter_type>')
 def applyFilter(filter_type):
     session['sortOption'] = filter_type
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-
+    categories = [] if 'categories' not in session else session['categories']
     feedback = []
     cursor = getCursor()[1]
+    if categories == "":
+        cursor.execute(query().fetchAllCategories())
+        allCategories = cursor.fetchall()
+        categories = [allCategories[i][0] for i in range(len(allCategories))]
+
 
     if 'previousQuery' in session:
         data = session['previousQuery']
@@ -145,14 +162,17 @@ def applyFilter(filter_type):
     data = filter_data(data, filter_type)
     feedback.append(filter_type)
     currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
+    categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
-    return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch)
+    return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route('/results', methods=['POST', 'GET'])
 def searchPage():
     print(len(request.form))
     currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
+    # categoryName = "Category" if 'categoryName' not in session else session['categoryName']
+    categories = [] if 'categories' not in session else session['categories']
     formsLen = len(request.form)
 
     feedback, data = [], ""
@@ -163,15 +183,24 @@ def searchPage():
 
     if request.method == 'POST':
         cursor = getCursor()[1]
+        if categories == "":
+            cursor.execute(query().fetchAllCategories())
+            allCategories = cursor.fetchall()
+            categories = [allCategories[i][0] for i in range(len(allCategories))]
+
+
         if formsLen > 0:
             search = request.form['text']
-
+            catName = "All" if request.form['category'] == "All" else request.form['category']
+            if catName != "":
+                session['categoryName'] = catName
+            print("catname is: ",catName)
             search = str(bleach.clean(search))  # sanitizing a bad search
             print("search recieved:", search)
             session['currentSearch'] = search
             print("sessions's search", session['currentSearch'])
             currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
-            cursor.execute(query().SEARCH_QUERY(search))
+            cursor.execute(query().SEARCH_QUERY(search,catName))
 
             data = cursor.fetchall()
             print("All items?", data)
@@ -182,11 +211,18 @@ def searchPage():
             cursor.execute(query().ALL_APPROVED_LISTINGS())
             data = cursor.fetchall()
         cursor.close()
+        
+    # if catName != "":
+    #     data = [d for d in data if d['c_name'] == catName]
 
     for d in data:
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
+            data = [productObject.toDict() for d in cursor.fetchall()]    
+    
+    
+
 
     session['previousQuery'] = [productObject.toDict()
                                 for productObject in productList]
@@ -203,43 +239,45 @@ def searchPage():
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     # currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
+    categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch)
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
-@app.route("/categories/<categoryName>", methods=["POST", "GET"])
-def selectCategory(categoryName):
+@app.route("/categories/<catName>", methods=["POST", "GET"])
+def selectCategory(catName):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
     cursor = getCursor()[1]
-    print(categoryName)
+    print(catName)
     feedback = []
 
     if 'previousQuery' in session:  # Some sort of filtering before
         data = session['previousQuery']
         print("data from  prev query in Category ", data)
     else:
-        cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
+        cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(catName))
         data = [product.makeProduct(d).toDict() for d in cursor.fetchall()]
     cursor.close()
 
-    data = [d for d in data if d['c_name'] == categoryName]
+    data = [d for d in data if d['c_name'] == catName]
 
     if len(data) == 0:
         feedback.append("No Results Found, Consider these")
         data = session['previousQuery']
     else:
-        feedback.append(categoryName)
+        feedback.append(catName)
 
-    session['currentCategory'] = categoryName
+    session['currentCategory'] = catName
+    session['categoryName'] = catName
     productList = []
 
     if 'sortOption' in session:
         data = filter_data(data, session['sortOption'])
 
     currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
-
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch)
+    categoryName = "All" if 'categoryName' not in session else session['categoryName']
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName)
 
 
 @app.route("/products/<product_id>", methods=["POST", "GET"])
@@ -394,7 +432,8 @@ def item_posting():
         session.pop('lazyRegistration')
         session.pop('lazyPage')
         print('Rediret from lazy login to home')
-        return render_template('home.html', sessionUser=session['sessionUser'], id=-1)
+        # return render_template('home.html', sessionUser=session['sessionUser'], id=-1,categoryName="Catogory")
+        return redirect("/")
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     # print("Session user", sessionUser)
@@ -404,9 +443,9 @@ def item_posting():
             print("printing request form", request.form)
 
         if formsLen > 0:
-            item_name = request.form['item_title']
+            item_name = str(bleach.clean(request.form['item_title']))
             item_category = request.form['category']
-            item_desc = request.form['item_desc']
+            item_desc = str(bleach.clean(request.form['item_desc']))
             item_price = request.form['item_price']
             is_tradable = str(1) if 'isTradable' in request.form else str(0)
             item_images = []
@@ -532,12 +571,20 @@ def seller_inbox(item_id):
 @app.route("/user-dashboard")
 def user_dashboard():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    categories = []
+
     if sessionUser == "":
         abort(404)
     cursor = getCursor()[1]
+            # To fetch items for a user from db
     cursor.execute(query().PRODUCTS_FOR_USER(sessionUser['u_id']))
     data = cursor.fetchall()
-
+            # To fetch categories from db
+    cursor.execute(query().fetchAllCategories())
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+    
     productList = []
 
     for d in data:
@@ -545,7 +592,12 @@ def user_dashboard():
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    return render_template("user-dashboard.html", sessionUser=sessionUser, productList=productList)
+    currentSearch = ""
+    categoryName = "All"
+    session['categories'] = categories
+
+    return render_template("user-dashboard.html", sessionUser=sessionUser, productList=productList,
+                            currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/admin-dashboard")
@@ -560,21 +612,48 @@ def admin_dashboard():
 def about():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
-    return render_template("about/about.html", sessionUser=sessionUser)
+    categories = []
+    cursor = getCursor()[1]
+    cursor.execute(query().fetchAllCategories())
+    
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+
+    cursor.close()
+
+    currentSearch = ""
+    categoryName = "All"
+    session['categories'] = categories
+
+    return render_template("about/about.html", sessionUser=sessionUser,
+                            currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/about/<member>")
 def about_mem(member):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+    
+    categories = []
+    cursor = getCursor()[1]
+    cursor.execute(query().fetchAllCategories())
 
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+
+    cursor.close()
+
+    currentSearch = ""
+    categoryName = "All"
+    session['categories'] = categories
+    
     return render_template("about/info.html", name=dev[member]['name'],
                            title=dev[member]['title'],
                            image=dev[member]['img'],
                            description=dev[member]['description'],
                            linkedin=dev[member]['linkedin'],
                            github=dev[member]['github'],
-                           email=dev[member]['email'], sessionUser=sessionUser
-                           )
+                           email=dev[member]['email'], sessionUser=sessionUser,
+                           currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/admin/<user_id>")
@@ -585,12 +664,17 @@ def admin_page(user_id):
     except KeyError:
         abort(404)
     conncetion, cursor = getCursor()
-
+    categories=[]
     cursor.execute("SELECT * FROM user;")
     print(cursor.fetchall())
-
+            # fetch the items for admin approval from db
     cursor.execute(query().ALL_PENDING_LISTINGS())
     data = cursor.fetchall()
+            # Fetch the categories from db
+    cursor.execute(query().fetchAllCategories())
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+
     productList = []
     for d in data:
         if len(d) == 16:
@@ -615,7 +699,12 @@ def admin_page(user_id):
             approvedProducts.append(productObject)
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
-    return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts)
+    currentSearch = ""
+    categoryName = "All"
+    session['categories'] = categories
+
+    return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts,
+                                                currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/admin/item/<item_id>/<action>")

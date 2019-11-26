@@ -17,14 +17,14 @@ class Query():
     def __init__(self):
         self.TEST_USER = "SELECT * FROM user WHERE user.u_is_admin=1 LIMIT 1;"
 
-    def SEARCH_QUERY(self, search):
+    def SEARCH_QUERY(self, search,categoryName):
         starting = "" + search + "%"
         ending = "%" + search + ""
         starting2 = " " + search + "%"
         ending2 = "%" + search + " "
         middle = "%" + search + "%"
         exact = search
-        return"""
+        q = """
         SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
         FROM item AS i
         JOIN item_image AS ii
@@ -38,8 +38,20 @@ class Query():
         OR i.i_desc LIKE '""" + starting2 + """'
         OR i.i_desc LIKE '""" + ending2 + """'
         OR i.i_desc LIKE '""" + middle + """'
-        OR i.i_desc LIKE '""" + exact + """');
+        OR i.i_desc LIKE '""" + exact + """')
         """
+        if categoryName != "All":
+            q = q+"AND c.c_name = '" + categoryName +"';"
+        else:
+            q= q+ ";"
+        print("querys search is: ",q)
+        return q
+
+    def fetchAllCategories(self):
+        return """
+    SELECT c.c_name
+    FROM category AS c;
+    """
 
     def ALL_APPROVED_LISTINGS(self):
         return """
