@@ -40,7 +40,7 @@ class Query():
         OR i.i_desc LIKE '""" + middle + """'
         OR i.i_desc LIKE '""" + exact + """')
         """
-        if categoryName != "Categories":
+        if categoryName != "All":
             q = q+"AND c.c_name = '" + categoryName +"';"
         else:
             q= q+ ";"

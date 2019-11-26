@@ -129,7 +129,7 @@ def home():
 # Storing previous query for filtering
     session['previousQuery'] = [product.toDict() for product in productList]
     currentSearch = ""
-    categoryName = "Categories"
+    categoryName = "All"
     session['categories'] = categories
 
     return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser,
@@ -162,7 +162,7 @@ def applyFilter(filter_type):
     data = filter_data(data, filter_type)
     feedback.append(filter_type)
     currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
-    categoryName = "Categories" if 'categoryName' not in session else session['categoryName']
+    categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
     return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
@@ -191,7 +191,7 @@ def searchPage():
 
         if formsLen > 0:
             search = request.form['text']
-            catName = "Categories" if request.form['category'] == "Categories" else request.form['category']
+            catName = "All" if request.form['category'] == "All" else request.form['category']
             if catName != "":
                 session['categoryName'] = catName
             print("catname is: ",catName)
@@ -239,7 +239,7 @@ def searchPage():
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     # currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
-    categoryName = "Categories" if 'categoryName' not in session else session['categoryName']
+    categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
     return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
@@ -276,7 +276,7 @@ def selectCategory(catName):
         data = filter_data(data, session['sortOption'])
 
     currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
-    categoryName = "Categories" if 'categoryName' not in session else session['categoryName']
+    categoryName = "All" if 'categoryName' not in session else session['categoryName']
     return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName)
 
 
@@ -593,7 +593,7 @@ def user_dashboard():
             productList.append(productObject)
 
     currentSearch = ""
-    categoryName = "Categories"
+    categoryName = "All"
     session['categories'] = categories
 
     return render_template("user-dashboard.html", sessionUser=sessionUser, productList=productList,
@@ -622,7 +622,7 @@ def about():
     cursor.close()
 
     currentSearch = ""
-    categoryName = "Categories"
+    categoryName = "All"
     session['categories'] = categories
 
     return render_template("about/about.html", sessionUser=sessionUser,
@@ -643,7 +643,7 @@ def about_mem(member):
     cursor.close()
 
     currentSearch = ""
-    categoryName = "Categories"
+    categoryName = "All"
     session['categories'] = categories
     
     return render_template("about/info.html", name=dev[member]['name'],
@@ -700,7 +700,7 @@ def admin_page(user_id):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
     currentSearch = ""
-    categoryName = "Categories"
+    categoryName = "All"
     session['categories'] = categories
 
     return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts,
