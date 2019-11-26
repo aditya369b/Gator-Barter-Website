@@ -571,12 +571,20 @@ def seller_inbox(item_id):
 @app.route("/user-dashboard")
 def user_dashboard():
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
+
+    categories = []
+
     if sessionUser == "":
         abort(404)
     cursor = getCursor()[1]
+            # To fetch items for a user from db
     cursor.execute(query().PRODUCTS_FOR_USER(sessionUser['u_id']))
     data = cursor.fetchall()
-
+            # To fetch categories from db
+    cursor.execute(query().fetchAllCategories())
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+    
     productList = []
 
     for d in data:
@@ -584,7 +592,12 @@ def user_dashboard():
             productObject = product.makeProduct(d)
             productList.append(productObject)
 
-    return render_template("user-dashboard.html", sessionUser=sessionUser, productList=productList)
+    currentSearch = ""
+    categoryName = "Categories"
+    session['categories'] = categories
+
+    return render_template("user-dashboard.html", sessionUser=sessionUser, productList=productList,
+                            currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/admin-dashboard")
@@ -651,12 +664,17 @@ def admin_page(user_id):
     except KeyError:
         abort(404)
     conncetion, cursor = getCursor()
-
+    categories=[]
     cursor.execute("SELECT * FROM user;")
     print(cursor.fetchall())
-
+            # fetch the items for admin approval from db
     cursor.execute(query().ALL_PENDING_LISTINGS())
     data = cursor.fetchall()
+            # Fetch the categories from db
+    cursor.execute(query().fetchAllCategories())
+    allCategories = cursor.fetchall()
+    categories = [allCategories[i][0] for i in range(len(allCategories))]
+
     productList = []
     for d in data:
         if len(d) == 16:
@@ -681,7 +699,12 @@ def admin_page(user_id):
             approvedProducts.append(productObject)
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
-    return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts)
+    currentSearch = ""
+    categoryName = "Categories"
+    session['categories'] = categories
+
+    return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts,
+                                                currentSearch=currentSearch,categoryName=categoryName,categories=categories)
 
 
 @app.route("/admin/item/<item_id>/<action>")
