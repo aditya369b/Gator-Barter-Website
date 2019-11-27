@@ -26,6 +26,8 @@ import gatorMessage as message
 from queries import query
 
 from flask import Flask, render_template, request, session, redirect, url_for, abort, flash
+from views.index import index_blueprint
+from views.filter import filter_blueprint
 from about_info import dev
 import pymysql
 import jinja2
@@ -39,6 +41,9 @@ import base64
 import uuid
 
 from werkzeug.utils import secure_filename  # for input picture loading
+
+from dbCursor import getCursor
+from filterData import filter_data
 
 
 # from livereload import Server   # PHILIPTEST
@@ -58,14 +63,8 @@ app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
-db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
-                     app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
 
-
-def getCursor():
-    return [db, db.cursor()]
-
+db = getCursor()[0]
 
 # prepare a cursor object using cursor() method
 cursor = getCursor()[1]
@@ -83,149 +82,9 @@ cursor.execute(query().TEST_USER)
 # sessionUser = user.makeUser(cursor.fetchone())
 cursor.close()
 
+app.register_blueprint(index_blueprint)
+app.register_blueprint(filter_blueprint)
 
-@app.route("/", methods=["POST", "GET"])
-def home():
-    n = 5  # number of most recent items to grab
-    productList = []
-    cursor = getCursor()[1]
-    cursor.execute(query().MOST_RECENT_ITEMS(n))
-    data = cursor.fetchall()
-    feedback = []
-    for d in data:
-        if len(d) == 16:
-            productObject = product.makeProduct(d)
-            productList.append(productObject)
-
-    cursor.close()
-    feedback.append("" if 'otherFeedback' not in session else session['otherFeedback'])
-    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-    if 'sessionUser' in session:
-        feedback.append("Welcome Back " + \
-            session['sessionUser']['u_fname'] + " " + \
-            session['sessionUser']['u_lname'])
-
-    feedback.append("Here are the latest Items")
-
-    try:
-        session.pop('otherFeedback')
-    except KeyError:
-        pass
-#  Reseting filter options
-    if 'currentCategory' in session:
-        session.pop('currentCategory')
-    if 'sortOption' in session:
-        session.pop('sortOption')
-# Storing previous query for filtering
-    session['previousQuery'] = [product.toDict() for product in productList]
-
-    return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
-
-
-@app.route('/apply_filter/<filter_type>')
-def applyFilter(filter_type):
-    session['sortOption'] = filter_type
-    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-
-    feedback = []
-    cursor = getCursor()[1]
-
-    if 'previousQuery' in session:
-        data = session['previousQuery']
-    else:
-        cursor.execute(query().ALL_APPROVED_LISTINGS())
-        data = [product.makeProduct(d).toDict() for d in cursor.fetchall()]
-
-    if 'currentCategory' in session:
-        feedback.append(session['currentCategory'])
-        data = [d for d in data if d['c_name'] == session['currentCategory']]
-
-    data = filter_data(data, filter_type)
-    feedback.append(filter_type)
-    
-    return render_template("home.html", products=data,sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'] )
-
-
-@app.route('/results', methods=['POST', 'GET'])
-def searchPage():
-
-    cursor = getCursor()[1]
-
-    print(len(request.form))
-
-    formsLen = len(request.form)
-
-    feedback, data = [], ""
-    if formsLen > 0:
-        search = request.form['text']
-
-        search = str(bleach.clean(search))  # sanitizing a bad search
-        cursor.execute(query().SEARCH_QUERY(search))
-
-        data = cursor.fetchall()
-        print("All items?", data)
-    productList = []
-
-    if len(data) == 0:
-        if formsLen > 0:
-            feedback.append("No Results, Consider these Items")
-        cursor.execute(query().ALL_APPROVED_LISTINGS())
-        data = cursor.fetchall()
-    cursor.close()
-
-    for d in data:
-        if len(d) > 11:
-            productObject = product.makeProduct(d)
-            productList.append(productObject)
-
-    session['previousQuery'] = [productObject.toDict() for productObject in productList]
-
-    if 'currentCategory' in  session:
-        session.pop('currentCategory')
-    data = session['previousQuery']
-
-    if len(feedback) == 0 and formsLen != 0:
-        if len(data) == 1:
-            feedback.append(str(len(data)) + " Result Found")
-        else:
-            feedback.append(str(len(data)) + " Results Found")
-
-    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
-
-
-@app.route("/categories/<categoryName>", methods=["POST", "GET"])
-def selectCategory(categoryName):
-    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-
-    cursor = getCursor()[1]
-    print(categoryName)
-    feedback = []
-
-    if 'previousQuery' in session:  # Some sort of filtering before
-        data = session['previousQuery']
-        print("data from  prev query in Category ", data)
-    else:
-        cursor.execute(query().APPROVED_ITEMS_FOR_CATEGORY(categoryName))
-        data = [product.makeProduct(d).toDict() for d in cursor.fetchall()]
-    cursor.close()
-
-    data = [d for d in data if d['c_name'] == categoryName]
-
-    if len(data) == 0:
-        feedback.append("No Results Found, Consider these")
-        data = session['previousQuery']
-    else:
-        feedback.append(categoryName)
-
-    session['currentCategory'] = categoryName
-    productList = []
-
-    if 'sortOption' in session:
-        data = filter_data(data, session['sortOption'])
-
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By")
 
 
 @app.route("/products/<product_id>", methods=["POST", "GET"])
@@ -252,111 +111,6 @@ def productPage(product_id):
     print("Redirecting to Product page", product_id)
     return render_template("products/product.html", product=productObject, user=userObject)
 
-
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-
-    cursor = getCursor()[1]
-
-    if request.method == "POST":
-        email = str(bleach.clean(request.form['email']))
-        pwd = str(bleach.clean(request.form['pwd']))
-        print(email, " tried to login")
-
-        cursor.execute(query().GET_USER_BY_EMAIL(email))
-        data = cursor.fetchone()
-        cursor.close()
-        if data is None:
-            flash("User not found!")
-            print("User not found!")
-            return render_template("login.html", code=404, message="Page Not Found")
-        print(data)
-        userObject = user.makeUser(data)
-
-        if sha256_crypt.verify(pwd, userObject.u_pwd):
-            print("Authentication Successful")
-            flash("Authentication Successful")
-            session['sessionUser'] = userObject.toDict()
-            session['sessionKey'] = int(time.time()*1000)
-            if 'lazyRegistration' in session:
-                # session.pop('lazyRegistration')
-                # makeAndInsertMessageForSeller()
-                if session['lazyPage'] == 'contact-seller':
-                    return redirect("/contact-seller/"+session['item_id'])
-                elif session['lazyPage'] == 'item-posting':
-                    return redirect("/item-posting")
-
-            return redirect("/")
-        else:
-            print("Authentication Failed!")
-            flash("Authentication Failed!")
-            return render_template("login.html", code=401, message="Unauthorized")
-
-    return render_template("login.html")
-
-
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-
-    cursor = getCursor()[1]
-
-    if request.method == "POST":
-        email = str(bleach.clean(request.form['email']))
-        password = sha256_crypt.encrypt(
-            str(bleach.clean(request.form['password'])))
-        fname = str(bleach.clean(request.form['fname']))
-        lname = str(bleach.clean(request.form['lname']))
-        created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
-        updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
-
-        print(fname, lname, created_ts)
-
-        # check if user already exists
-        cursor.execute(query().GET_USER_BY_EMAIL(email))
-        data = cursor.fetchone()
-
-        if data is not None:
-            print("Registeration of " + email +
-                  " Failed. User Already Exists!")
-            flash("Registeration of " + email +
-                  " Failed. User Already Exists!")
-            return redirect("/login")
-
-        # make new user row in db
-        print(query().INSERT_USER(email, password,
-                                  fname, lname, created_ts, updated_ts))
-        d = cursor.execute(query().INSERT_USER(
-            email, password, fname, lname, created_ts, updated_ts))
-        print(d)
-
-        db.commit()
-        if d == 1:
-            cursor.execute(query().GET_USER_BY_EMAIL(email))
-            session['sessionUser'] = user.makeUser(cursor.fetchone()).toDict()
-            print("Registeration of", email, "Successful")
-            flash("Registeration of "+email + " Successful")
-            session['sessionKey'] = int(time.time()*1000)
-            if 'lazyRegistration' in session:
-                # session.pop('lazyRegistration')
-                if session['lazyPage'] == 'contact-seller':
-                    return redirect("/contact-seller/"+session['item_id'])
-                elif session['lazyPage'] == 'item-posting':
-                    return redirect("/item-posting")
-
-            return redirect("/")
-        cursor.close()
-
-    print("Simple Register Page Click")
-    return render_template("register.html")
-
-
-@app.route("/logout")
-def logout():
-    try:
-        session.pop('sessionUser')
-    except KeyError:
-        pass
-    return redirect('/')
 
 
 def allowed_file(filename):
@@ -759,22 +513,6 @@ def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, ite
 
     return completeMessage
 
-def filter_data(data, filter_type):
-    if filter_type == "alpha_desc":
-        data = sorted(data, key=lambda k: k['i_title'])
-    elif filter_type == "alpha_asc":
-        data = sorted(data, key=lambda k: k['i_title'], reverse=True) 
-    elif filter_type == "price_asc":
-        data = sorted(data, key=lambda k: k['i_price']) 
-    elif filter_type == "price_desc":
-        data = sorted(data, key=lambda k: k['i_price'], reverse=True)
-    elif filter_type == "date_asc":
-        data = sorted(data, key=lambda k: k['i_create_ts'])  
-    elif filter_type == "date_desc":
-        data = sorted(data, key=lambda k: k['i_create_ts'], reverse=True)
-    else:
-        abort(404)
-    return data
 
 def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
     cursor = getCursor()[1]
