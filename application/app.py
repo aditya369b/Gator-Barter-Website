@@ -19,41 +19,38 @@ Might incorperate some features mentioned in the blog post(s)
 Also, this blog post: https://blog.tecladocode.com/handling-the-next-url-when-logging-in-with-flask/
 """
 
-
 import gatorProduct as product  # class made by alex
 import gatorUser as user
 import gatorMessage as message
 from queries import query
+from dbCursor import getCursor
+from filterData import filter_data
+from about_info import dev
 
 from flask import Flask, render_template, request, session, redirect, url_for, abort, flash
+
 from views.index import index_blueprint
+from views.authentication import authentication_blueprint
 from views.filter import filter_blueprint
-from about_info import dev
+from views.product import product_blueprint
+from views.itemPosting import itemPosting_blueprint
+
 import pymysql
 import jinja2
 import bleach  # sql santization lib
-
-from passlib.hash import sha256_crypt
 import time
 import calendar
 import os
 import base64
 import uuid
-
+from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename  # for input picture loading
 
-from dbCursor import getCursor
-from filterData import filter_data
-
-
 # from livereload import Server   # PHILIPTEST
-
 
 app = Flask(__name__)
 
 ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
-session_file = []
-
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = None
@@ -83,128 +80,12 @@ cursor.execute(query().TEST_USER)
 cursor.close()
 
 app.register_blueprint(index_blueprint)
+app.register_blueprint(authentication_blueprint)
 app.register_blueprint(filter_blueprint)
+app.register_blueprint(product_blueprint)
+app.register_blueprint(itemPosting_blueprint)
 
 
-
-@app.route("/products/<product_id>", methods=["POST", "GET"])
-def productPage(product_id):
-
-    cursor = getCursor()[1]
-    product_id = str(bleach.clean(product_id))  # sanitizing a bad redirect
-
-    cursor.execute(query().APPROVED_ITEM(product_id))
-    data = cursor.fetchall()
-    if len(data) == 0:
-        abort(404)
-
-    cursor.execute(query().USER_FOR_PRODUCT(product_id))
-    userObject = cursor.fetchone()
-    cursor.close()
-
-    productObject = product.makeProduct(data[0])
-    try:
-        if productObject.getStatus() == 0 and not session['sessionUser']['u_is_admin'] > 0:
-            abort(404)
-    except KeyError:
-        abort(404)
-    print("Redirecting to Product page", product_id)
-    return render_template("products/product.html", product=productObject, user=userObject)
-
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route("/item-posting", methods=["POST", "GET"])
-def item_posting():
-
-    # cursor = db.cursor()
-    print(request.form)
-    formsLen = len(request.form)
-    images_path = []
-
-    if 'lazyRegistration' in session:
-        print('session file is: ', session_file)
-        insertItemPost(session['item_name'], session['item_category'], session['item_desc'],
-                       session['item_price'], session['is_tradable'], session['item_images'],
-                       session['sessionUser'], True)
-        session_file.clear()
-        session.pop('lazyRegistration')
-        session.pop('lazyPage')
-        print('Rediret from lazy login to home')
-        return render_template('home.html', sessionUser=session['sessionUser'], id=-1)
-
-    sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-    # print("Session user", sessionUser)
-
-    if request.method == "POST":
-        if request.form:
-            print("printing request form", request.form)
-
-        if formsLen > 0:
-            item_name = request.form['item_title']
-            item_category = request.form['category']
-            item_desc = request.form['item_desc']
-            item_price = request.form['item_price']
-            is_tradable = str(1) if 'isTradable' in request.form else str(0)
-            item_images = []
-            if sessionUser == "":
-                session['item_images'] = []
-
-            # store image in separate folder as per category
-            UPLOAD_FOLDER = 'static/images/' + item_category
-            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-            for file in request.files.getlist('file'):
-                if file.filename == '':
-                    print('No file selected for uploading')
-                else:
-                    # session['item_image'].append(base64.b64encode(file.read()).decode('ascii'))
-                    if sessionUser == "":
-                        # session_file.append(file)
-
-                        if file and allowed_file(file.filename):
-
-                            filename = secure_filename(file.filename)
-
-                    # unique filename
-                        uuid_val = uuid.uuid1()
-                        filename = str(uuid_val) + '.' + \
-                            filename.rsplit('.', 1)[1].lower()
-                        file_path = os.path.join(
-                            app.config['UPLOAD_FOLDER'], filename)
-                        print("file path from item-posting post req is:", file_path)
-                        # file = open(file,"wr")
-                        file.save(file_path)
-                        session['item_images'].append(file_path)
-                    else:
-                        item_images.append(file)
-
-            if sessionUser == "":
-                session['lazyRegistration'] = True
-                session['lazyPage'] = 'item-posting'
-                session['item_name'] = item_name
-                session['item_category'] = item_category
-                session['item_desc'] = item_desc
-                session['item_price'] = item_price
-                session['is_tradable'] = is_tradable
-                # session['item_userid'] =
-                # session['item_images'] = None #item_images
-
-                print("going to login?")
-                return redirect("/login")
-
-            else:
-                # sessionUser = session['sessionUser']
-                insertItemPost(item_name, item_category, item_desc,
-                               item_price, is_tradable, item_images, sessionUser, False)
-
-    if request.method == "GET":
-        return render_template("item-posting.html")
-
-    return redirect('/')
 
 
 @app.route('/contact-seller/<item_id>', methods=['GET', 'POST'])
@@ -421,119 +302,7 @@ def admin_user_action(user_id, action):
         abort(404)
 
 
-def insertItemPost(item_name, item_category, item_desc, item_price, is_tradable, item_images, sessionUser, isLazyReg):
 
-    cursor = db.cursor()
-    user_id = sessionUser['u_id']  # else get current logged in user's user id
-    images_path = []
-
-    # store image in separate folder as per category
-    UPLOAD_FOLDER = 'static/images/' + item_category
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    print('Upload folder is: ', UPLOAD_FOLDER)
-    print('App config Upload folder is: ', app.config['UPLOAD_FOLDER'])
-
-    ts = time.strftime('%Y-%m-%d %H:%M:%S')
-
-    # print ("Print request.files[1]", request.files,"  and the type is: ", type(request.files))
-
-    query = 'INSERT INTO item(i_title, i_desc, i_price, i_is_tradable, i_u_id, i_c_id, i_status, i_created_ts, i_updated_ts) ' \
-            'VALUES("' + item_name + '", ' \
-            '"' + item_desc + '", ' \
-            '"' + item_price + '", ' \
-            '"' + is_tradable + '",' \
-            ' "' + str(user_id) + '' \
-            '", (SELECT c_id from category where c_name="' \
-            '' + item_category + '"), 0, \'' + ts + "\', \'" + ts + '\'  );'
-
-    print(query)
-    data = cursor.execute(query)
-
-    print("printing response from query", data)
-
-    cursor_id = cursor.lastrowid
-    print("ID", cursor_id)
-
-    unique_variable = 0
-
-    if isLazyReg:
-        for file in item_images:
-                    # file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
-            filename = str(user_id) + '_' + str(cursor_id) + '_' + \
-                str(unique_variable) + '.' + file.rsplit('.', 1)[1].lower()
-            new_path = file.rsplit('/', 1)[0] + '/' + filename
-            print("The os rename values are: ", file, " and ", new_path)
-            os.rename(file, new_path)
-            images_path.append(new_path)
-    else:
-        for file in item_images:
-            # file = request.files['file']
-            #     print("single file ")
-            # file = base64.b64decode(file)
-
-            # print("printing file:", file)
-            if file and allowed_file(file.filename):
-
-                filename = secure_filename(file.filename)
-
-                # unique filename
-                filename = str(user_id) + '_' + str(cursor_id) + '_' + \
-                    str(unique_variable) + '.' + \
-                    filename.rsplit('.', 1)[1].lower()
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                print("file path is:", file_path)
-                # file = open(file,"wr")
-                file.save(file_path)
-
-                images_path.append(file_path)
-
-        unique_variable += 1
-        #####
-
-    for path in images_path:
-
-        query = 'insert into item_image(ii_url,ii_i_id) values("/' + \
-            path+'",'+str(cursor_id)+')'
-        print(query)
-        cursor.execute(query)
-    db.commit()
-
-    # print("Item has been sent to admin for approval!")
-
-    cursor.close()
-
-
-def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
-    completeMessage = ["This is a message in regaurds to " + itemTitle]
-    completeMessage.append("Which was posted at " + str(itemTS))
-    completeMessage.append("For the price of " + str(itemPrice))
-    completeMessage.append(messageBody)
-    completeMessage.append(buyerName)
-    completeMessage.append(buyerConact)
-
-    return completeMessage
-
-
-def makeAndInsertMessageForSeller(buyerContact, buyerMessage, item_id, sessionUser):
-    cursor = getCursor()[1]
-    cursor.execute(query().APPROVED_ITEM(item_id))
-    item = product.makeProduct(cursor.fetchone())
-
-    cursor.execute(query().USER_FOR_PRODUCT(item_id))
-    seller = cursor.fetchone()
-
-    completeMessageList = messageForSeller(sessionUser['u_fname'] + " " + sessionUser['u_lname'],
-                                           buyerContact, buyerMessage, item.i_title, item.i_create_ts, item.i_price)
-    completeMessage = '\n'.join(message for message in completeMessageList)
-
-    print(query().INSERT_MESSAGE(completeMessage,
-                                 sessionUser['u_id'], seller[0], item_id))
-
-    cursor.execute(query().INSERT_MESSAGE(completeMessage,
-                                          sessionUser['u_id'], seller[0], item_id))
-    db.commit()
-    cursor.close()
-    session['otherFeedback'] = "Message Sent"
 
 
 @app.errorhandler(404)
