@@ -33,7 +33,7 @@ def item_posting():
         session.pop('lazyRegistration')
         session.pop('lazyPage')
         print('Rediret from lazy login to home')
-        return render_template('home.html', sessionUser=session['sessionUser'], id=-1)
+        return redirect('/')
 
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
     # print("Session user", sessionUser)
