@@ -40,9 +40,7 @@ select {
 .navbar-brand {
     color: #FFCC33;
     font-family: 'Pacifico', cursive;
-    /* font-size: 2.17rem; */
     font-size: 1.5rem;
-    padding-left: 4px;
 }
 
 .navbar-link {
@@ -114,7 +112,7 @@ input {
     color: #330033;
     border-color: #FFCC33;
     padding: 0.5rem 1rem;
-    margin: 1rem 0;
+    margin: 1.08rem 0 0 1.05rem;
     width: 100%;
 }
 
@@ -128,8 +126,7 @@ input {
 }
 
 .search-bar {
-    /* width: 77%; */
-    width: 82%;
+    width: 82.8%;
 }
 
 
@@ -143,7 +140,6 @@ input {
 }
 
 .purple-select {
-    /* -webkit-border-radius: 0; */
     border: 0;
     outline: 1px solid #330033;
     outline-offset: -1px;
@@ -156,7 +152,6 @@ input {
 .filter-select-padding {
     float: right;
     width: 10%;
-    margin: 0 0.75rem 0 0;
 }
 
 .sort-dropdown {
@@ -167,7 +162,6 @@ input {
     background-color: #330033;
     color: #FFCC33;
     padding: 0.5rem 4.5rem;
-    margin: 0 0.75rem;
 }
 
 .dropdown-fb-col {
