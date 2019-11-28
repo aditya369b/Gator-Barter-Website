@@ -32,9 +32,8 @@
 </head>
 
 <body>
-
     {% if product.i_status == 0 %}
-        <h2> FOR ADMIN USE ONLY </h2>
+    <h2> FOR ADMIN USE ONLY </h2>
     {% endif %}
 
     <div class="product-container">
@@ -78,53 +77,10 @@
 
             <div class="col-sm-12 col-lg-2 col-right product-col">
                 <h5 class="price-label">${{product.i_price}}</h5>
-                <!-- <br> -->
                 <div class="tradable-label">Tradable</div>
-
-                <div class="dropdown show">
-                    <a class="btn btn-warning dropdown-toggle wishlist-toggle" href="#" role="button"
-                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        @{{user[2]}}_{{user[3]}}'s Wishlist
-                    </a>
-
-                    <div class="dropdown-menu dropdown-menu-right wishlist-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a>
-                        <a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a>
-                        <a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a>
-                        <a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a><a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a>
-                        <a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a>
-                        <a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a>
-                        <a class="dropdown-item wishlist-item" href="#">
-                            <img src="/static/images/image-na.png" alt="">
-                            <p>Item</p>
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- <a href="mailto:{{user[1]}}" class="btn btn-warning btn-block">Contact Seller</a> -->
         <a href="/contact-seller/{{product.i_id}}" class="btn btn-warning btn-block">Contact Seller</a>
     </div>
 
