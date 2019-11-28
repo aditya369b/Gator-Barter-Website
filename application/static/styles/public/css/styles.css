@@ -231,6 +231,10 @@ footer {
     margin: 2rem;
 }
 
+.product-container button {
+    width: 25%;
+}
+
 .product-col {
     padding: 1rem;
 }

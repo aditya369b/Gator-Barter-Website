@@ -36,7 +36,7 @@
         onsubmit="return validateForm()" enctype="multipart/form-data">
 
         <center>
-            <h1>Sell with GatorBarter</h1>
+            <h1>Make an Item Posting</h1>
         </center>
 
         <div class="form-group">
@@ -100,13 +100,15 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-3"></div>
-            <div class="col-lg-3"></div>
-            <div class="col-lg-3">
-                <button class="btn btn-danger item-posting-btn" onclick="self.close()">Cancel</button>
+            <div class="col-lg">
             </div>
             <div class="col-lg-3">
-                <button class="btn btn-warning item-posting-btn" type="submit">Submit</button>
+                <a href="/" class="btn btn-danger item-posting-btn">Cancel</a>
+            </div>
+            <div class="col-lg-3">
+                <button class="btn btn-warning item-posting-btn" type="submit">
+                    Submit
+                </button>
             </div>
         </div>
     </form>
@@ -116,7 +118,7 @@
     <!-- Custom JS -->
     <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
 
-    <script>
+    <!-- <script>
         function validateForm() {
             if (document.forms["item_form"]["item_title"].value == "") {
                 alert("Title must be filled out");
@@ -147,7 +149,7 @@
 
             return true;
         }
-    </script>
+    </script> -->
 </body>
 
 </html>
