@@ -118,8 +118,9 @@
                 <form action="/results" method="POST">
                     <div class="container-fluid">
                         <div class="row">
+<!--<<<<<<< frontend-m4
                             <form action="">
-                                <!-- Category Select -->
+                                <!-- Category Select
                                 <select class="yellow-select category-select-padding">
                                     <optgroup label="Category">
                                         <option value="none" selected disabled hidden>
@@ -130,11 +131,40 @@
                                         <option value="Other">Other</option>
                                     </optgroup>
                                 </select>
-                                <!-- Search bar -->
+                                <!-- Search bar
                                 <input class="search-bar" type="text"
                                     placeholder="Search for books, electronics, furnitures..." name="text">
-                                <!-- Search button -->
+                                <!-- Search button
                                 <button class="search-btn" type="submit"><i class="fas fa-search"></i></button></form>
+======= -->
+
+                            <form action="">
+                                <select name="category" class="yellow-select category-select-padding">
+                                    {%if categoryName == 'All' %}
+                                    <option selected value="All">{{categoryName}}</option>
+                                    {% else %}
+                                    <option value="All">All</option>
+                                    {% endif %}
+
+                                    {% for cat in categories %}
+                                    {% if cat == categoryName%}
+                                    <option selected value={{ cat }}>{{cat}}</option>
+                                    {% else %}
+                                    <option value={{ cat }}>{{cat}}</option>
+                                    {%endif%}
+                                    {% endfor %}
+
+                                    <!-- <option value=>select category</option>
+                                    <option value="Electronic">Electronic</option>
+                                    <option value="Furniture">Furniture</option>
+                                    <option value="Other">Other</option> -->
+                                </select>
+                                <!-- Search bar -->
+                                <input class="search-bar" type="text" placeholder="Search for books, electronics, furnitures..."
+                                    name="text" value="{{currentSearch}}" maxlength="40">
+                                <!-- Search button -->
+                                <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
+                            </form>
                         </div>
                     </div>
                 </form>
