@@ -33,6 +33,10 @@
 
 <body>
     <header>
+        <div class="edu-label">
+            "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration Only"
+        </div>
+
         <!-- Upper Navigation Bar -->
         <nav class="navbar navbar-expand-lg">
             <!-- Navigation Brand/Logo -->
@@ -50,13 +54,10 @@
                 <!-- LHS Navigation Links -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link navbar-link" href="/about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link navbar-link" href="/">FAQ</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link navbar-link" href="/item-posting">Sell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/about">About</a>
                     </li>
                     {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0 %}
                     <li class="nav-item">
@@ -117,6 +118,25 @@
                 <form action="/results" method="POST">
                     <div class="container-fluid">
                         <div class="row">
+<!--<<<<<<< frontend-m4
+                            <form action="">
+                                <!-- Category Select
+                                <select class="yellow-select category-select-padding">
+                                    <optgroup label="Category">
+                                        <option value="none" selected disabled hidden>
+                                            Category
+                                        </option>
+                                        <option value="Electronic">Electronic</option>
+                                        <option value="Furniture">Furniture</option>
+                                        <option value="Other">Other</option>
+                                    </optgroup>
+                                </select>
+                                <!-- Search bar
+                                <input class="search-bar" type="text"
+                                    placeholder="Search for books, electronics, furnitures..." name="text">
+                                <!-- Search button
+                                <button class="search-btn" type="submit"><i class="fas fa-search"></i></button></form>
+======= -->
 
                             <form action="">
                                 <select name="category" class="yellow-select category-select-padding">
@@ -145,7 +165,6 @@
                                 <!-- Search button -->
                                 <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
                             </form>
-
                         </div>
                     </div>
                 </form>
