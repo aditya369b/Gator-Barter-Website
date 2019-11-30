@@ -1,72 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-62806475-2"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      gtag("config", "UA-62806475-2");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Product Page</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/styles.css') }}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/public/css/styles.css') }}"
+    />
 
     <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Fontawesome -->
     <script src="https://kit.fontawesome.com/6ab52acb52.js"></script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Pacifico|Roboto&display=swap" rel="stylesheet">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Pacifico|Roboto&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
+  <body>
     {% if product.i_status == 0 %}
-    <h2> FOR ADMIN USE ONLY </h2>
-    {% endif %}
+    <h2>FOR ADMIN USE ONLY</h2>
+    {% endif %} {% set imageSrc = product.ii_url %} {% set imageSrcShort =
+    imageSrc.split('/static/', 2)[1] %}
 
     <div class="product-container">
-        <div class="row">
-            <div class="col-sm-12 col-lg-6 product-col">
-                <img src="{{product.ii_url}}" style="width: 100%; height: 600px;">
-            </div>
-
-            <div class="col-sm-12 col-lg-4 product-col">
-                <h5>{{product.i_title}}</h5>
-                <h6 class="text-muted">@{{user[2]}}_{{user[3]}}</h6>
-                <p>
-                    {{product.i_desc}}
-                </p>
-            </div>
-
-            <div class="col-sm-12 col-lg-2 col-right product-col">
-                <h5 class="price-label">${{product.i_price}}</h5>
-                <div class="tradable-label">Tradable</div>
-            </div>
+      <div class="row">
+        <div class="col-sm-12 col-lg-6 product-col">
+          <img
+            src="{{ url_for('static',filename=imageSrcShort) }}"
+            alt="{{product.i_title}}"
+            style="width: 100%; height: 600px;"
+          />
         </div>
 
-        <center>
-            <button class="btn btn-warning" onclick="window.open('/contact-seller/{{product.i_id}}')">
-                Contact Seller
-            </button>
-        </center>
+        <div class="col-sm-12 col-lg-4 product-col">
+          <h5>{{product.i_title}}</h5>
+          <h6 class="text-muted">@{{user[2]}}_{{user[3]}}</h6>
+          <p>
+            {{product.i_desc}}
+          </p>
+        </div>
+
+        <div class="col-sm-12 col-lg-2 col-right product-col">
+          <h5 class="price-label">${{product.i_price}}</h5>
+          <div class="tradable-label">Tradable</div>
+        </div>
+      </div>
+
+      <center>
+        <button
+          class="btn btn-warning"
+          onclick="window.open('/contact-seller/{{product.i_id}}')"
+        >
+          Contact Seller
+        </button>
+      </center>
     </div>
 
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Custom JS -->
-    <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
-</body>
-
+    <script
+      type="text/javascript"
+      src="{{ url_for('static',filename='index.js') }}"
+    ></script>
+  </body>
 </html>
