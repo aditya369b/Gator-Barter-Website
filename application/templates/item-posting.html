@@ -1,175 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      gtag("config", "UA-62806475-2");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Post an item for sale</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/styles.css') }}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/public/css/styles.css') }}"
+    />
 
     <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Fontawesome -->
     <script src="https://kit.fontawesome.com/6ab52acb52.js"></script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Pacifico|Roboto&display=swap" rel="stylesheet">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Pacifico|Roboto&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
+  <body>
+    <form
+      id="item-posting-page"
+      class="col-sm-10"
+      action="/item-posting"
+      method="post"
+      name="item_form"
+      onsubmit="return validateForm()"
+      enctype="multipart/form-data"
+    >
+      <center>
+        <h1>Make an Item Posting</h1>
+      </center>
 
-    <form id="item-posting-page" class="col-sm-10" action="/item-posting" method="post" name="item_form" onsubmit="return validateForm()" enctype="multipart/form-data">
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-control"
+          id="item-name"
+          name="item_title"
+          placeholder="Item name"
+        />
+      </div>
 
-        <div class="form-group">
-            <input type="text" class="form-control" id="item-name" name="item_title" placeholder="Item name">
+      <select class="yellow-select w-100">
+        <optgroup label="Category">
+          <option value="none" selected disabled hidden>
+            Category
+          </option>
+          <option value="Electronic">Electronic</option>
+          <option value="Furniture">Furniture</option>
+          <option value="Other">Other</option>
+        </optgroup>
+      </select>
+
+      <div class="form-group">
+        <input
+          type="number"
+          class="form-control"
+          id="item-price"
+          name="item_price"
+          placeholder="Item price"
+        />
+      </div>
+
+      <div class="form-group">
+        <textarea
+          class="form-control"
+          id="item-desc"
+          name="item_desc"
+          rows="10"
+          placeholder="Add a description for the item you are listing..."
+        ></textarea>
+      </div>
+
+      <div
+        id="drop_zone"
+        class="text-center"
+        ondrop="dropHandler(event);"
+        ondragover="dragOverHandler(event);"
+      >
+        <i class="far fa-images"></i>
+        <p>Drag your item photos here</p>
+        <p>&#151; or &#151;</p>
+        <div style="height:0px;overflow:hidden">
+          <input type="file" id="fileInput" name="file" accept="image/*" />
         </div>
+        <button type="button" onclick="chooseFile();">
+          Select a photo from your computer
+        </button>
+        <!--&lt;!&ndash;<p>&ndash;&gt;-->
+        <!--{% with messages = get_flashed_messages() %}-->
+        <!--{% if messages %}-->
+        <!--<ul class=flashes>-->
+        <!--{% for message in messages %}-->
+        <!--<li>{{ message }}</li>-->
+        <!--{% endfor %}-->
+        <!--</ul>-->
+        <!--{% endif %}-->
+        <!--{% endwith %}-->
+        <!--&lt;!&ndash;</p>&ndash;&gt;-->
+      </div>
 
-        <div class="dropdown show">
-            <!--<a class="btn btn-warning dropdown-toggle item-category-toggle" href="#" role="button" id="dropdownMenuLink"-->
-                <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-                <!--Item category-->
-            <!--</a>-->
+      <div class="tradable-check">
+        <p>Would you like to trade items from your wish list for this item?</p>
 
-            <!--<div class="dropdown-menu dropdown-menu-right item-category-menu" aria-labelledby="dropdownMenuLink">-->
-                <!--<a class="dropdown-item category-item" href="#"><i class="fas fa-laptop"> Electronic</i></a>-->
-                <!--<a class="dropdown-item category-item" href="#"><i class="fas fa-couch"> Furniture</i></a>-->
-                <!--<a class="dropdown-item category-item" href="#"><i class="fas fa-question-circle"> Other</i></a>-->
-            <!--</div>-->
-            <select name="category">
-                    <option value="">select category</option>
-                    <option value="Electronic">Electronic</option>
-                    <option value="Furniture">Furniture</option>
-                    <option value="Other">Other</option>
-            </select>
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" name="optradio" /> Yes
+          </label>
         </div>
-
-
-        <div class="form-group">
-            <input type="number" class="form-control" id="item-price" name="item_price" placeholder="Item price">
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" name="optradio" /> No
+          </label>
         </div>
+      </div>
 
-        <div class="form-group item-desc-field">
-            <textarea class="form-control" id="item-desc" name="item_desc" rows="10"
-                placeholder="Add a description for the item you are listing..."></textarea>
+      <div class="row">
+        <div class="col-lg"></div>
+        <div class="col-lg-3">
+          <a href="/" class="btn btn-danger item-posting-btn">Cancel</a>
         </div>
-
-        <div id="drop_zone" class="text-center" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-            <i class="far fa-images"></i>
-            <p>Drag your item photos here</p>
-            <p>&#151; or &#151;</p>
-            <div style="height:0px;overflow:hidden">
-                <input type="file" id="fileInput" name="file" accept="image/*" />
-            </div>
-            <button type="button" onclick="chooseFile();">Select a photo from your computer</button>
-            <!--&lt;!&ndash;<p>&ndash;&gt;-->
-	            <!--{% with messages = get_flashed_messages() %}-->
-	                <!--{% if messages %}-->
-                        <!--<ul class=flashes>-->
-		                <!--{% for message in messages %}-->
-		                    <!--<li>{{ message }}</li>-->
-		                <!--{% endfor %}-->
-		                <!--</ul>-->
-	                <!--{% endif %}-->
-	            <!--{% endwith %}-->
-            <!--&lt;!&ndash;</p>&ndash;&gt;-->
+        <div class="col-lg-3">
+          <button class="btn btn-warning item-posting-btn" type="submit">
+            Submit
+          </button>
         </div>
-
-        <div class="tradable-check">
-            <p>Would you like to trade items from your wish list for this item?</p>
-
-            <div class="form-check">
-                <label class="form-check-label radio-spacing" for="yes-tradable">Yes</label>
-                <input class="form-check-input" type="radio" name="isTradable" id="yesTradable" onclick="showWishlist()">
-            </div>
-            <div class="form-check">
-                <label class="form-check-label radio-spacing" for="no-tradable">No</label>
-                <input class="form-check-input" type="radio" name="isNotTradable" id="noTradable" onclick="hideWishlist()">
-            </div>
-        </div>
-
-        <div id="showDiv" style="display: none;">
-            <h1>Wishlist</h1>
-
-            <input type="text" placeholder="Enter your first wishlist item name...">
-
-            <input type="text" placeholder="Enter your second wishlist item name...">
-
-            <input type="text" placeholder="Enter your third wishlist item name...">
-
-            <input type="text" placeholder="Enter your fourth wishlist item name...">
-
-            <input type="text" placeholder="Enter your first wishlist item name...">
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12 col-md-6">
-                <button class="btn btn-success item-posting-btn" type="submit">Submit</button>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <button class="btn btn-danger item-posting-btn" onclick="self.close()">Cancel</button>
-            </div>
-        </div>
+      </div>
     </form>
 
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Custom JS -->
-    <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static',filename='index.js') }}"
+    ></script>
 
-    <script>
+    <!-- <script>
         function validateForm() {
-            if (document.forms["item_form"]["item_title"].value == "")
-            {
+            if (document.forms["item_form"]["item_title"].value == "") {
                 alert("Title must be filled out");
                 return false;
             }
-            if(document.forms["item_form"]["category"].value == "")
-            {
+            if (document.forms["item_form"]["category"].value == "") {
                 alert("Category must be filled out");
                 return false;
             }
-            if(document.forms["item_form"]["item_desc"].value == "")
-            {
+            if (document.forms["item_form"]["item_desc"].value == "") {
                 alert("Description must be filled out");
                 return false;
             }
-            if(document.forms["item_form"]["item_price"].value == "")
-            {
+            if (document.forms["item_form"]["item_price"].value == "") {
                 alert("Price must be filled out. Put 0 if, it is a free give away.");
                 return false;
             }
 
-            if(document.forms["item_form"]["tradable"].value == "")
-            {
+            if (document.forms["item_form"]["tradable"].value == "") {
                 alert("Select appropriate option for - Would you like to trade this item?");
                 return false;
             }
 
-            if(document.forms["item_form"]["fileInput"].value == "")
-            {
+            if (document.forms["item_form"]["fileInput"].value == "") {
                 alert("Select a picture of item you wish to sell!");
                 return false;
             }
 
             return true;
         }
-</script>
-
-</body>
-
+    </script> -->
+  </body>
 </html>

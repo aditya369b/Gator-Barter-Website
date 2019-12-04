@@ -18,8 +18,19 @@ a:hover {
     color: #c89b00;
 }
 
+select {
+    text-align: center;
+    text-align-last: center;
+}
+
 
 /* Navigation Bar Section */
+
+.edu-label {
+    background-color: #FFCC33;
+    color: #330033;
+    text-align: center;
+}
 
 .navbar {
     background-color: #330033;
@@ -29,18 +40,12 @@ a:hover {
 .navbar-brand {
     color: #FFCC33;
     font-family: 'Pacifico', cursive;
-    font-size: 2.17rem;
-    padding-left: 4px;
-}
-
-.navbar-subtext {
-    font-family: 'Pacifico', cursive;
-    font-size: 14px;
+    font-size: 1.5rem;
 }
 
 .navbar-link {
     color: #FFCC33;
-    font-size: 1.25rem;
+    font-size: 1rem;
 }
 
 .navbar-btn {
@@ -71,6 +76,22 @@ a:hover {
     border-color: #FFCC33;
 }
 
+.yellow-select {
+    -webkit-border-radius: 0;
+    border: 0;
+    outline: 1px solid #ffcc33;
+    outline-offset: -1px;
+    background-color: #FFCC33;
+    border-color: #FFCC33;
+    color: #330033;
+    height: 2.65rem;
+}
+
+.category-select-padding {
+    margin: 1.05rem 0 0 1rem;
+    width: 10%;
+}
+
 /* Search Bar Section */
 
 .search-container {
@@ -91,7 +112,7 @@ input {
     color: #330033;
     border-color: #FFCC33;
     padding: 0.5rem 1rem;
-    margin: 1rem 0;
+    margin: 1.08rem 0 0 1.05rem;
     width: 100%;
 }
 
@@ -100,28 +121,42 @@ input {
     color: #330033;
     border-color: #FFCC33;
     padding: 0.5rem 0rem;
-    margin: 1rem 0.20rem 1rem 0;
-    width: 100%;
+    margin: 1.05rem 0.20rem 1.05rem 0;
+    width: 5%;
+}
+
+.search-bar {
+    width: 82.8%;
+
 }
 
 
 /* Main Content Section */
 
-.edu-purpose-label {
-    font-size: 25px;
-    font-weight: bold;
-    text-align: center;
-    padding: 0.5rem;
+.feedback {
+    padding: 0.75rem 0rem;
+    float: left;
+    text-align: right;
+    font-size: 1rem;
 }
 
-.feedback {
-    font-style: italic;	    font-style: italic;
-    padding: 0.5rem 1.5rem;	    float: right;
-    text-align: right;	    font-size: 1.25rem;
-    margin: 0;	}
+.purple-select {
+    border: 0;
+    outline: 1px solid #330033;
+    outline-offset: -1px;
+    background-color: #330033;
+    border-color: #330033;
+    color: #FFCC33;
+    height: 2.65rem;
+}
+
+.filter-select-padding {
+    float: right;
+    width: 10%;
+}
 
 .sort-dropdown {
-    float: left;
+    float: right;
 }
 
 .sort-dropdown div button {
@@ -132,9 +167,8 @@ input {
 
 .dropdown-fb-col {
     display: block;
-    padding-bottom: 4rem;
+    padding: 1rem 0 4rem 0;
     margin: 0 1rem;
-    /* margin: 0 1rem; */
 }
 
 /* Listing Section */
@@ -196,6 +230,10 @@ footer {
 
 .product-container {
     margin: 2rem;
+}
+
+.product-container button {
+    width: 25%;
 }
 
 .product-col {
@@ -264,28 +302,6 @@ footer {
     margin: 0 auto;
 }
 
-.item-category-toggle {
-    width: 100%;
-}
-
-.item-category-menu {
-    width: 100%;
-    overflow-y: scroll;
-}
-
-.category-item {
-    width: auto;
-    padding: 0.5rem;
-}
-
-.category-item:hover {
-    background-color: #FFCC33;
-}
-
-.item-desc-field {
-    padding-top: 1rem;
-}
-
 #drop_zone {
     border: 1px solid rgba(0, 0, 0, .2);
     border-radius: 0.25rem;
@@ -315,6 +331,7 @@ footer {
 
 .tradable-check {
     text-align: center;
+    margin-bottom: 1rem;
 }
 
 .tradable-check p {
@@ -329,10 +346,6 @@ footer {
 .item-posting-btn {
     width: 100%;
     margin: 0.5rem 0;
-}
-
-.radio-spacing {
-    padding-right: 0.3rem;
 }
 
 /* Login Section */
