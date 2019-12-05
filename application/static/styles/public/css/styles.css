@@ -662,6 +662,11 @@ input:checked+.slider:before {
   text-align: center;
 }
 
+#login-text{
+  padding-top: 2%;
+  text-align:center;
+}
+
 .form-check-input{
   margin-left: 1.5rem;
 }
@@ -687,6 +692,11 @@ input[type=submit] {
 .container {
   background-color: #f1f1f1;
   padding: 20px;
+}
+
+/* style for log in inputs */
+#log-con{
+  width: 20%;
 }
 
 /* The message box is shown when the user clicks on the password field */
