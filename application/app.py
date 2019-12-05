@@ -53,14 +53,14 @@ session_file = []
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
 db = pymysql.connect(app.config['MYSQL_DATABASE_HOST'],
                      app.config['MYSQL_DATABASE_USER'],
-                     None, app.config['MYSQL_DATABASE_DB'])
+                     'Password123', app.config['MYSQL_DATABASE_DB'])
 
 
 def getCursor():
@@ -447,7 +447,7 @@ def item_posting():
             item_category = request.form['category']
             item_desc = str(bleach.clean(request.form['item_desc']))
             item_price = request.form['item_price']
-            is_tradable = str(1) if 'isTradable' in request.form else str(0)
+            is_tradable = request.form['isTradable']  #str(1) if 'isTradable' in request.form else str(0)
             item_images = []
             if sessionUser == "":
                 session['item_images'] = []
