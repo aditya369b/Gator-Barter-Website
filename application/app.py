@@ -43,9 +43,9 @@ app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
 # app.config['DEBUG'] = 'True'    # PHILIPTEST
 
 # Might need to rework this, random now to ensure unique sessions (with high probability)
