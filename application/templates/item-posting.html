@@ -80,9 +80,9 @@
         />
       </div>
 
-      <select class="yellow-select w-100">
+      <select name=category class="yellow-select w-100">
         <optgroup label="Category">
-          <option value="none" selected disabled hidden>
+          <option value="" selected disabled hidden>
             Category
           </option>
           <option value="Electronic">Electronic</option>
@@ -121,11 +121,15 @@
         <p>Drag your item photos here</p>
         <p>&#151; or &#151;</p>
         <div style="height:0px;overflow:hidden">
-          <input type="file" id="fileInput" name="file" accept="image/*" />
+          <input type="file" id="fileInput" name="file" accept="image/*" onchange="fileUploaded();" />
         </div>
         <button type="button" onclick="chooseFile();">
           Select a photo from your computer
         </button>
+        <p style="visibility: hidden;" id="imageUpload">
+          File Uploaded
+          </p>
+          
         <!--&lt;!&ndash;<p>&ndash;&gt;-->
         <!--{% with messages = get_flashed_messages() %}-->
         <!--{% if messages %}-->
@@ -144,12 +148,12 @@
 
         <div class="form-check">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optradio" /> Yes
+            <input type="radio" class="form-check-input" name="isTradable" value=1 /> Yes
           </label>
         </div>
         <div class="form-check">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optradio" /> No
+            <input type="radio" class="form-check-input" name="isTradable" value=0 checked/> No
           </label>
         </div>
       </div>
@@ -207,5 +211,11 @@
             return true;
         }
     </script> -->
+    <!-- <script>
+      function fileUploaded(){
+          console.log("in file uploaded")
+          document.getElementById("imageUpload").style.visibility = "visible";
+      }
+      </script> -->
   </body>
 </html>

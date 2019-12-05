@@ -11,6 +11,43 @@ function isTradable(tradable) {
 function chooseFile() {
     $("#fileInput").click();
 }
+    // TO display "file uploaded" message in item-posting
+function fileUploaded(){
+    console.log("in file uploaded")
+    document.getElementById("imageUpload").style.visibility = "visible";
+}
+
+// To validate a form for item-posting
+function validateForm() {
+    if (document.forms["item_form"]["item_title"].value == "") {
+        alert("Title must be filled out");
+        return false;
+    }
+    if (document.forms["item_form"]["category"].value == "") {
+        alert("Category must be filled out");
+        return false;
+    }
+    if (document.forms["item_form"]["item_desc"].value == "") {
+        alert("Description must be filled out");
+        return false;
+    }
+    if (document.forms["item_form"]["item_price"].value == "") {
+        alert("Price must be filled out. Put 0 if, it is a free give away.");
+        return false;
+    }
+
+    // if (document.forms["item_form"]["isTradable"].value == 1) {
+    //     alert("Select appropriate option for - Would you like to trade this item?");
+    //     return false;
+    // }
+
+    if (document.forms["item_form"]["fileInput"].value == "") {
+        alert("Select a picture of item you wish to sell!");
+        return false;
+    }
+
+    return true;
+}
 
 function dropHandler(ev) {
     console.log('File(s) dropped');
