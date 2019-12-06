@@ -33,7 +33,7 @@
 </head>
 
 <body>
-
+  <button onclick="goHome()">Go Back</button>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="feedback">
@@ -75,7 +75,8 @@
         </div>
     </form>
   </div>
-
+  <!-- Custom JS -->
+  <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
 </body>
 
 </html>
