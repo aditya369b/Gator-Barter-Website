@@ -2,11 +2,13 @@
 
 html {
     height: 100%;
+    overflow-y: visible;
 }
 
 body {
     margin: 0;
     height: 100%;
+    overflow-y: scroll;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -219,6 +221,22 @@ footer {
     width: 100%;
     position: absolute;
     bottom: -1;
+}
+
+footer2{
+    padding: 1rem 1rem;
+    background-color: #330033;
+    color: #FFCC33;
+    text-align: center;
+    position:fixed;
+    /*position:static;*/
+    left:0px;
+    /*bottom:0px;*/
+    height:50px;
+     /*width: 300px;*/
+    width: 100%;
+    /*position: absolute;*/
+    bottom: 0 ;
 }
 
 /* Product Details Section */
@@ -609,10 +627,14 @@ input:checked+.slider:before {
 .member_container {
     text-align: center;
     padding-top: 15px;
+    padding-bottom: 40px;
 }
 
 .btn-primary {
     width: 20%;
+    color: #330033;
+    background: #ffcc33;
+    border-color: #ffcc33;
 }
 
 .about {
