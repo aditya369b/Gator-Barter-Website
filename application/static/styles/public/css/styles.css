@@ -663,13 +663,6 @@ input:checked+.slider:before {
   text-align: center;
 }
 
-#con
-{
-  width: 38%;
-  background-color: #f0f0f0;
-  padding-left: 6%;
-}
-
 #regis-text{
   padding-top: 2%;
   text-align: center;
@@ -684,16 +677,6 @@ input:checked+.slider:before {
   margin-left: 1.5rem;
 }
 
-/* Style all input fields */
-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  margin-top: 6px;
-  margin-bottom: 16px;
-}
 
 /* Style the submit button */
 input[type=submit] {
