@@ -157,6 +157,13 @@ class Query():
         VALUES (\"""" + m_text + "\", " + str(m_sender_id) + ", " + str(m_receiver_id) + ", " + str(m_item_id) + ", '" + str(time.strftime('%Y-%m-%d %H:%M:%S')) + """');
         """
 
+    def SELL_ITEM(self, item_id):
+        return """ 
+            UPDATE item as i
+            SET i.i_sold_ts = '""" + str(time.strftime('%Y-%m-%d %H:%M:%S')) + """', 
+            i_status = 2
+            WHERE i.i_id = '""" + str(item_id) + """';"""
+
 
 localQuery = Query()
 
