@@ -62,15 +62,25 @@ def register():
     cursor = getCursor()[1]
 
     if request.method == "POST":
+        print(request.form)
         email = str(bleach.clean(request.form['email']))
         password = sha256_crypt.encrypt(
-            str(bleach.clean(request.form['password'])))
+            str(bleach.clean(request.form['password'].strip())))
+        confirm_password = sha256_crypt.encrypt(
+            str(bleach.clean(request.form['confirm-password'].strip())))
         fname = str(bleach.clean(request.form['fname']))
         lname = str(bleach.clean(request.form['lname']))
         created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
         updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
 
-        print(fname, lname, created_ts)
+        if not request.form['password'] == request.form['confirm-password'] :
+            pass_temp = request.form['password']
+            confirm_pass_temp = request.form['confirm-password']
+            print(pass_temp, confirm_pass_temp)
+            print(pass_temp == confirm_pass_temp)
+            flash("passwords do not match")
+            return redirect("/register")
+
 
         # check if user already exists
         cursor.execute(query().GET_USER_BY_EMAIL(email))
@@ -82,6 +92,10 @@ def register():
             flash("Registeration of " + email +
                   " Failed. User Already Exists!")
             return redirect("/login")
+
+        if not email.endswith("@mail.sfsu.edu"):
+            flash("email needs to end with @mail.sfsu.edu")
+            return redirect("/register")
 
         # make new user row in db
         print(query().INSERT_USER(email, password,
