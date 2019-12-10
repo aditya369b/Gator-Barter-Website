@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, session, request, abort, redirect
+from flask import Blueprint, render_template, session, request, abort, redirect, flash
 import gatorProduct as product  # class made by alex
 
 from queries import query
@@ -103,5 +103,7 @@ def item_posting():
 
     if request.method == "GET":
         return render_template("item-posting.html")
+
+    flash("Item Posted Successfully")
 
     return redirect('/')
