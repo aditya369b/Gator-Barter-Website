@@ -87,7 +87,9 @@
 
         <div class="col-sm-12 col-lg-2 col-right product-col">
           <h5 class="price-label">${{product.i_price}}</h5>
+          {% if product.i_is_tradable > 0 %}
           <div class="tradable-label">Tradable</div>
+          {% endif %}
         </div>
       </div>
 

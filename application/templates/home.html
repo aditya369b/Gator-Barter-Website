@@ -98,9 +98,11 @@
 
                                 <div class="col">
                                     <h5 class="card-title price-label">${{itemPrice}}</h5>
+                                    {% if isTradable > 0 %}
                                     <div class="card-subtitle tradable-label">
                                         Tradable
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
 
