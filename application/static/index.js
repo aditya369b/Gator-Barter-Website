@@ -42,3 +42,7 @@ function goBack(){
  function goHome(){
    window.location.href='/';
 }
+
+function closeWindow(){
+  close();
+}
