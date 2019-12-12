@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename  # for input picture loading
 
 db = getCursor()[0]
 
-ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 
 def messageForSeller(buyerName, buyerConact, messageBody, itemTitle, itemTS, itemPrice):
