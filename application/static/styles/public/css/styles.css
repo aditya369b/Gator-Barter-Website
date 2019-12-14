@@ -70,6 +70,15 @@ select {
     visibility: visible;
 }
 
+.back-btn {
+    border: 0;
+    outline: 1px solid;
+    outline-offset: -1px;
+    background-color: #f1f1f1;
+    border-color: #FFCC33;
+    height: 2.65rem;
+}
+
 /* Navigation Bar Section */
 
 .edu-label {
@@ -123,9 +132,8 @@ select {
 }
 
 .yellow-select {
-    -webkit-border-radius: 0;
     border: 0;
-    outline: 1px solid #ffcc33;
+    outline: 1px solid #330033;
     outline-offset: -1px;
     background-color: #FFCC33;
     border-color: #FFCC33;

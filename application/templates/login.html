@@ -33,7 +33,8 @@
 </head>
 
 <body>
-    <button onclick="goHome()">Go Back</button>
+    <button onclick="goHome()" class="back-btn"><i class="fas fa-backward"></i> Go Back</button>
+    
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="feedback">
