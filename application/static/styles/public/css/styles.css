@@ -25,6 +25,10 @@ select {
     text-align-last: center;
 }
 
+.page-title {
+    padding: 0.5rem 0;
+    text-align: center;
+}
 
 /* Navigation Bar Section */
 
