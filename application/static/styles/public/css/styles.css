@@ -72,9 +72,9 @@ select {
 
 .back-btn {
     border: 0;
+    margin: 2rem;
     outline: 1px solid;
-    outline-offset: -1px;
-    background-color: #f1f1f1;
+    background-color: white;
     border-color: #FFCC33;
     height: 2.65rem;
 }
