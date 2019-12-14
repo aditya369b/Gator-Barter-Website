@@ -99,10 +99,16 @@ def home():
     print("categories fetched are: ",categories," and type is: ")
 
     feedback = []
+    productUsers = []
     for d in data:
         if len(d) == 16:
             productObject = product.makeProduct(d)
             productList.append(productObject)
+            cursor.execute(query().FULL_USER_FOR_PRODUCT(str(productObject.i_id)))
+            productUser = user.makeUser(cursor.fetchone())
+            productUsers.append(productUser.toDict())
+
+    # print("productUserList", "\n".join(str(x.toDict()) for x in productUsers))
 
     cursor.close()
     feedback.append(
@@ -133,7 +139,7 @@ def home():
     session['categories'] = categories
 
     return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser,
-                     sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories)
+                     sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories, productUsers=productUsers)
 
 
 @app.route('/apply_filter/<filter_type>')
@@ -210,18 +216,22 @@ def searchPage():
                 feedback.append("No Results, Consider these Items")
             cursor.execute(query().ALL_APPROVED_LISTINGS())
             data = cursor.fetchall()
-        cursor.close()
         
     # if catName != "":
     #     data = [d for d in data if d['c_name'] == catName]
+
+    productUsers = []
 
     for d in data:
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
-            data = [productObject.toDict() for d in cursor.fetchall()]    
+            data = [productObject.toDict() for d in cursor.fetchall()]
+            cursor.execute(query().FULL_USER_FOR_PRODUCT(str(productObject.i_id)))
+            productUser = user.makeUser(cursor.fetchone())
+            productUsers.append(productUser)
     
-    
+    cursor.close()
 
 
     session['previousQuery'] = [productObject.toDict()
@@ -241,7 +251,7 @@ def searchPage():
     # currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
     categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories)
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories, productUsers=productUsers)
 
 
 @app.route("/categories/<catName>", methods=["POST", "GET"])
