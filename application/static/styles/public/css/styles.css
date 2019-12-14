@@ -25,6 +25,11 @@ select {
     text-align-last: center;
 }
 
+.required-field {
+    color: red;
+    font-weight: bold;
+}
+
 .page-title {
     padding: 0.5rem 0;
     text-align: center;
@@ -168,7 +173,7 @@ input {
 
 .search-bar {
     width: 82.8%;
-
+    margin: 1rem 0;
 }
 
 
@@ -392,6 +397,10 @@ footer2 {
 .item-posting-btn {
     width: 100%;
     margin: 0.5rem 0;
+}
+
+#item-name, #item-price, #fname, #lname, #email, #psw, #confirm-pwd {
+    margin: 0;
 }
 
 /* Login Section */
