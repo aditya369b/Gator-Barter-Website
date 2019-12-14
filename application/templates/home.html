@@ -17,9 +17,10 @@
                     {% endwith %}
                     {% for feed in feedback %}
                     {% if feed|length > 0 %}
-                    <li>{{feed}}</li>
+                    <li>{{ feed }}</li>
                     {% endif %}
                     {% endfor %}
+                    <li>1 - {{products | length}} of {{products | length}} results</li>
                 </ul>
             </div>
 
