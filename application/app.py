@@ -41,7 +41,7 @@ import uuid
 from werkzeug.utils import secure_filename  # for input picture loading
 
 
-from livereload import Server   # PHILIPTEST
+# from livereload import Server   # PHILIPTEST
 
 
 app = Flask(__name__)
@@ -54,7 +54,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = None
 app.config['MYSQL_DATABASE_DB'] = 'gatorbarter'
 app.config['MYSQL_DATABASE_HOST'] = '0.0.0.0'
-app.config['DEBUG'] = 'True'    # PHILIPTEST
+# app.config['DEBUG'] = 'True'    # PHILIPTEST
 app.secret_key = os.urandom(32)
 
 # Master Connection, Server ready, don't push changes.
@@ -942,6 +942,6 @@ def not_found(e):
 
 
 if __name__ == "__main__":
-    server = Server(app.wsgi_app)   # PHILIPTEST
-    server.serve()  # PHILIPTEST
-    # app.run("0.0.0.0")
+    # server = Server(app.wsgi_app)   # PHILIPTEST
+    # server.serve()  # PHILIPTEST
+    app.run("0.0.0.0")
