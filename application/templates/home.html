@@ -5,57 +5,67 @@
 <!-- Main content -->
 <main>
     <div>
-        <div class="dropdown-fb-col">
-            <div class="feedback">
+        <div class="row">
+            <div class="feedback col-lg-4 col-sm-12">
                 <ul class="list-unstyled">
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
                     {% for message in messages %}
                     <li>{{ message }}</li>
-                    {% endfor %} 
-                {% endif %}
-                {% endwith %}
-                {% for feed in feedback %}
-                    {% if feed|length > 0 %}
-                     <li>{{feed}}</li>
+                    {% endfor %}
                     {% endif %}
-                {% endfor %}
-            </ul>
+                    {% endwith %}
+                    {% for feed in feedback %}
+                    {% if feed|length > 0 %}
+                    <li>{{ feed }}</li>
+                    {% endif %}
+                    {% endfor %}
+                    <li>Showing 1-{{products | length}} of {{products | length}} results</li>
+                </ul>
             </div>
 
-          
-             <span class="sort-dropdown">
+            <div class="col-lg col-sm page-title">
+                <h1>Home</h1>
+            </div>
+
+            <span class=" sort-dropdown col-lg-4 col-sm-12">
                 <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown">{{sortOption}}</button>
 
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" href="/apply_filter/alpha_desc"><i class="fas fa-sort-alpha-down"> Alphabetical: A to
+                            <a class="dropdown-item" href="/apply_filter/alpha_desc"><i class="fas fa-sort-alpha-down">
+                                    Alphabetical: A to
                                     Z</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/apply_filter/alpha_asc"><i class="fas fa-sort-alpha-up"> Alphabetical: Z to
+                            <a class="dropdown-item" href="/apply_filter/alpha_asc"><i class="fas fa-sort-alpha-up">
+                                    Alphabetical: Z to
                                     A</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/apply_filter/price_asc"><i class="fas fa-money-bill-alt"> Price: Low to
+                            <a class="dropdown-item" href="/apply_filter/price_asc"><i class="fas fa-money-bill-alt">
+                                    Price: Low to
                                     High</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/apply_filter/price_desc"><i class="fas fa-money-bill"> Price: High to Low</i></a>
+                            <a class="dropdown-item" href="/apply_filter/price_desc"><i class="fas fa-money-bill">
+                                    Price: High to Low</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/apply_filter/date_asc"><i class="fas fa-history"> Date: Oldest</i></a>
+                            <a class="dropdown-item" href="/apply_filter/date_asc"><i class="fas fa-history"> Date:
+                                    Oldest</i></a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/apply_filter/date_desc"><i class="fas fa-clock"> Date: Newest</i></a>
+                            <a class="dropdown-item" href="/apply_filter/date_desc"><i class="fas fa-clock"> Date:
+                                    Newest</i></a>
                         </li>
                     </ul>
                 </div>
             </span>
 
             <!-- Category Select -->
-           <!-- <div class="dr">
+            <!-- <div class="dr">
                 <select class="purple-select filter-select-padding">
                     <optgroup label="Sort By">
                         <option value="none" selected disabled hidden>
@@ -71,7 +81,7 @@
                 </select>
             </div> -->
         </div>
-
+        {% set i = 0 %}
         <div class="container-fluid content-row">
             <div class="row">
                 {% for product in products %}
@@ -91,16 +101,16 @@
                         </a>
                         <div class="card-body d-flex flex-column">
                             <div class="row">
-                                <div class="col-sm-8">
+                                    <div class="col-sm-8">
                                     <h5 class="card-title item-label">{{itemTitle}}</h5>
-                                    <h6 class="card-subtitle user-label">@username</h6>
+                                    <h6 class="card-subtitle user-label">@{{productUsers[i]['u_fname']}}_{{productUsers[i]['u_lname']}}</h6>
                                 </div>
 
                                 <div class="col">
                                     <h5 class="card-title price-label">${{itemPrice}}</h5>
                                     {% if isTradable > 0 %}
-                                    <div class="card-subtitle tradable-label">
-                                        Tradable
+                                    <div class="card-subtitle tradable-label label-tooltip">Tradable
+                                        <span class="tooltiptext">You can trade item(s) for this item.</span>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -116,15 +126,16 @@
                         </div>
                     </div>
                 </div>
+                {% set i = i+1 %}
                 {% endfor %}
                 <!-- Load all item listings -->
             </div>
         </div>
 
         <!-- Show more items -->
-        <button class="show-more-btn">
+        <!-- <button class="show-more-btn">
             Show More
-        </button>
+        </button> -->
 </main>
 
 {% endblock %}

@@ -61,33 +61,55 @@
     />
   </head>
 
-  <body>
-    {% if id|int < 1 %}
-    <script>
-      self.close();
-    </script>
-    {% endif %}
-    <div class="contact-seller">
+<body>
+  <!-- <button onclick="closeWindow()">Close</button> -->
+  {% if id|int < 1 %}
+  <script>
+    self.close();
+  </script>
+  {% endif %}
+  <div class="contact-seller">
+
+    <div class="page-title">
       <h1>Contact Seller</h1>
+    </div>
 
-      <form action="/contact-seller/{{id}}" method="post">
-        <input
-          type="text"
-          class="form-control"
-          id="item-name"
-          name="contactType"
-          placeholder="Enter your phone number or email address..."
-        />
+    <h4>{{currentItem['i_title']}}</h4>
+    <p>{{currentItem['i_desc']}}</p>
 
-        <div class="form-group">
-          <textarea
-            class="form-control"
-            id="message_desc"
-            rows="10"
-            name="buyerMessage"
-            placeholder="Add a message to the seller..."
-          ></textarea>
+    <form action="/contact-seller/{{id}}" method="post">
+      <div class="form-group">
+        <label for="contact-method" style="float: left;">Contact Method <span class="required-field">*</span></label>
+        <input type="text" class="form-control" id="contact-method" name="contactType"
+          placeholder="Enter your phone number or email address..." required />
+      </div>
+
+      <div class="form-group">
+        <label for="contact-msg" style="float: left;">Message <span class="required-field">*</span></label>
+        <textarea class="form-control" id="contact-msg" rows="10" name="buyerMessage"
+          placeholder="Add a message to the seller..." required></textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+
         </div>
+        <div class="col-sm-12 col-md-3">
+          <button class="btn btn-danger btn-block" onclick="self.close()">
+            Cancel
+          </button>
+        </div>
+        <div class="col-sm-12 col-md-3">
+          <button class="btn btn-warning btn-block" type="submit">
+            Send Message
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- Custom JS -->
+  <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
+</body>
 
         <div class="row">
           <div class="col-md-6"></div>

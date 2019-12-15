@@ -71,3 +71,15 @@ function dropHandler(ev) {
         }
     }
 }
+
+function goBack(){
+  window.history.back();
+}
+
+ function goHome(){
+   window.location.href='/';
+}
+
+function closeWindow(){
+  close();
+}

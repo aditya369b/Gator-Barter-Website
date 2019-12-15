@@ -2,11 +2,13 @@
 
 html {
     height: 100%;
+    overflow-y: visible;
 }
 
 body {
     margin: 0;
     height: 100%;
+    overflow-y: scroll;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -23,6 +25,59 @@ select {
     text-align-last: center;
 }
 
+.required-field {
+    color: red;
+    font-weight: bold;
+}
+
+.page-title {
+    padding: 0.5rem 0;
+    text-align: center;
+}
+
+.label-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.label-tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black; 
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.label-tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.label-tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.back-btn {
+    border: 0;
+    margin: 2rem;
+    outline: 1px solid;
+    background-color: white;
+    border-color: #FFCC33;
+    height: 2.65rem;
+}
 
 /* Navigation Bar Section */
 
@@ -77,9 +132,8 @@ select {
 }
 
 .yellow-select {
-    -webkit-border-radius: 0;
     border: 0;
-    outline: 1px solid #ffcc33;
+    outline: 1px solid #330033;
     outline-offset: -1px;
     background-color: #FFCC33;
     border-color: #FFCC33;
@@ -127,17 +181,14 @@ input {
 
 .search-bar {
     width: 82.8%;
-
+    margin: 1rem 0;
 }
 
 
 /* Main Content Section */
 
 .feedback {
-    padding: 0.75rem 0rem;
-    float: left;
-    text-align: right;
-    font-size: 1rem;
+    margin: 0.5rem 1rem;
 }
 
 .purple-select {
@@ -155,20 +206,12 @@ input {
     width: 10%;
 }
 
-.sort-dropdown {
-    float: right;
-}
-
 .sort-dropdown div button {
     background-color: #330033;
     color: #FFCC33;
     padding: 0.5rem 4.5rem;
-}
-
-.dropdown-fb-col {
-    display: block;
-    padding: 1rem 0 4rem 0;
-    margin: 0 1rem;
+    float: right;
+    margin: 1rem;
 }
 
 /* Listing Section */
@@ -219,6 +262,22 @@ footer {
     width: 100%;
     position: absolute;
     bottom: -1;
+}
+
+footer2 {
+    padding: 1rem 1rem;
+    background-color: #330033;
+    color: #FFCC33;
+    text-align: center;
+    position: fixed;
+    /*position:static;*/
+    left: 0px;
+    /*bottom:0px;*/
+    height: 50px;
+    /*width: 300px;*/
+    width: 100%;
+    /*position: absolute;*/
+    bottom: 0;
 }
 
 /* Product Details Section */
@@ -346,6 +405,10 @@ footer {
 .item-posting-btn {
     width: 100%;
     margin: 0.5rem 0;
+}
+
+#item-name, #item-price, #fname, #lname, #email, #psw, #confirm-pwd {
+    margin: 0;
 }
 
 /* Login Section */
@@ -609,10 +672,14 @@ input:checked+.slider:before {
 .member_container {
     text-align: center;
     padding-top: 15px;
+    padding-bottom: 40px;
 }
 
 .btn-primary {
     width: 20%;
+    color: #330033;
+    background: #ffcc33;
+    border-color: #ffcc33;
 }
 
 .about {
@@ -648,6 +715,32 @@ input:checked+.slider:before {
     .item-desc-col {
         text-align: center;
     }
+
+    .category-select-padding {
+        width: 100%;
+        margin: 0.5rem 1rem;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin: 0.5rem 1rem;
+    }
+
+    .search-btn {
+        width: 100%;
+        margin: 0.5rem 1rem 1.5rem 1rem;
+    }
+
+    .feedback {
+        text-align: center;
+        margin: 1rem 0 0 0;
+    }
+
+    .sort-dropdown div button {
+        width: 96%;
+        float: none;
+        float: center;
+    }
 }
 
 /* Medium devices (≥ 768px; tablet) */
@@ -658,3 +751,87 @@ input:checked+.slider:before {
 
 /* Extra large devices (≥ 1200px; wide desktop) */
 @media (min-width: 1200px) {}
+
+#multiCap {
+    text-align: center;
+}
+
+#regis-text {
+    padding-top: 2%;
+    text-align: center;
+}
+
+#login-text {
+    padding-top: 2%;
+    text-align: center;
+}
+
+.form-check-input {
+    margin-left: 1.5rem;
+}
+
+
+/* Style the submit button */
+input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/*style for registration fields */
+#con {
+    background-color: #f1f1f1;
+    padding: 20px;
+    padding-left: 5%;
+    width: 38%;
+}
+
+
+/* style for log in inputs */
+#log-con {
+    width: 20%;
+    background-color: #f1f1f1;
+    padding: 20px;
+}
+
+/* The message box is shown when the user clicks on the password field */
+#message {
+    background: #f1f1f1;
+    color: #000;
+    position: relative;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+#message p {
+    text-align: center;
+    padding: 5px 35px;
+    font-size: 18px;
+}
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
+    color: green;
+}
+
+.valid:before {
+    position: relative;
+    left: -35px;
+    content: "✔";
+}
+
+/* Add a red text color and an "x" when the requirements are wrong */
+.invalid {
+    color: red;
+}
+
+.invalid:before {
+    position: relative;
+    left: -35px;
+    content: "✖";
+}
+
+/* position of radio buttons in items posting page */
+input[type="checkbox"],
+input[type="radio"] {
+    top: 0;
+}

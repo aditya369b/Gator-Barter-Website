@@ -15,6 +15,7 @@ import gatorProduct as product  # class made by alex
 from queries import query
 from dbCursor import getCursor
 from filterData import filter_data
+import gatorUser as user
 import bleach
 
 index_blueprint = Blueprint('index', __name__)
@@ -35,10 +36,14 @@ def home():
     print("categories fetched are: ",categories," and type is: ")
 
     feedback = []
+    productUsers = []
     for d in data:
         if len(d) == 16:
             productObject = product.makeProduct(d)
             productList.append(productObject)
+            cursor.execute(query().FULL_USER_FOR_PRODUCT(str(productObject.i_id)))
+            productUser = user.makeUser(cursor.fetchone())
+            productUsers.append(productUser.toDict())
 
     cursor.close()
     feedback.append(
@@ -69,7 +74,7 @@ def home():
     session['categories'] = categories
 
     return render_template("home.html", products=session['previousQuery'], feedback=feedback, sessionUser=sessionUser,
-                     sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories)
+                     sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories, productUsers=productUsers)
 
 
 @index_blueprint.route('/results', methods=['POST', 'GET'])
@@ -117,7 +122,9 @@ def searchPage():
                 feedback.append("No Results, Consider these Items")
             cursor.execute(query().ALL_APPROVED_LISTINGS())
             data = cursor.fetchall()
-        cursor.close()
+        # cursor.close()
+
+        productUsers = []
         
     # if catName != "":
     #     data = [d for d in data if d['c_name'] == catName]
@@ -126,7 +133,13 @@ def searchPage():
         if len(d) > 11:
             productObject = product.makeProduct(d)
             productList.append(productObject)
-            data = [productObject.toDict() for d in cursor.fetchall()]    
+            data = [productObject.toDict() for d in cursor.fetchall()]
+            
+            cursor.execute(query().FULL_USER_FOR_PRODUCT(str(productObject.i_id)))
+            productUser = user.makeUser(cursor.fetchone())
+            productUsers.append(productUser) 
+
+    cursor.close()
     
     
 
@@ -148,7 +161,7 @@ def searchPage():
     # currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
     categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
-    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories)
+    return render_template("home.html", products=data, feedback=feedback, sessionUser=sessionUser, sortOption="Sort By", currentSearch=currentSearch,categoryName=categoryName,categories=categories, productUsers=productUsers)
 
 
 @index_blueprint.route("/categories/<catName>", methods=["POST", "GET"])

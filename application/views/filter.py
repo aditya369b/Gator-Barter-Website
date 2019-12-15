@@ -5,6 +5,7 @@ from queries import query
 from dbCursor import getCursor
 
 from filterData import filter_data
+import gatorUser as user
 filter_blueprint = Blueprint('filter', __name__ )
 
 
@@ -32,9 +33,17 @@ def applyFilter(filter_type):
         data = [d for d in data if d['c_name'] == session['currentCategory']]
 
     data = filter_data(data, filter_type)
+
+    productUsers = []
+
+    for productObject in data:
+        cursor.execute(query().FULL_USER_FOR_PRODUCT(str(productObject['i_id'])))
+        productUser = user.makeUser(cursor.fetchone())
+        productUsers.append(productUser)
+
     feedback.append(filter_type)
     currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
     categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
-    return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch,categoryName=categoryName,categories=categories)
+    return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch,categoryName=categoryName,categories=categories, productUsers=productUsers)
 

@@ -1,69 +1,99 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
 
-<!-- Main content -->
-<main>
-  <div class="edu-purpose-label">
-    "SFSU Software Engineering Project CSC 648-848, Fall 2019. For Demonstration
-    Only”
-    <br />Admin Dashboard
-  </div>
+{% block content %}
 
-  <ul class="nav nav-pills nav-justified nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link active" data-toggle="pill" href="#waitlist"
-        >Waitlist</a
-      >
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#approved">Approved</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#users">Users</a>
-    </li>
-  </ul>
+    <!-- Main content -->
+    <main>
+        <div class="page-title">
+            <h1>Admin Dashboard</h1>
+        </div>
 
-  <div class="tab-content">
-    <!-- Waitlist Tab -->
-    <div id="waitlist" class="tab-pane container-fluid active tab-content">
-      <!-- Results returned -->
-      <div class="feedback">
-        {{feedback}}
-      </div>
+        <ul class="nav nav-pills nav-justified nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="pill" href="#waitlist">Waitlist</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#approved">Approved</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#users">Users</a>
+            </li>
+        </ul>
 
-      <!-- Load items -->
-      <div class="container-fluid content-row">
-        <div class="row">
-          {% for product in products %} {% set imageSrc = product.ii_url %} {%
-          set imageSrcShort = imageSrc.split('/static/', 2)[1] %}
-          <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
-            <div class="card mb-3">
-              <img
-                src="{{ url_for('static',filename=imageSrcShort) }}"
-                class="card-img-top h-35"
-                alt="{{product.i_title}}"
-              />
-              <div class="card-body d-flex flex-column testing-body">
-                <div class="row">
-                  <div class="col-sm-8">
-                    <h5 class="card-title item-label">{{product.i_title}}</h5>
-                    <h6 class="card-subtitle user-label">
-                      @username
-                      <i class="fas fa-envelope"></i>
-                      <i class="fas fa-ban"></i>
-                    </h6>
-                  </div>
+        <div class="tab-content">
+            <!-- Waitlist Tab -->
+            <div id="waitlist" class="tab-pane container-fluid active tab-content">
+                <!-- Results returned -->
+                <div class="feedback">
+                    {{feedback}}
+                </div>
 
-                  <div class="col">
-                    <h5 class="card-title price-label">${{product.i_price}}</h5>
-                    <div class="card-subtitle tradable-label">
-                      Tradable
+                <!-- Load items -->
+                <div class="container-fluid content-row">
+                    <div class="row">
+                        {% for product in products %}
+                        <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
+                            <div class="card mb-3">
+                                <img src="{{product.ii_url}}" class="card-img-top h-35" alt="{{product.ii_url}}">
+                                <div class="card-body d-flex flex-column testing-body">
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <h5 class="card-title item-label">{{product.i_title}}</h5>
+                                            <h6 class="card-subtitle user-label">
+                                                @username
+                                                <i class="fas fa-envelope"></i>
+                                                <i class="fas fa-ban"></i>
+                                            </h6>
+                                        </div>
+
+                                        <div class="col">
+                                            <h5 class="card-title price-label">${{product.i_price}}</h5>
+                                            <div class="card-subtitle tradable-label">
+                                                Tradable
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-text">
+                                        Category: {{product.c_name}}<br>
+                                        {{product.i_desc}}
+                                    </div>
+
+                                    <div class="card-btn mt-auto">
+                                        <form action="/admin/item/{{product.i_id}}/approve">
+                                            <button class="btn btn-success btn-block btn-white-text"
+                                                type="submit">Approve</button>
+                                        </form>
+
+                                        <form action="/admin/item/{{product.i_id}}/moreinfo">
+                                            <button class="btn btn-warning btn-block" type="sunmit">More
+                                                Details</button>
+                                        </form>
+
+                                        <form action="/admin/item/{{product.i_id}}/deny">
+                                            <button class="btn btn-danger btn-block btn-white-text"
+                                                type="submit">Reject</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Load all item listings -->
                     </div>
                   </div>
                 </div>
 
-                <div class="card-text">
-                  Category: {{product.c_name}}<br />
-                  {{product.i_desc}}
+                <!-- Show more items -->
+                <!-- <button class="show-more-btn">
+                    Show More
+                </button> -->
+            </div>
+            <!-- Approved Tab -->
+            <div id="approved" class="tab-pane container-fluid fade tab-content">
+                <!-- Results returned -->
+                <div class="feedback">
+                    {{feedback}}
                 </div>
 
                 <div class="card-btn mt-auto">

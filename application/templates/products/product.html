@@ -61,11 +61,17 @@
     />
   </head>
 
-  <body>
+<body>
+    <button onclick="goHome()" class="back-btn"><i class="fas fa-backward"></i> Go Back</button>
+  
     {% if product.i_status == 0 %}
     <h2>FOR ADMIN USE ONLY</h2>
     {% endif %} {% set imageSrc = product.ii_url %} {% set imageSrcShort =
     imageSrc.split('/static/', 2)[1] %}
+
+    <div class="page-title">
+        <h1>Item</h1>
+    </div>
 
     <div class="product-container">
       <div class="row">
@@ -106,9 +112,15 @@
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Custom JS -->
+<<<<<<< HEAD
     <script
       type="text/javascript"
       src="{{ url_for('static',filename='index.js') }}"
     ></script>
   </body>
+=======
+    <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
+</body>
+
+>>>>>>> frontend-m4
 </html>

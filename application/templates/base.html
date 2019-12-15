@@ -67,105 +67,79 @@
         "SFSU Software Engineering Project CSC 648-848, Fall 2019. For
         Demonstration Only"
       </div>
+        <!-- Upper Navigation Bar -->
+        <nav class="navbar navbar-expand-lg">
+            <!-- Navigation Brand/Logo -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Gator Barter</a>
+            </div>
 
-      <!-- Upper Navigation Bar -->
-      <nav class="navbar navbar-expand-lg">
-        <!-- Navigation Brand/Logo -->
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">Gater Barter</a>
-        </div>
+            <!-- Navigation Links Hamburger Menu Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-btn"><i class="fas fa-bars"></i></span>
+            </button>
 
-        <!-- Navigation Links Hamburger Menu Button -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarTogglerDemo01"
-          aria-controls="navbarTogglerDemo01"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-btn"><i class="fas fa-bars"></i></span>
-        </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <!-- LHS Navigation Links -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/item-posting">Sell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/about">About</a>
+                    </li>
+                    {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0 %}
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/admin/{{sessionUser['u_id']}}">Admin</a>
+                    </li>
+                    {% endif %}
+                </ul>
 
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <!-- LHS Navigation Links -->
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a class="nav-link navbar-link" href="/item-posting">Sell</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link navbar-link" href="/about">About</a>
-            </li>
-            {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0 %}
-            <li class="nav-item">
-              <a
-                class="nav-link navbar-link"
-                href="/admin/{{sessionUser['u_id']}}"
-                >Admin</a
-              >
-            </li>
-            {% endif %}
-          </ul>
+                <!-- RHS Navigation Links -->
+                <ul class="navbar-nav">
+                    {% if sessionUser|length == 0 %}
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    </li>
+                    {% elif sessionUser|length > 0 %}
+                    <li class="nav-item">
+                        <div class="current-user">
+                            {{sessionUser['u_fname']}} {{sessionUser['u_lname']}}
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown">
+                            <button class="profile-dropdown" type="button" data-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i>
+                            </button>
 
-          <!-- RHS Navigation Links -->
-          <ul class="navbar-nav">
-            {% if sessionUser|length == 0 %}
-            <li class="nav-item">
-              <a class="nav-link navbar-link" href="/login"
-                ><i class="fas fa-sign-in-alt"></i> Login</a
-              >
-            </li>
-            {% elif sessionUser|length > 0 %}
-            <li class="nav-item">
-              <div class="current-user">
-                {{sessionUser['u_fname']}} {{sessionUser['u_lname']}}
-              </div>
-            </li>
-            <li class="nav-item">
-              <!-- Profile Dropdown -->
-              <div class="dropdown">
-                <button
-                  class="profile-dropdown"
-                  type="button"
-                  data-toggle="dropdown"
-                >
-                  <i class="fas fa-user-circle"></i>
-                </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="dropdown-item" href="/user-dashboard"><i class="fas fa-user"> User
+                                            Dashboard</i></a>
+                                </li>
+                                {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0 %}
+                                <li>
+                                    <a class="dropdown-item" href="/admin/{{sessionUser['u_id']}}"><i
+                                            class="fas fa-crown"> Admin Dashboard</i></a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item" href="/"><i class="fas fa-cog"> Settings</i></a>
+                                </li>
+                            </ul>
+                        </div>
 
-                <ul class="dropdown-menu dropdown-menu-right">
-                  <li>
-                    <a class="dropdown-item" href="/user-dashboard"
-                      ><i class="fas fa-user"> User Dashboard</i></a
-                    >
-                  </li>
-                  {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0
-                  %}
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="/admin/{{sessionUser['u_id']}}"
-                      ><i class="fas fa-crown"> Admin Dashboard</i></a
-                    >
-                  </li>
-                  {% endif %}
-                  <li>
-                    <a class="dropdown-item" href="/"
-                      ><i class="fas fa-cog"> Settings</i></a
-                    >
-                  </li>
+                    </li>
+                    <div class="dropdown-divider"></div>
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/logout"><i class="fas fa-sign-in-alt"></i> Logout</a>
+                    </li>
+                    {% endif %}
                 </ul>
               </div>
-            </li>
-            <div class="dropdown-divider"></div>
-            <li class="nav-item">
-              <a class="nav-link navbar-link" href="/logout"
-                ><i class="fas fa-sign-in-alt"></i> Logout</a
-              >
-            </li>
-            {% endif %}
-          </ul>
-        </div>
       </nav>
 
       <!-- Lower Navigation Bar -->

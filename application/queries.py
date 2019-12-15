@@ -3,7 +3,7 @@
 """
 Querries for the data basse
 
-Some are dynamic and take in a paramater. 
+Some are dynamic and take in a paramater.
 ideally we will have all the queries in here
 but currently some still reside in the main file
 
@@ -17,7 +17,7 @@ class Query():
     def __init__(self):
         self.TEST_USER = "SELECT * FROM user WHERE user.u_is_admin=1 LIMIT 1;"
 
-    def SEARCH_QUERY(self, search,categoryName):
+    def SEARCH_QUERY(self, search, categoryName):
         starting = "" + search + "%"
         ending = "%" + search + ""
         starting2 = " " + search + "%"
@@ -41,10 +41,10 @@ class Query():
         OR i.i_desc LIKE '""" + exact + """')
         """
         if categoryName != "All":
-            q = q+"AND c.c_name = '" + categoryName +"';"
+            q = q+"AND c.c_name = '" + categoryName + "';"
         else:
-            q= q+ ";"
-        print("querys search is: ",q)
+            q = q + ";"
+        print("querys search is: ", q)
         return q
 
     def fetchAllCategories(self):
@@ -87,6 +87,15 @@ class Query():
     ON i.i_u_id = u.u_id
     AND i.i_id = """ + product_id + """;
     """
+
+
+    def FULL_USER_FOR_PRODUCT(self, product_id):
+            return """
+        SELECT u.* FROM user AS u
+        JOIN item as i
+        ON i.i_u_id = u.u_id
+        AND i.i_id = """ + product_id + """;
+        """
 
     def APPROVED_ITEMS_FOR_CATEGORY(self, categoryName):
         return """
