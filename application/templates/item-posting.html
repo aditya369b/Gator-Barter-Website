@@ -78,9 +78,12 @@
                 <p>Drag your item photos here</p>
                 <p>&#151; or &#151;</p>
                 <div style="height:0px;overflow:hidden">
-                    <input type="file" id="fileInput" name="file" accept="image/*" />
+                    <input type="file" id="fileInput" name="file" accept="image/*" onchange="fileUploaded();" />
                 </div>
                 <button type="button" onclick="chooseFile();">Select a photo from your computer</button>
+                <p style="visibility: hidden;" id="imageUpload">
+                    File Uploaded
+                    </p>
                 <!--&lt;!&ndash;<p>&ndash;&gt;-->
                 <!--{% with messages = get_flashed_messages() %}-->
                 <!--{% if messages %}-->
@@ -100,12 +103,12 @@
 
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="radio" class="form-check-input"  name="isTradable"> Yes
+                    <input type="radio" class="form-check-input"  name="isTradable" value=1 > Yes
                 </label>
             </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="radio" class="form-check-input"  name="isTradable"> No
+                    <input type="radio" class="form-check-input"  name="isTradable" value=0 checked> No
                 </label>
             </div>
         </div>
@@ -129,38 +132,6 @@
     <!-- Custom JS -->
     <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
 
-    <!-- <script>
-        function validateForm() {
-            if (document.forms["item_form"]["item_title"].value == "") {
-                alert("Title must be filled out");
-                return false;
-            }
-            if (document.forms["item_form"]["category"].value == "") {
-                alert("Category must be filled out");
-                return false;
-            }
-            if (document.forms["item_form"]["item_desc"].value == "") {
-                alert("Description must be filled out");
-                return false;
-            }
-            if (document.forms["item_form"]["item_price"].value == "") {
-                alert("Price must be filled out. Put 0 if, it is a free give away.");
-                return false;
-            }
-
-            if (document.forms["item_form"]["tradable"].value == "") {
-                alert("Select appropriate option for - Would you like to trade this item?");
-                return false;
-            }
-
-            if (document.forms["item_form"]["fileInput"].value == "") {
-                alert("Select a picture of item you wish to sell!");
-                return false;
-            }
-
-            return true;
-        }
-    </script> -->
 </body>
 
 </html>

@@ -53,6 +53,6 @@ def contact_seller_action(item_id, action):
         db, cursor = getCursor()
         cursor.execute(query().SELL_ITEM(item_id))
         db.commit()
-        return redirect("/user-dashboard/")
+        return redirect("/user-dashboard")
     else:
         abort(404)
