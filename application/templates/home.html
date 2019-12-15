@@ -11,7 +11,7 @@
                     {% with messages = get_flashed_messages() %}
                     {% if messages %}
                     {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <li>{{ message | safe }}</li>
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
@@ -26,6 +26,7 @@
 
             <div class="col-lg col-sm page-title">
                 <h1>Home</h1>
+                <h1> Welcome to Gator Barter! </h1>
             </div>
 
             <span class=" sort-dropdown col-lg-4 col-sm-12">

@@ -1,22 +1,12 @@
 from flask import Blueprint, render_template, session, request
 import gatorProduct as product  # class made by alex
 
-from queries import query
-from dbCursor import getCursor
-from filterData import filter_data
 import bleach
-
-index_blueprint = Blueprint('index', __name__)
-
-
-from flask import Blueprint, render_template, session, request
-import gatorProduct as product  # class made by alex
-
-from queries import query
-from dbCursor import getCursor
-from filterData import filter_data
 import gatorUser as user
-import bleach
+from queries import query
+from dbCursor import getCursor
+from filterData import filter_data
+index_blueprint = Blueprint('index', __name__)
 
 index_blueprint = Blueprint('index', __name__)
 
@@ -29,11 +19,10 @@ def home():
     cursor = getCursor()[1]
     cursor.execute(query().MOST_RECENT_ITEMS(n))
     data = cursor.fetchall()
-
     cursor.execute(query().fetchAllCategories())
     allCategories = cursor.fetchall()
     categories = [allCategories[i][0] for i in range(len(allCategories))]
-    print("categories fetched are: ",categories," and type is: ")
+    print("categories fetched are: ", categories, " and type is: ")
 
     feedback = []
     productUsers = []
