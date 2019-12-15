@@ -48,7 +48,7 @@
 
         <div class="form-group">
             <label for="item-category">Item Category <span class="required-field">*</span></label>
-            <select class="yellow-select w-100" id="item-category" required>
+            <select class="yellow-select w-100" id="item-category" name="category" required>
                 <optgroup label="Category">
                     <option value="none" selected disabled hidden>
                         Category
@@ -100,12 +100,12 @@
 
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="optradio"> Yes
+                    <input type="radio" class="form-check-input" name="isTradable"> Yes
                 </label>
             </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="optradio"> No
+                    <input type="radio" class="form-check-input" name="isNotTradable"> No
                 </label>
             </div>
         </div>

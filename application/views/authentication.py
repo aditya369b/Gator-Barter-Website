@@ -43,8 +43,10 @@ def login():
                 # session.pop('lazyRegistration')
                 # makeAndInsertMessageForSeller()
                 if session['lazyPage'] == 'contact-seller':
+                    flash('Message Sent Successfully')
                     return redirect("/contact-seller/"+session['item_id'])
                 elif session['lazyPage'] == 'item-posting':
+                    flash('Item Pending Approval')
                     return redirect("/item-posting")
 
             return redirect("/")

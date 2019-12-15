@@ -48,7 +48,7 @@ def item_posting():
             item_category = request.form['category']
             item_desc = str(bleach.clean(request.form['item_desc']))
             item_price = request.form['item_price']
-            is_tradable = request.form['isTradable']  #str(1) if 'isTradable' in request.form else str(0)
+            is_tradable = '0' if 'isTradable' not in request.form else request.form['isTradable']  #str(1) if 'isTradable' in request.form else str(0)
             item_images = []
             if sessionUser == "":
                 session['item_images'] = []
