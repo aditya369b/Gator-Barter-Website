@@ -10,8 +10,6 @@ import bleach
 contactSeller_blueprint = Blueprint('contactSeller', __name__)
 
 
-
-
 @contactSeller_blueprint.route('/contact-seller/<item_id>', methods=['GET', 'POST'])
 def contact_seller(item_id):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
@@ -26,6 +24,12 @@ def contact_seller(item_id):
 
     if request.method == "GET":
         print("Got a Get")
+        cursor = getCursor()[1]
+        cursor.execute(query().APPROVED_ITEM(str(item_id)))
+        itemObject = product.makeProduct(cursor.fetchone())
+        cursor.close()
+        currentItem = itemObject.toDict()
+        session['contact_seller_item'] = currentItem
 
     if request.method == "POST":
         buyerContact = str(bleach.clean(request.form['contactType']))
@@ -44,5 +48,12 @@ def contact_seller(item_id):
             buyerContact, buyerMessage, item_id, sessionUser)
         return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
 
-    return render_template('contact-seller.html', sessionUser=sessionUser, id=item_id)
+        currentItem = "" if 'contact_seller_item' not in session else session[
+            'contact_seller_item']
+    try:
+        session.pop('contact_seller_item')
+    except KeyError:
+        print('yo, dat contact_seller_item was not in the session bro')
+        print('Have a nice day!')
 
+    return render_template('contact-seller.html', sessionUser=sessionUser, id=item_id, currentItem=currentItem)
