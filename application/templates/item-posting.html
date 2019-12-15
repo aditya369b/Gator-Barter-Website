@@ -53,9 +53,9 @@
                     <option value="none" selected disabled hidden>
                         Category
                     </option>
-                    <option value="Electronic">Electronic</option>
-                    <option value="Furniture">Furniture</option>
-                    <option value="Other">Other</option>
+                    {% for category in categories %}
+                    <option value="{{category}}">{{category}}</option>
+                    {% endfor %}
                 </optgroup>
             </select>
         </div>

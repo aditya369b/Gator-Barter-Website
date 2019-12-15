@@ -102,7 +102,12 @@ def item_posting():
                                item_price, is_tradable, item_images, sessionUser, False)
 
     if request.method == "GET":
-        return render_template("item-posting.html")
+        cursor = getCursor()[1]
+        cursor.execute(query().fetchAllCategories())
+        allCategories = cursor.fetchall()
+        cursor.close()
+        categories = [allCategories[i][0] for i in range(len(allCategories))]
+        return render_template("item-posting.html", categories=categories)
 
     flash("Item Posted Successfully")
 
