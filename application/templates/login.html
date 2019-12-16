@@ -54,7 +54,7 @@
 
 <body>
     <button onclick="goHome()" class="back-btn"><i class="fas fa-backward"></i> Go Back</button>
-    
+
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="feedback">
@@ -66,12 +66,12 @@
     </div>
     {% endif %}
     {% endwith %}
-    
+
     <div class="page-title">
         <h1>Login</h1>
     </div>
 
-    <div class="container" id="log-con">
+    <div class="container col-xs-6 col-md-3" id="log-con">
         <form id="login-page" class="col-sm-10" action="/login" method="post">
             <div class="form-group mt-4">
                 <input type="email" class="form-control" id="email" placeholder="SFSU Email Address" name="email"
