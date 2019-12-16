@@ -23,6 +23,7 @@ from dbCursor import getCursor
 
 
 from flask import Flask, abort, render_template
+# from livereload import Server   # PHILIPTEST
 
 from views.index import index_blueprint
 from views.authentication import authentication_blueprint
