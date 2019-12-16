@@ -3,7 +3,7 @@
 """
 Querries for the data basse
 
-Some are dynamic and take in a paramater. 
+Some are dynamic and take in a paramater.
 ideally we will have all the queries in here
 but currently some still reside in the main file
 
@@ -17,14 +17,14 @@ class Query():
     def __init__(self):
         self.TEST_USER = "SELECT * FROM user WHERE user.u_is_admin=1 LIMIT 1;"
 
-    def SEARCH_QUERY(self, search):
+    def SEARCH_QUERY(self, search, categoryName):
         starting = "" + search + "%"
         ending = "%" + search + ""
         starting2 = " " + search + "%"
         ending2 = "%" + search + " "
         middle = "%" + search + "%"
         exact = search
-        return"""
+        q = """
         SELECT i.*, ii.ii_url, ii.ii_status, c.c_name, c.c_id, c.c_status
         FROM item AS i
         JOIN item_image AS ii
@@ -38,8 +38,20 @@ class Query():
         OR i.i_desc LIKE '""" + starting2 + """'
         OR i.i_desc LIKE '""" + ending2 + """'
         OR i.i_desc LIKE '""" + middle + """'
-        OR i.i_desc LIKE '""" + exact + """');
+        OR i.i_desc LIKE '""" + exact + """')
         """
+        if categoryName != "All":
+            q = q+"AND c.c_name = '" + categoryName + "';"
+        else:
+            q = q + ";"
+        print("querys search is: ", q)
+        return q
+
+    def fetchAllCategories(self):
+        return """
+    SELECT c.c_name
+    FROM category AS c;
+    """
 
     def ALL_APPROVED_LISTINGS(self):
         return """
@@ -75,6 +87,15 @@ class Query():
     ON i.i_u_id = u.u_id
     AND i.i_id = """ + product_id + """;
     """
+
+
+    def FULL_USER_FOR_PRODUCT(self, product_id):
+            return """
+        SELECT u.* FROM user AS u
+        JOIN item as i
+        ON i.i_u_id = u.u_id
+        AND i.i_id = """ + product_id + """;
+        """
 
     def APPROVED_ITEMS_FOR_CATEGORY(self, categoryName):
         return """
@@ -144,6 +165,13 @@ class Query():
         INSERT INTO `message`(m_text, m_sender_id, m_receiver_id, m_item_id, m_sent_ts  )
         VALUES (\"""" + m_text + "\", " + str(m_sender_id) + ", " + str(m_receiver_id) + ", " + str(m_item_id) + ", '" + str(time.strftime('%Y-%m-%d %H:%M:%S')) + """');
         """
+
+    def SELL_ITEM(self, item_id):
+        return """ 
+            UPDATE item as i
+            SET i.i_sold_ts = '""" + str(time.strftime('%Y-%m-%d %H:%M:%S')) + """', 
+            i_status = 2
+            WHERE i.i_id = '""" + str(item_id) + """';"""
 
 
 localQuery = Query()

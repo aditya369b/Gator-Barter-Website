@@ -1,43 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-62806475-2"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      gtag("config", "UA-62806475-2");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Gator Barter</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/public/css/styles.css') }}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/public/css/styles.css') }}"
+    />
 
     <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Fontawesome -->
     <script src="https://kit.fontawesome.com/6ab52acb52.js"></script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Pacifico|Roboto&display=swap" rel="stylesheet">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Pacifico|Roboto&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
+  <body>
     <header>
+      <div class="edu-label">
+        "SFSU Software Engineering Project CSC 648-848, Fall 2019. For
+        Demonstration Only"
+      </div>
         <!-- Upper Navigation Bar -->
         <nav class="navbar navbar-expand-lg">
             <!-- Navigation Brand/Logo -->
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">Gater Barter</a>
+                <a class="navbar-brand" href="/">Gator Barter</a>
             </div>
 
             <!-- Navigation Links Hamburger Menu Button -->
@@ -50,13 +84,10 @@
                 <!-- LHS Navigation Links -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link navbar-link" href="/about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link navbar-link" href="/">FAQ</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link navbar-link" href="/item-posting">Sell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link navbar-link" href="/about">About</a>
                     </li>
                     {% if sessionUser|length > 0 and sessionUser['u_is_admin'] > 0 %}
                     <li class="nav-item">
@@ -108,70 +139,90 @@
                     </li>
                     {% endif %}
                 </ul>
-            </div>
-        </nav>
+              </div>
+      </nav>
 
-        <!-- Lower Navigation Bar -->
-        <nav>
-            <div class="search-container">
-                <form action="/results" method="POST">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="dropdown col-lg-2">
-                                <!-- Filter button -->
-                                <button class="dropdown-toggle category-btn" type="button"
-                                    data-toggle="dropdown">Category</button>
+      <!-- Lower Navigation Bar -->
+      <nav>
+        <div class="search-container">
+          <form action="/results" method="POST">
+            <div class="container-fluid">
+              <div class="row">
+                <!--<<<<<<< frontend-m4
+                            <form action="">
+                                <!-- Category Select
+                                <select class="yellow-select category-select-padding">
+                                    <optgroup label="Category">
+                                        <option value="none" selected disabled hidden>
+                                            Category
+                                        </option>
+                                        <option value="Electronic">Electronic</option>
+                                        <option value="Furniture">Furniture</option>
+                                        <option value="Other">Other</option>
+                                    </optgroup>
+                                </select>
+                                <!-- Search bar
+                                <input class="search-bar" type="text"
+                                    placeholder="Search for books, electronics, furnitures..." name="text">
+                                <!-- Search button
+                                <button class="search-btn" type="submit"><i class="fas fa-search"></i></button></form>
+======= -->
 
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="/categories/Electronic">
-                                            <i class="fas fa-laptop"> Electronic</i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="/categories/Furniture">
-                                            <i class="fas fa-couch"> Furniture</i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="/categories/Other">
-                                            <i class="fas fa-question-circle"> Other</i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                <form action="">
+                  <select
+                    name="category"
+                    class="yellow-select category-select-padding"
+                  >
+                    {%if categoryName == 'All' %}
+                    <option selected value="All">{{categoryName}}</option>
+                    {% else %}
+                    <option value="All">All</option>
+                    {% endif %} {% for cat in categories %} {% if cat ==
+                    categoryName%}
+                    <option selected value="{{ cat }}">{{cat}}</option>
+                    {% else %}
+                    <option value="{{ cat }}">{{cat}}</option>
+                    {%endif%} {% endfor %}
 
-                            <div class="col-lg-9">
-                                <!-- Search bar -->
-                                <input type="text" placeholder="Search for books, electronics, furnitures..."
-                                    name="text">
-                            </div>
-
-                            <div class="col-lg-1">
-                                <!-- Search button -->
-                                <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
-                            </div>
-
-                        </div>
-                    </div>
+                    <!-- <option value=>select category</option>
+                                    <option value="Electronic">Electronic</option>
+                                    <option value="Furniture">Furniture</option>
+                                    <option value="Other">Other</option> -->
+                  </select>
+                  <!-- Search bar -->
+                  <input
+                    class="search-bar"
+                    type="text"
+                    placeholder="Search for books, electronics, furnitures..."
+                    name="text"
+                    value="{{currentSearch}}"
+                    maxlength="40"
+                  />
+                  <!-- Search button -->
+                  <button class="search-btn" type="submit">
+                    <i class="fas fa-search"></i>
+                  </button>
                 </form>
+              </div>
             </div>
-        </nav>
+          </form>
+        </div>
+      </nav>
     </header>
 
-    {% block content %}
-
-    {% endblock %}
+    {% block content %} {% endblock %}
 
     <!-- Footer -->
     <footer>
-        <h6>Copyright © 2019 Gator Barter</h6>
+      <h6>Copyright © 2019 Gator Barter</h6>
     </footer>
 
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Custom JS -->
-    <script type="text/javascript" src="{{ url_for('static',filename='index.js') }}"></script>
-</body>
-
+    <script
+      type="text/javascript"
+      src="{{ url_for('static',filename='index.js') }}"
+    ></script>
+  </body>
 </html>
