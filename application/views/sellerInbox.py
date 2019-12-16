@@ -1,3 +1,14 @@
+"""
+BluePrint for seller-inbox route and logic
+
+Not much logic here, just sends messages and the product to the front end
+
+Written by Alex Kohanim
+
+Please contact if questions arise
+
+"""
+
 from flask import Blueprint, render_template, session, request, abort
 import gatorProduct as product  # class made by alex
 import gatorMessage as message

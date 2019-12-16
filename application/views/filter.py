@@ -1,3 +1,13 @@
+"""
+BluePrint and Logic for applying filter to products
+
+Sorting logic done in "from filterData import filter_data"
+
+Written By Alex Kohanim, please contact if questions arise
+
+"""
+
+
 from flask import Blueprint, render_template, session
 import gatorProduct as product  # class made by alex
 
@@ -6,7 +16,7 @@ from dbCursor import getCursor
 
 from filterData import filter_data
 import gatorUser as user
-filter_blueprint = Blueprint('filter', __name__ )
+filter_blueprint = Blueprint('filter', __name__)
 
 
 @filter_blueprint.route('/apply_filter/<filter_type>')
@@ -20,7 +30,6 @@ def applyFilter(filter_type):
         cursor.execute(query().fetchAllCategories())
         allCategories = cursor.fetchall()
         categories = [allCategories[i][0] for i in range(len(allCategories))]
-
 
     if 'previousQuery' in session:
         data = session['previousQuery']
@@ -37,7 +46,8 @@ def applyFilter(filter_type):
     productUsers = []
 
     for productObject in data:
-        cursor.execute(query().FULL_USER_FOR_PRODUCT(str(productObject['i_id'])))
+        cursor.execute(query().FULL_USER_FOR_PRODUCT(
+            str(productObject['i_id'])))
         productUser = user.makeUser(cursor.fetchone())
         productUsers.append(productUser)
 
@@ -45,5 +55,4 @@ def applyFilter(filter_type):
     currentSearch = "" if 'currentSearch' not in session else session['currentSearch']
     categoryName = "All" if 'categoryName' not in session else session['categoryName']
 
-    return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch,categoryName=categoryName,categories=categories, productUsers=productUsers)
-
+    return render_template("home.html", products=data, sessionUser=sessionUser, feedback=feedback, sortOption=session['sortOption'], currentSearch=currentSearch, categoryName=categoryName, categories=categories, productUsers=productUsers)

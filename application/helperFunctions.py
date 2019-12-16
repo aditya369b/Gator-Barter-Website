@@ -1,3 +1,16 @@
+"""
+Common Helper functions used in multiple routs
+
+Made a class for them to reduce repeated code
+
+File made by Alex Kohanim
+
+Functions made by multiple team members
+
+Please Contact Alex if any questions arise and if He can't answer your question
+He will redirect you to the appropriate developer
+"""
+
 from dbCursor import getCursor
 from queries import query
 import gatorProduct as product

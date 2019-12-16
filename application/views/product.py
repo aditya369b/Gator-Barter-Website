@@ -1,3 +1,13 @@
+"""
+BluePrint for product page route and logic
+
+Written by Alex Kohanim
+
+Please contact of questions arise
+
+"""
+
+
 from flask import Blueprint, render_template, session, request, abort
 import gatorProduct as product  # class made by alex
 

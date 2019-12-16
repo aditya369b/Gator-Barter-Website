@@ -1,4 +1,17 @@
+"""
+Class for holding logic for sorting Item Posts
+
+
+The posts are a list of dictionareis which makes for interesting sort logic
+
+Created By Alex Kohanim with some help from stack overflow
+
+Please contact if any questions arise
+
+"""
+
 from flask import abort
+
 
 def filter_data(data, filter_type):
     if filter_type == "alpha_desc":

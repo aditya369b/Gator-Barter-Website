@@ -1,3 +1,20 @@
+"""
+BluePrint for all Authontication routs and logic
+
+Use "from passlib.hash import sha256_crypt" as our encryption library
+
+User information stored in the session (Backend) as a dictionary
+And accessible from any route
+
+30% written by Alex Kohanim
+70% written By Akshay Kasar
+
+If any questions arise from this blueprint, we should both be able to answer
+your questions
+
+
+"""
+
 from flask import Blueprint, render_template, session, request, redirect, flash
 import gatorProduct as product  # class made by alex
 import gatorUser as user  # class made by alex
@@ -75,14 +92,13 @@ def register():
         created_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
         updated_ts = str(bleach.clean(time.strftime('%Y-%m-%d %H:%M:%S')))
 
-        if not request.form['password'] == request.form['confirm-password'] :
+        if not request.form['password'] == request.form['confirm-password']:
             pass_temp = request.form['password']
             confirm_pass_temp = request.form['confirm-password']
             print(pass_temp, confirm_pass_temp)
             print(pass_temp == confirm_pass_temp)
             flash("passwords do not match")
             return redirect("/register")
-
 
         # check if user already exists
         cursor.execute(query().GET_USER_BY_EMAIL(email))

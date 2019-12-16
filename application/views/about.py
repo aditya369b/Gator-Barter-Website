@@ -1,3 +1,10 @@
+"""
+BluePrint For Handeling About Pages and their logic
+Uses "about_info" a class made by Aditya which reduces repeated code
+
+"""
+
+
 from flask import Blueprint, render_template, session, request
 import gatorProduct as product  # class made by alex
 from about_info import dev  # class by Aditya
@@ -18,7 +25,7 @@ def about():
     categories = []
     cursor = getCursor()[1]
     cursor.execute(query().fetchAllCategories())
-    
+
     allCategories = cursor.fetchall()
     categories = [allCategories[i][0] for i in range(len(allCategories))]
 
@@ -29,13 +36,13 @@ def about():
     session['categories'] = categories
 
     return render_template("about/about.html", sessionUser=sessionUser,
-                            currentSearch=currentSearch,categoryName=categoryName,categories=categories)
+                           currentSearch=currentSearch, categoryName=categoryName, categories=categories)
 
 
 @about_blueprint.route("/about/<member>")
 def about_mem(member):
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
-    
+
     categories = []
     cursor = getCursor()[1]
     cursor.execute(query().fetchAllCategories())
@@ -48,7 +55,7 @@ def about_mem(member):
     currentSearch = ""
     categoryName = "All"
     session['categories'] = categories
-    
+
     return render_template("about/info.html", name=dev[member]['name'],
                            title=dev[member]['title'],
                            image=dev[member]['img'],
@@ -56,7 +63,5 @@ def about_mem(member):
                            linkedin=dev[member]['linkedin'],
                            github=dev[member]['github'],
                            email=dev[member]['email'], sessionUser=sessionUser,
-                           currentSearch=currentSearch,categoryName=categoryName,categories=categories
+                           currentSearch=currentSearch, categoryName=categoryName, categories=categories
                            )
-
-

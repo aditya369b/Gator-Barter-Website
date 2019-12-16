@@ -1,3 +1,17 @@
+"""
+BluePrint for contactseller route and logic
+
+Incorparated Laxy Registration logic by using session (backend) variables
+
+Written and revised by Adatiya Bodi, Alex Kohanim and Tejasvi Belsare
+
+All three of them shoudl be able to answer most if not all questions about this blueprint
+
+Please contact if any questions arise
+
+"""
+
+
 from flask import Blueprint, render_template, session, request, redirect
 import gatorProduct as product  # class made by alex
 

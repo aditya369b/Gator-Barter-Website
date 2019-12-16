@@ -1,3 +1,13 @@
+"""
+BluePrint for all of the Admin Routs and Functioality
+
+Multiple checks to verify that only Admins can access these pages
+
+All logic Written by Alex Kohanim, if anythin needs clarifing, please contact
+
+"""
+
+
 from flask import Blueprint, render_template, session, request, abort, redirect
 import gatorProduct as product  # class made by alex
 import gatorUser as user

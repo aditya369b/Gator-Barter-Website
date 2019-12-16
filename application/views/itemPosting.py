@@ -1,4 +1,16 @@
 
+"""
+BluePrint for posting and item to sell and relative route and logic
+
+Uses POST to get form from user, and valid file types checked
+both in backend and frontend
+
+Mainly Written By Aditya Abodi and Tejasvi Belsare
+Minor functionality and checks added by Alex Kohanim
+
+Please contact and of them for questions about this blueprint
+"""
+
 from flask import Blueprint, render_template, session, request, abort, redirect, flash
 import gatorProduct as product  # class made by alex
 

@@ -1,3 +1,15 @@
+"""
+BluePrint for seller inbox route and logic
+
+Shows the User their products they have posted and
+Allows them to mark them as sold
+
+Very Simple, written By Alex Kohanim
+
+Please contact if questions arise
+
+"""
+
 from flask import Blueprint, render_template, session, request, abort, redirect
 import gatorProduct as product  # class made by alex
 

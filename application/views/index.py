@@ -1,3 +1,16 @@
+"""
+BluePrint for Landing Page route and Search Results page route
+As well as the logic for those routs
+
+Many decisions for persistant search results and combining filter types present
+
+This BluePrint is not an easy read
+
+Please contact Alex Kohanim if any questions arise
+
+"""
+
+
 from flask import Blueprint, render_template, session, request
 import gatorProduct as product  # class made by alex
 
@@ -114,7 +127,7 @@ def searchPage():
         # cursor.close()
 
         productUsers = []
-        
+
     # if catName != "":
     #     data = [d for d in data if d['c_name'] == catName]
 
@@ -123,16 +136,12 @@ def searchPage():
             productObject = product.makeProduct(d)
             productList.append(productObject)
             data = [productObject.toDict() for d in cursor.fetchall()]
-            
+
             cursor.execute(query().FULL_USER_FOR_PRODUCT(str(productObject.i_id)))
             productUser = user.makeUser(cursor.fetchone())
             productUsers.append(productUser) 
 
     cursor.close()
-    
-    
-
-
     session['previousQuery'] = [productObject.toDict()
                                 for productObject in productList]
 
