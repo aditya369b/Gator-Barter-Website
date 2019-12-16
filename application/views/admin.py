@@ -26,22 +26,26 @@ def admin_page(user_id):
     except KeyError:
         abort(404)
     conncetion, cursor = getCursor()
-    categories=[]
+    categories = []
     cursor.execute("SELECT * FROM user;")
     print(cursor.fetchall())
-            # fetch the items for admin approval from db
+    # fetch the items for admin approval from db
     cursor.execute(query().ALL_PENDING_LISTINGS())
     data = cursor.fetchall()
-            # Fetch the categories from db
+    # Fetch the categories from db
     cursor.execute(query().fetchAllCategories())
     allCategories = cursor.fetchall()
     categories = [allCategories[i][0] for i in range(len(allCategories))]
 
     productList = []
+    productListUsers = []
     for d in data:
         if len(d) == 16:
             productObject = product.makeProduct(d)
             productList.append(productObject)
+            cursor.execute(query().FULL_USER_FOR_PRODUCT(
+                str(productObject.i_u_id)))
+            productListUsers.append(user.makeUser(cursor.fetchone()))
 
     cursor.execute(query().ALL_NON_ADMIN_APPROVED_USERS())
     data = cursor.fetchall()
@@ -55,10 +59,15 @@ def admin_page(user_id):
     data = cursor.fetchall()
 
     approvedProducts = []
+    approvedProductsUsers = []
     for d in data:
         if len(d) == 16:
             productObject = product.makeProduct(d)
             approvedProducts.append(productObject)
+            cursor.execute(query().FULL_USER_FOR_PRODUCT(
+                str(productObject.i_u_id)))
+            approvedProductsUsers.append(user.makeUser(cursor.fetchone()))
+
     sessionUser = "" if 'sessionUser' not in session else session['sessionUser']
 
     currentSearch = ""
@@ -66,8 +75,7 @@ def admin_page(user_id):
     session['categories'] = categories
 
     return render_template("admin/admin.html", sessionUser=sessionUser, id=user_id, products=productList, users=userList, approvedProducts=approvedProducts,
-                                                currentSearch=currentSearch,categoryName=categoryName,categories=categories)
-
+                           currentSearch=currentSearch, categoryName=categoryName, categories=categories, approvedProductsUsers=approvedProductsUsers, productListUsers=productListUsers)
 
 
 @admin_blueprint.route("/admin/item/<item_id>/<action>")
