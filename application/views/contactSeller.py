@@ -34,7 +34,7 @@ def contact_seller(item_id):
             session['buyerContact'], session['buyerMessage'], item_id, sessionUser)
         session.pop('lazyRegistration')
         session.pop('lazyPage')
-        return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
+        return redirect("/")
 
     if request.method == "GET":
         print("Got a Get")
@@ -60,7 +60,7 @@ def contact_seller(item_id):
             return redirect("/login")
         makeAndInsertMessageForSeller(
             buyerContact, buyerMessage, item_id, sessionUser)
-        return render_template('contact-seller.html', sessionUser=sessionUser, id=-1)
+        return redirect("/")
 
         currentItem = "" if 'contact_seller_item' not in session else session[
             'contact_seller_item']
