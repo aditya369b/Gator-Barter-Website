@@ -2,194 +2,206 @@
 
 {% block content %}
 
-    <!-- Main content -->
-    <main>
-        <div class="page-title">
-            <h1>Admin Dashboard</h1>
-        </div>
+<!-- Main content -->
+<main>
+    <div class="page-title">
+        <h1>Admin Dashboard</h1>
+    </div>
 
-        <ul class="nav nav-pills nav-justified nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-toggle="pill" href="#waitlist">Waitlist</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="pill" href="#approved">Approved</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="pill" href="#users">Users</a>
-            </li>
-        </ul>
+    <ul class="nav nav-pills nav-justified nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="pill" href="#waitlist">Waitlist</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#approved">Approved</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#users">Users</a>
+        </li>
+    </ul>
 
-        <div class="tab-content">
-            <!-- Waitlist Tab -->
-            <div id="waitlist" class="tab-pane container-fluid active tab-content">
-                <!-- Results returned -->
-                <div class="feedback">
-                    {{feedback}}
-                </div>
+    <div class="tab-content">
+        <!-- Waitlist Tab -->
+        <div id="waitlist" class="tab-pane container-fluid active tab-content">
+            <!-- Results returned -->
+            <div class="feedback">
+                {{feedback}}
+            </div>
 
-                <!-- Load items -->
-                <div class="container-fluid content-row">
-                    <div class="row">
-                        {% for product in products %} {% set imageSrc = product.ii_url %} {%
+            <!-- Load items -->
+            <div class="container-fluid content-row">
+                <div class="row">
+                    {% set i = 0 %}
+                    {% for product in products %} {% set imageSrc = product.ii_url %} {%
                           set imageSrcShort = imageSrc.split('/static/', 2)[1] %}
-                        <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
-                            <div class="card mb-3">
-                                <img src="{{ url_for('static',filename=imageSrcShort) }}" class="card-img-top h-35" alt="{{product.ii_url}}">
-                                <div class="card-body d-flex flex-column testing-body">
-                                    <div class="row">
-                                        <div class="col-sm-8">
-                                            <h5 class="card-title item-label">{{product.i_title}}</h5>
-                                            <h6 class="card-subtitle user-label">
-                                                @username
-                                                <i class="fas fa-envelope"></i>
-                                                <i class="fas fa-ban"></i>
-                                            </h6>
+                    {% set imageRedirect = product.i_id %}
+                    {% set user = productListUsers[i] %}
+                    <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
+                        <div class="card mb-3">
+                            <a onclick="window.open('/products/{{imageRedirect}}')">
+                                <img src="{{ url_for('static',filename=imageSrcShort) }}" class="card-img-top h-35"
+                                    alt="{{product.ii_url}}">
+                            </a>
+                            <div class="card-body d-flex flex-column testing-body">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h5 class="card-title item-label">{{product.i_title}}</h5>
+                                        <h6 class="card-subtitle user-label">
+                                            @{{user['u_fname']}}_{{user['u_lname']}}
+                                            <i class="fas fa-envelope"></i>
+                                            <i class="fas fa-ban"></i>
+                                        </h6>
+                                    </div>
+
+                                    <div class="col">
+                                        <h5 class="card-title price-label">${{product.i_price}}</h5>
+                                        <div class="card-subtitle tradable-label">
+                                            Tradable
                                         </div>
-
-                                        <div class="col">
-                                            <h5 class="card-title price-label">${{product.i_price}}</h5>
-                                            <div class="card-subtitle tradable-label">
-                                                Tradable
-                                            </div>
-                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="card-text">
-                                        Category: {{product.c_name}}<br>
-                                        {{product.i_desc}}
-                                    </div>
+                                <div class="card-text">
+                                    Category: {{product.c_name}}<br>
+                                    {{product.i_desc}}
+                                </div>
 
-                                    <div class="card-btn mt-auto">
-                                        <form action="/admin/item/{{product.i_id}}/approve">
-                                            <button class="btn btn-success btn-block btn-white-text"
-                                                type="submit">Approve</button>
-                                        </form>
+                                <div class="card-btn mt-auto">
+                                    <form action="/admin/item/{{product.i_id}}/approve">
+                                        <button class="btn btn-success btn-block btn-white-text"
+                                            type="submit">Approve</button>
+                                    </form>
 
-                                        <form action="/admin/item/{{product.i_id}}/moreinfo">
-                                            <button class="btn btn-warning btn-block" type="sunmit">More
-                                                Details</button>
-                                        </form>
+                                    <!-- <form action="/admin/item/{{product.i_id}}/moreinfo"> -->
+                                    <button onclick="window.open('/products/{{imageRedirect}}')"
+                                        class="btn btn-warning btn-block" type="sunmit">More
+                                        Details</button>
+                                    <!-- </form> -->
 
-                                        <form action="/admin/item/{{product.i_id}}/deny">
-                                            <button class="btn btn-danger btn-block btn-white-text"
-                                                type="submit">Reject</button>
-                                        </form>
-                                    </div>
+                                    <form action="/admin/item/{{product.i_id}}/deny">
+                                        <button class="btn btn-danger btn-block btn-white-text"
+                                            type="submit">Reject</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
-                        <!-- Load all item listings -->
                     </div>
+                    {% set i = i +1 %}
+                    {% endfor %}
+                    <!-- Load all item listings -->
                 </div>
+            </div>
 
-                <!-- Show more items -->
-                <!-- <button class="show-more-btn">
+            <!-- Show more items -->
+            <!-- <button class="show-more-btn">
                     Show More
                 </button> -->
+        </div>
+        <!-- Approved Tab -->
+        <div id="approved" class="tab-pane container-fluid fade tab-content">
+            <!-- Results returned -->
+            <div class="feedback">
+                {{feedback}}
             </div>
-            <!-- Approved Tab -->
-            <div id="approved" class="tab-pane container-fluid fade tab-content">
-                <!-- Results returned -->
-                <div class="feedback">
-                    {{feedback}}
-                </div>
 
-                <!-- Load items -->
-                <div class="container-fluid content-row">
-                    <div class="row">
-                        {% for product in approvedProducts %} {% set imageSrc = product.ii_url
+            <!-- Load items -->
+            <div class="container-fluid content-row">
+                <div class="row">
+                    {% set i = 0 %}
+                    {% for product in approvedProducts %} {% set imageSrc = product.ii_url
                           %} {% set imageSrcShort = imageSrc.split('/static/', 2)[1] %}
-                        <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
-                            <div class="card mb-3">
-                                <img src="{{ url_for('static',filename=imageSrcShort) }}" class="card-img-top h-35" alt="{{product.ii_url}}">
-                                <div class="card-body d-flex flex-column testing-body">
-                                    <div class="row">
-                                        <div class="col-sm-8">
-                                            <h5 class="card-title item-label">{{product.i_title}}</h5>
-                                            <h6 class="card-subtitle user-label">
-                                                @username
-                                                <i class="fas fa-envelope"></i>
-                                                <i class="fas fa-ban"></i>
-                                            </h6>
+                    {% set imageRedirect = product.i_id %}
+                    {% set user = approvedProductsUsers[i] %}
+                    <div class="col-lg-4 col-md-6 col-sm-12 product-listing">
+                        <div class="card mb-3">
+                            <a onclick="window.open('/products/{{imageRedirect}}')">
+                                <img src="{{ url_for('static',filename=imageSrcShort) }}" class="card-img-top h-35"
+                                    alt="{{product.ii_url}}">
+                            </a>
+                            <div class="card-body d-flex flex-column testing-body">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h5 class="card-title item-label">{{product.i_title}}</h5>
+                                        <h6 class="card-subtitle user-label">
+                                            @{{user['u_fname']}}_{{user['u_lname']}}
+                                            <i class="fas fa-envelope"></i>
+                                            <i class="fas fa-ban"></i>
+                                        </h6>
+                                    </div>
+
+                                    <div class="col">
+                                        <h5 class="card-title price-label">${{product.i_price}}</h5>
+                                        <div class="card-subtitle tradable-label">
+                                            Tradable
                                         </div>
-
-                                        <div class="col">
-                                            <h5 class="card-title price-label">${{product.i_price}}</h5>
-                                            <div class="card-subtitle tradable-label">
-                                                Tradable
-                                            </div>
-                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="card-text">
-                                        Category: {{product.c_name}}<br>
-                                        {{product.i_desc}}
-                                    </div>
+                                <div class="card-text">
+                                    Category: {{product.c_name}}<br>
+                                    {{product.i_desc}}
+                                </div>
 
-                                    <div class="card-btn mt-auto">
-                                        <form action="/admin/item/{{product.i_id}}/deny">
-                                            <button class="btn btn-danger btn-block btn-white-text"
-                                                type="submit">Reject</button>
-                                        </form>
+                                <div class="card-btn mt-auto">
+                                    <form action="/admin/item/{{product.i_id}}/deny">
+                                        <button class="btn btn-danger btn-block btn-white-text"
+                                            type="submit">Reject</button>
+                                    </form>
 
-                                        <form action="/admin/item/{{product.i_id}}/moreinfo">
-                                            <button class="btn btn-warning btn-block" type="sunmit">More
-                                                Details</button>
-                                        </form>
-                                    </div>
+                                    <!-- <form action="/admin/item/{{product.i_id}}/moreinfo"> -->
+                                    <button onclick="window.open('/products/{{imageRedirect}}')"
+                                        class="btn btn-warning btn-block" type="sunmit">More
+                                        Details</button>
+                                    <!-- </form> -->
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
-                        <!-- Load all item listings -->
                     </div>
+                    {% set i = i +1 %}
+                    {% endfor %}
+                    <!-- Load all item listings -->
                 </div>
-
-                <!-- Show more items -->
-                <button class="show-more-btn">
-                    Show More
-                </button>
             </div>
-            <!-- User List Tab -->
-            <div id="users" class="tab-pane container-fluid fade tab-content">
-                <div class="row user-list-header">
-                    <div class="col-lg-4">
-                        <h4>Name</h4>
-                    </div>
-                    <div class="col-lg-4">
-                        <h4>Username</h4>
-                    </div>
-                    <div class="col-lg-4">
-                        <h4>Button</h4>
-                    </div>
-                </div>
 
-                {% for user in users %}
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <div class="row user-list">
-                            <div class="col-lg-4">
-                                {{user.u_fname}} {{user.u_lname}}
-                            </div>
-                            <div class="col-lg-4">
-                                @{{user.u_fname}}_{{user.u_lname}}
-                            </div>
-                            <div class="col-lg-4">
-                                <form action="/admin/user/{{user.u_id}}/ban">
-                                    <button class="btn btn-danger btn-block" type="submit">
-                                        Ban
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                {% endfor %}
-            </div>
         </div>
+        <!-- User List Tab -->
+        <div id="users" class="tab-pane container-fluid fade tab-content">
+            <div class="row user-list-header">
+                <div class="col-lg-4">
+                    <h4>Name</h4>
+                </div>
+                <div class="col-lg-4">
+                    <h4>Username</h4>
+                </div>
+                <div class="col-lg-4">
+                    <h4>Button</h4>
+                </div>
+            </div>
 
-    </main>
+            {% for user in users %}
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="row user-list">
+                        <div class="col-lg-4">
+                            {{user.u_fname}} {{user.u_lname}}
+                        </div>
+                        <div class="col-lg-4">
+                            @{{user.u_fname}}_{{user.u_lname}}
+                        </div>
+                        <div class="col-lg-4">
+                            <form action="/admin/user/{{user.u_id}}/ban">
+                                <button class="btn btn-danger btn-block" type="submit">
+                                    Ban
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+    </div>
+
+</main>
 
 {% endblock %}
