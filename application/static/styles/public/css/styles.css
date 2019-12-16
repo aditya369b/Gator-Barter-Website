@@ -397,10 +397,10 @@ footer2 {
     margin: 1rem 0 0.5rem 0;
 }
 
-.tradable-check .form-check {
+/* .tradable-check .form-check {
     display: inline;
     margin: 0.5rem;
-}
+} */
 
 .item-posting-btn {
     width: 100%;
@@ -428,6 +428,7 @@ input[type=checkbox] {
 
 .rmr-me-check {
     text-align: center;
+    display: absolute;
 }
 
 .login-btn {
@@ -744,7 +745,37 @@ input:checked+.slider:before {
 }
 
 /* Medium devices (≥ 768px; tablet) */
-@media (max-width: 991px) {}
+@media (max-width: 991px) {
+    .item-desc-col {
+        text-align: center;
+    }
+
+    .category-select-padding {
+        width: 100%;
+        margin: 0.5rem 1rem;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin: 0.5rem 1rem;
+    }
+
+    .search-btn {
+        width: 100%;
+        margin: 0.5rem 1rem 1.5rem 1rem;
+    }
+
+    .feedback {
+        text-align: center;
+        margin: 1rem 0 0 0;
+    }
+
+    .sort-dropdown div button {
+        width: 96%;
+        float: none;
+        float: center;
+    }
+}
 
 /* Large devices (≥ 992px; desktop) */
 @media (max-width: 1199px) {}
@@ -766,9 +797,9 @@ input:checked+.slider:before {
     text-align: center;
 }
 
-.form-check-input {
+/* .form-check-input {
     margin-left: 1.5rem;
-}
+} */
 
 
 /* Style the submit button */
