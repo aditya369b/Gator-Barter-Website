@@ -28,7 +28,7 @@
 1. Server URL - https://gatorbater.store (IP: 3.132.140.242)
 2. SSH username - ubuntu
 3. SSH key - Uploaded to the credentials folder.
-4. Database URL or IP and port used: - 0.0.0.0:3360
+4. Database URL or IP and port used: - 0.0.0.0:3306
 5. Database username - root
 6. Database password - (No password while connecting to DB on server)
 7. Database name - gatorbarter
