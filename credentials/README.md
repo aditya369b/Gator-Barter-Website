@@ -28,7 +28,14 @@
 1. Server URL - https://gatorbater.store (IP: 3.132.140.242)
 2. SSH username - ubuntu
 3. SSH key - Uploaded to the credentials folder.
-4. Instructions on how to use the above information are as follows:
+4. Database URL or IP and port used: - 0.0.0.0:3360
+5. Database username - root
+6. Database password - (No password while connecting to DB on server)
+7. Database name - gatorbarter
+8. Instructions on how to use the above information are as follows:
+![Intructions for connecting DB](https://github.com/CSC-648-SFSU/csc648-fall2019-Team04/blob/master/credentials/Screen%20Shot%202019-12-17%20at%208.43.37%20PM.png)
+
+Note: While running the application locally you need to set the above values with appropriate local credentials in the file application/dbCursor.py
 
 How to ssh as root user
 - Aquire the appropriate .pem file
